@@ -1,0 +1,8 @@
+TOPIC SideMenu:
+--------------
+We homeve
+
+Used tooltip for SideMenu Nav item with icon, all the icon are created through icon object in components/icon.
+
+Expandable menu:
+Create icon and on click of its reduce the size plus hide title, hooks to trace the click on sidebar icon

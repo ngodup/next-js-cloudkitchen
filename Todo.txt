@@ -1,0 +1,6 @@
+Pending Task:
+-----------
+1. Sidemenu - desktop 
+2. Mobile Menu - Pending
+3. Card for each Food Item
+4. Main home page
