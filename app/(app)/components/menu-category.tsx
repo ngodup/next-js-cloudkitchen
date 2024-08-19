@@ -11,10 +11,9 @@ const MenuCategoryItem = ({ menu }: MenuCategoryProps) => {
   const Icon = Icons[icon || "foodPot"];
 
   return (
-    <Card className="w-25 p-2 rounded-2xl">
-      <CardContent className="flex gap-2 pb-0 justify-between">
-        {/* <LayoutDashboardIcon className="text-primary" size={30} /> */}
-        <Icon className={`size-8 text-primary flex-none`} />
+    <Card className="w-48 rounded-2xl shadow-md p-2">
+      <CardContent className="flex gap-2 pl-0 pb-0 justify-start">
+        <Icon className="size-8 text-primary" />
         <div className="text-xs">
           <p className="font-semibold">{name}</p>
           <p>{shortDescription}</p>
@@ -25,3 +24,5 @@ const MenuCategoryItem = ({ menu }: MenuCategoryProps) => {
 };
 
 export default MenuCategoryItem;
+
+//Adding flexable card for responsive
