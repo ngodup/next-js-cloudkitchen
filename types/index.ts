@@ -47,3 +47,26 @@ export interface FooterItem {
 // Type aliases for clarity
 export type MainNavItem = NavItemWithOptionalChildren;
 export type SidebarNavItem = NavItemWithChildren;
+
+export interface FoodItem {
+  imageName: string;
+  name: string;
+  rating: number;
+  reviews: number;
+  price: number;
+  repas: string;
+  repasType: string;
+  category: string;
+  active: boolean;
+}
+
+/* Start of Redux related type */
+export interface FoodsState {
+  products: FoodItem[];
+}
+
+export interface RootState {
+  products: FoodsState;
+}
+
+/* End here redux related type */
