@@ -1,6 +1,9 @@
 "use client";
+
 import React from "react";
-import ThemeProvider from "./ThemeToggle/theme-provider";
+import { Provider as ReduxProvider } from "react-redux";
+import ThemeProvider from "./themeToggle/theme-provider";
+import store from "@/store";
 // import { SessionProvider, SessionProviderProps } from 'next-auth/react';
 export default function Providers({
   children,
@@ -10,10 +13,12 @@ export default function Providers({
 }) {
   return (
     <>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        {children}
-        {/* <SessionProvider session={session}>{children}</SessionProvider> */}
-      </ThemeProvider>
+      <ReduxProvider store={store}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          {/* <SessionProvider session={session}>{children}</SessionProvider> */}
+        </ThemeProvider>
+      </ReduxProvider>
     </>
   );
 }

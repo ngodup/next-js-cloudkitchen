@@ -8,7 +8,7 @@ const MenuTitle = () => {
   return (
     <div className="flex items-center gap-2">
       <Image
-        src="/assets/images/main-logo.png"
+        src="/assets/images/main-logo.webp"
         alt="Cloud kitchen"
         width={isMinimized ? 60 : 100} // Reduced size for minimized state
         height={isMinimized ? 40 : 40} // Keeping the height proportional

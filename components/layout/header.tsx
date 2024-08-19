@@ -1,5 +1,5 @@
 import SearchInput from "@/app/(app)/components/search-input";
-import ThemeToggle from "./ThemeToggle/theme-toggle";
+import ThemeToggle from "./themeToggle/theme-toggle";
 import UserNav from "./user-nav";
 
 export default function Header() {
