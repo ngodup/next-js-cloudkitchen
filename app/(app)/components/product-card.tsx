@@ -1,9 +1,11 @@
-import Image from "next/image";
+"use client";
 
+import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FoodItem } from "@/types";
 import { LeafyGreenIcon, BeefIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface MenuItemProps {
   food: FoodItem;
@@ -44,9 +46,12 @@ export default function ProductCard({ food }: MenuItemProps) {
           <Button className="mt-3 w-full text-xs h-8 bg-lightGreen text-gray-600">
             Add to Cart
           </Button>
-          <Button className="mt-3  text-xs h-8 bg-primary text-primary-foreground">
+          <Link
+            href={`/products/${food.id}`}
+            className="mt-3  text-xs h-8 bg-primary text-primary-foreground rounded-sm p-2"
+          >
             View
-          </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>
