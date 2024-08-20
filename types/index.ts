@@ -49,6 +49,7 @@ export type MainNavItem = NavItemWithOptionalChildren;
 export type SidebarNavItem = NavItemWithChildren;
 
 export interface FoodItem {
+  id?: string;
   imageName: string;
   name: string;
   rating: number;

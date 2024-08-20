@@ -2,6 +2,7 @@ import { MenuCategory, NavItem, FoodItem } from "@/types";
 
 export const products: FoodItem[] = [
   {
+    id: "1",
     imageName: "Quiche-Lorraine.png",
     name: "Quiche Lorraine",
     rating: 4.5,
@@ -13,6 +14,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "2",
     imageName: "Yakitori.png",
     name: "Yakitori",
     rating: 2.5,
@@ -25,6 +27,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "3",
     imageName: "Palak-Paneer.png",
     name: "Palak Paneer",
     rating: 3,
@@ -36,6 +39,7 @@ export const products: FoodItem[] = [
     active: false,
   },
   {
+    id: "4",
     imageName: "Steak-frites.png",
     name: "Steak frites",
     rating: 5,
@@ -47,6 +51,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "5",
     imageName: "Dal-Makhani.png",
     name: "Dal Makhani",
     rating: 1,
@@ -58,6 +63,7 @@ export const products: FoodItem[] = [
     active: false,
   },
   {
+    id: "6",
     imageName: "Biryani.png",
     name: "Biryani",
     rating: 3,
@@ -70,6 +76,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "7",
     imageName: "Pizza.png",
     name: "Pizza",
     rating: 4.5,
@@ -82,6 +89,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "8",
     imageName: "Soupe-oignon-gratinée.png",
     name: "Soupe à l'oignon gratinée",
     rating: 4.5,
@@ -94,6 +102,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "9",
     imageName: "Poulet-au-beurre.png",
     name: "Poulet au beurre",
     rating: 4.5,
@@ -106,6 +115,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "10",
     imageName: "Boeuf-Bourguignon.png",
     name: "Boeuf Bourguignon",
     rating: 4.5,
@@ -117,17 +127,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
-    imageName: "Coq-au-vin.png",
-    name: "Coq au vin",
-    rating: 4.5,
-    reviews: 123,
-    price: 12,
-    repas: "non-végétarien",
-    repasType: "déjeuner",
-    category: "français",
-    active: true,
-  },
-  {
+    id: "11",
     imageName: "Lasagna.png",
     name: "Lasagna",
     rating: 4.5,
@@ -139,6 +139,7 @@ export const products: FoodItem[] = [
     active: false,
   },
   {
+    id: "12",
     imageName: "Crêpes.png",
     name: "Crêpes",
     rating: 4.5,
@@ -150,6 +151,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "13",
     imageName: "Ratatouille.png",
     name: "Ratatouille",
     rating: 4.5,
@@ -162,6 +164,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "14",
     imageName: "Magret-de-Canard.png",
     name: "Magret de Canard",
     rating: 4.5,
@@ -173,6 +176,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "15",
     imageName: "Pasta.png",
     name: "Pasta",
     rating: 4.5,
@@ -184,6 +188,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "16",
     imageName: "Salade-Niçoise.png",
     name: "Salade Niçoise",
     rating: 4.5,
@@ -195,6 +200,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "17",
     imageName: "Blanquette-de-Veau.png",
     name: "Blanquette de Veau",
     rating: 4.5,
@@ -206,6 +212,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "18",
     imageName: "Soufflé.png",
     name: "Soufflé",
     rating: 4.5,
@@ -217,6 +224,19 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "19",
+    imageName: "Coq-au-vin.png",
+    name: "Coq au vin",
+    rating: 4.5,
+    reviews: 123,
+    price: 12,
+    repas: "non-végétarien",
+    repasType: "déjeuner",
+    category: "français",
+    active: true,
+  },
+  {
+    id: "20",
     imageName: "Dropa Khatsa.png",
     name: "Dropa Khatsa",
     rating: 4.5,
@@ -228,6 +248,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "21",
     imageName: "Momos.png",
     name: "Momos",
     rating: 4.5,
@@ -239,6 +260,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "22",
     imageName: "Thenthuk.png",
     name: "Thenthuk",
     rating: 4.5,
@@ -250,6 +272,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "23",
     imageName: "Cassoulet.png",
     name: "Cassoulet",
     rating: 4.5,
@@ -262,6 +285,7 @@ export const products: FoodItem[] = [
   },
 
   {
+    id: "24",
     imageName: "Bún chả.png",
     name: "Bún chả",
     rating: 4.5,
@@ -273,6 +297,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "25",
     imageName: "Phở.png",
     name: "Phở",
     rating: 4.5,
@@ -284,6 +309,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "26",
     imageName: "Sushi.png",
     name: "Sushi",
     rating: 4.5,
@@ -295,6 +321,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "27",
     imageName: "Gỏi-Cuốn.png",
     name: "Gỏi Cuốn",
     rating: 4.5,
@@ -306,6 +333,7 @@ export const products: FoodItem[] = [
     active: true,
   },
   {
+    id: "28",
     imageName: "Tempura.png",
     name: "Tempura",
     rating: 4.5,
