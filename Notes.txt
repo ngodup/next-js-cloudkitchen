@@ -6,3 +6,12 @@ Used tooltip for SideMenu Nav item with icon, all the icon are created through i
 
 Expandable menu:
 Create icon and on click of its reduce the size plus hide title, hooks to trace the click on sidebar icon
+
+Flex-wrap
+
+PASSING className to component through parent
+---------------------------------------------
+interface ProductQuantitiesProps {
+  className?: string;
+}
+

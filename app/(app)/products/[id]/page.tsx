@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { useSelector } from "react-redux";
 import { Card, CardContent } from "@/components/ui/card";
 import ProductRating from "../../components/product-rating";
+import ProductQuantities from "../../components/product-quantities";
 
 type Props = {
   params: { id: string };
@@ -44,8 +45,22 @@ export default function ProductDetail({ params }: Props) {
             </p>
           </div>
           <div className="flex justify-between">
-            <p>Prix : €{food.price}</p>
+            <p>
+              <span className="font-semibold">Prix :</span> €{food.price}
+            </p>
             <ProductRating rating={food.rating} />
+          </div>
+          {/* Quantity component */}
+          <ProductQuantities className="mt-5" />
+          {/* Food menu category */}
+          <div className="flex gap-4 mt-5 text-sm">
+            <Card className="bg-blue-700 text-primary-foreground p-2">
+              {food.category}
+            </Card>
+            <Card className="bg-primary text-primary-foreground p-2">
+              {food.repas}
+            </Card>
+            <Card className="bg-lightGreen p-2">{food.repasType}</Card>
           </div>
         </div>
       </CardContent>
