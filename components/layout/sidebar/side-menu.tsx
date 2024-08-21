@@ -41,7 +41,7 @@ const SideMenu = () => {
 
       <footer className="md:flex md:gap-2 items-center mt-4 flex-shrink-0">
         <Avatar>
-          <AvatarFallback className="bg-primary text-primary-foreground dark:bg-pink-800">
+          <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary">
             NT
           </AvatarFallback>
         </Avatar>

@@ -13,7 +13,7 @@ interface MenuItemProps {
 
 export default function ProductCard({ food }: MenuItemProps) {
   return (
-    <Card className="w-[200px] h-[330px] flex flex-col rounded-lg overflow-hidden">
+    <Card className="w-[250px] flex flex-col rounded-lg overflow-hidden">
       <CardHeader className="p-2 flex-shrink-0">
         <Image
           src={`/assets/images/${food.imageName}`}

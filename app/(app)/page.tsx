@@ -22,7 +22,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="mt-5">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-5">
+          <div className="grid gap-x-2 gap-y-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
             {products &&
               products.map((product, index) => (
                 <ProductCard key={index} food={product} />
