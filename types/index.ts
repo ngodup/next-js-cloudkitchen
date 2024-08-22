@@ -1,4 +1,5 @@
 import { Icons } from "@/components/icons";
+import { ProductState } from "@/store/products/products-slice";
 
 /**
  * Represents a single navigation item.
@@ -62,12 +63,9 @@ export interface FoodItem {
 }
 
 /* Start of Redux related type */
-export interface FoodsState {
-  products: FoodItem[];
-}
 
 export interface RootState {
-  products: FoodsState;
+  products: ProductState;
 }
 
 /* End here redux related type */

@@ -28,7 +28,7 @@ export default function ProductCard({ food }: MenuItemProps) {
         <div className="flex justify-between text-sm">
           <p className="text-primary">€ {food.price}</p>
           <div className="flex gap-1 items-center">
-            {food.repas === "végétarien" ? (
+            {food.repas === "Vegétarien" ? (
               <>
                 <LeafyGreenIcon className="text-primary" />
                 <span className="text-xs text-primary">Veg</span>

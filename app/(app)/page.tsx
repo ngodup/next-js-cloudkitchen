@@ -1,14 +1,32 @@
 "use client";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import PageContainer from "@/components/layout/page-container";
 import { menuCategories } from "@/constants/data";
 import MenuCategoryItem from "./components/menu-category";
 import { RootState } from "@/types";
 import ProductCard from "./components/product-card";
+import { useEffect } from "react";
+import { fetchProducts } from "@/store/products/products-slice";
+import { useAppDispatch } from "@/store";
 
 export default function DashboardPage() {
-  const products = useSelector((state: RootState) => state.products.products);
+  const dispatch = useAppDispatch();
+  const { products, status, error } = useSelector(
+    (state: RootState) => state.products
+  );
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+  }, [dispatch]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "failed") {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <PageContainer scrollable={true}>
