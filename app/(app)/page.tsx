@@ -1,9 +1,9 @@
 "use client";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PageContainer from "@/components/layout/page-container";
 import { menuCategories } from "@/constants/data";
-import MenuCategoryItem from "./components/menu-category";
+import MenuCuisineItem from "./components/menu-cuisine";
 import { RootState } from "@/types";
 import ProductCard from "./components/product-card";
 import { useEffect } from "react";
@@ -35,15 +35,15 @@ export default function DashboardPage() {
         <div className="flex flex-wrap gap-2">
           {menuCategories &&
             menuCategories.map((menu, index) => (
-              <MenuCategoryItem key={index} menu={menu} />
+              <MenuCuisineItem key={index} menu={menu} />
             ))}
         </div>
 
         <div className="mt-5">
           <div className="grid gap-x-2 gap-y-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
             {products &&
-              products.map((product, index) => (
-                <ProductCard key={index} food={product} />
+              products.map((product) => (
+                <ProductCard key={product._id} food={product} />
               ))}
           </div>
         </div>

@@ -1,12 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Icons } from "@/components/icons";
-import { MenuCategory } from "@/types";
+import { MenuCuisine } from "@/types";
 
 interface MenuCategoryProps {
-  menu: MenuCategory;
+  menu: MenuCuisine;
 }
 
-const MenuCategoryItem = ({ menu }: MenuCategoryProps) => {
+const MenuCuisineItem = ({ menu }: MenuCategoryProps) => {
   const { name, icon, shortDescription } = menu;
   const Icon = Icons[icon || "foodPot"];
 
@@ -23,6 +23,6 @@ const MenuCategoryItem = ({ menu }: MenuCategoryProps) => {
   );
 };
 
-export default MenuCategoryItem;
+export default MenuCuisineItem;
 
 //Adding flexable card for responsive

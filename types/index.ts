@@ -13,7 +13,7 @@ export interface NavItem {
   description?: string; // Optional description for the item
 }
 
-export type MenuCategory = {
+export type MenuCuisine = {
   name: string;
   icon: keyof typeof Icons;
   shortDescription: string;
@@ -50,7 +50,7 @@ export type MainNavItem = NavItemWithOptionalChildren;
 export type SidebarNavItem = NavItemWithChildren;
 
 export interface FoodItem {
-  id?: string;
+  _id?: string;
   imageName: string;
   name: string;
   rating: number;
@@ -58,7 +58,7 @@ export interface FoodItem {
   price: number;
   repas: string;
   repasType: string;
-  category: string;
+  cuisine: string;
   active: boolean;
 }
 

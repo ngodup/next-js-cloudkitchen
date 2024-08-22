@@ -1,8 +1,8 @@
-import { MenuCategory, NavItem, FoodItem } from "@/types";
+import { MenuCuisine, NavItem, FoodItem } from "@/types";
 
 export const products: FoodItem[] = [
   {
-    id: "1",
+    _id: "1",
     imageName: "Quiche-Lorraine.png",
     name: "Quiche Lorraine",
     rating: 4.5,
@@ -10,11 +10,11 @@ export const products: FoodItem[] = [
     price: 12,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "2",
+    _id: "2",
     imageName: "Yakitori.png",
     name: "Yakitori",
     rating: 2.5,
@@ -22,12 +22,12 @@ export const products: FoodItem[] = [
     price: 14,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "japonaise",
+    cuisine: "japonaise",
     active: true,
   },
 
   {
-    id: "3",
+    _id: "3",
     imageName: "Palak-Paneer.png",
     name: "Palak Paneer",
     rating: 3,
@@ -35,11 +35,11 @@ export const products: FoodItem[] = [
     price: 6,
     repas: "végétarien",
     repasType: "petit-déjeuner",
-    category: "indienne",
+    cuisine: "indienne",
     active: false,
   },
   {
-    id: "4",
+    _id: "4",
     imageName: "Steak-frites.png",
     name: "Steak frites",
     rating: 5,
@@ -47,11 +47,11 @@ export const products: FoodItem[] = [
     price: 4,
     repas: "non-végétarien",
     repasType: "déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "5",
+    _id: "5",
     imageName: "Dal-Makhani.png",
     name: "Dal Makhani",
     rating: 1,
@@ -59,11 +59,11 @@ export const products: FoodItem[] = [
     price: 6,
     repas: "végétarien",
     repasType: "petit-déjeuner",
-    category: "indienne",
+    cuisine: "indienne",
     active: false,
   },
   {
-    id: "6",
+    _id: "6",
     imageName: "Biryani.png",
     name: "Biryani",
     rating: 3,
@@ -71,12 +71,12 @@ export const products: FoodItem[] = [
     price: 7,
     repas: "non-végétarien",
     repasType: "déjeune",
-    category: "indienne",
+    cuisine: "indienne",
     active: false,
   },
 
   {
-    id: "7",
+    _id: "7",
     imageName: "Pizza.png",
     name: "Pizza",
     rating: 4.5,
@@ -84,12 +84,12 @@ export const products: FoodItem[] = [
     price: 5,
     repas: "végétarien",
     repasType: "déjeune",
-    category: "italienne",
+    cuisine: "italienne",
     active: true,
   },
 
   {
-    id: "8",
+    _id: "8",
     imageName: "Soupe-oignon-gratinée.png",
     name: "Soupe à l'oignon gratinée",
     rating: 4.5,
@@ -97,12 +97,12 @@ export const products: FoodItem[] = [
     price: 5,
     repas: "végétarien",
     repasType: "petit-déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
 
   {
-    id: "9",
+    _id: "9",
     imageName: "Poulet-au-beurre.png",
     name: "Poulet au beurre",
     rating: 4.5,
@@ -110,12 +110,12 @@ export const products: FoodItem[] = [
     price: 8,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "indienne",
+    cuisine: "indienne",
     active: true,
   },
 
   {
-    id: "10",
+    _id: "10",
     imageName: "Boeuf-Bourguignon.png",
     name: "Boeuf Bourguignon",
     rating: 4.5,
@@ -123,11 +123,11 @@ export const products: FoodItem[] = [
     price: 10,
     repas: "non-végétarien",
     repasType: "petit-déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "11",
+    _id: "11",
     imageName: "Lasagna.png",
     name: "Lasagna",
     rating: 4.5,
@@ -135,11 +135,11 @@ export const products: FoodItem[] = [
     price: 14,
     repas: "non-végétarien",
     repasType: "non-végétarien",
-    category: "italienne",
+    cuisine: "italienne",
     active: false,
   },
   {
-    id: "12",
+    _id: "12",
     imageName: "Crêpes.png",
     name: "Crêpes",
     rating: 4.5,
@@ -147,11 +147,11 @@ export const products: FoodItem[] = [
     price: 15,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "13",
+    _id: "13",
     imageName: "Ratatouille.png",
     name: "Ratatouille",
     rating: 4.5,
@@ -159,12 +159,12 @@ export const products: FoodItem[] = [
     price: 17,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
 
   {
-    id: "14",
+    _id: "14",
     imageName: "Magret-de-Canard.png",
     name: "Magret de Canard",
     rating: 4.5,
@@ -172,11 +172,11 @@ export const products: FoodItem[] = [
     price: 21,
     repas: "non-végétarien",
     repasType: "dînerr",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "15",
+    _id: "15",
     imageName: "Pasta.png",
     name: "Pasta",
     rating: 4.5,
@@ -184,11 +184,11 @@ export const products: FoodItem[] = [
     price: 9,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "italienne",
+    cuisine: "italienne",
     active: true,
   },
   {
-    id: "16",
+    _id: "16",
     imageName: "Salade-Niçoise.png",
     name: "Salade Niçoise",
     rating: 4.5,
@@ -196,11 +196,11 @@ export const products: FoodItem[] = [
     price: 7,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "17",
+    _id: "17",
     imageName: "Blanquette-de-Veau.png",
     name: "Blanquette de Veau",
     rating: 4.5,
@@ -208,11 +208,11 @@ export const products: FoodItem[] = [
     price: 16,
     repas: "végétarien",
     repasType: "dîner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "18",
+    _id: "18",
     imageName: "Soufflé.png",
     name: "Soufflé",
     rating: 4.5,
@@ -220,11 +220,11 @@ export const products: FoodItem[] = [
     price: 22,
     repas: "déjeuner",
     repasType: "non-végétarien",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "19",
+    _id: "19",
     imageName: "Coq-au-vin.png",
     name: "Coq au vin",
     rating: 4.5,
@@ -232,11 +232,11 @@ export const products: FoodItem[] = [
     price: 12,
     repas: "non-végétarien",
     repasType: "déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
   {
-    id: "20",
+    _id: "20",
     imageName: "Dropa Khatsa.png",
     name: "Dropa Khatsa",
     rating: 4.5,
@@ -244,11 +244,11 @@ export const products: FoodItem[] = [
     price: 8,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "tibétaine",
+    cuisine: "tibétaine",
     active: true,
   },
   {
-    id: "21",
+    _id: "21",
     imageName: "Momos.png",
     name: "Momos",
     rating: 4.5,
@@ -256,11 +256,11 @@ export const products: FoodItem[] = [
     price: 8,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "tibétaine",
+    cuisine: "tibétaine",
     active: true,
   },
   {
-    id: "22",
+    _id: "22",
     imageName: "Thenthuk.png",
     name: "Thenthuk",
     rating: 4.5,
@@ -268,11 +268,11 @@ export const products: FoodItem[] = [
     price: 10,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "tibétaine",
+    cuisine: "tibétaine",
     active: true,
   },
   {
-    id: "23",
+    _id: "23",
     imageName: "Cassoulet.png",
     name: "Cassoulet",
     rating: 4.5,
@@ -280,12 +280,12 @@ export const products: FoodItem[] = [
     price: 12,
     repas: "végétarien",
     repasType: "déjeuner",
-    category: "français",
+    cuisine: "français",
     active: true,
   },
 
   {
-    id: "24",
+    _id: "24",
     imageName: "Bún chả.png",
     name: "Bún chả",
     rating: 4.5,
@@ -293,11 +293,11 @@ export const products: FoodItem[] = [
     price: 20,
     repas: "végétarien",
     repasType: "dîner",
-    category: "vietnamienne",
+    cuisine: "vietnamienne",
     active: true,
   },
   {
-    id: "25",
+    _id: "25",
     imageName: "Phở.png",
     name: "Phở",
     rating: 4.5,
@@ -305,11 +305,11 @@ export const products: FoodItem[] = [
     price: 8,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "vietnamienne",
+    cuisine: "vietnamienne",
     active: true,
   },
   {
-    id: "26",
+    _id: "26",
     imageName: "Sushi.png",
     name: "Sushi",
     rating: 4.5,
@@ -317,11 +317,11 @@ export const products: FoodItem[] = [
     price: 22,
     repas: "non-végétarien",
     repasType: "dîner",
-    category: "japonaise",
+    cuisine: "japonaise",
     active: true,
   },
   {
-    id: "27",
+    _id: "27",
     imageName: "Gỏi-Cuốn.png",
     name: "Gỏi Cuốn",
     rating: 4.5,
@@ -329,11 +329,11 @@ export const products: FoodItem[] = [
     price: 11,
     repas: "non-végétarien",
     repasType: "non-végétarien",
-    category: "vietnamienne",
+    cuisine: "vietnamienne",
     active: true,
   },
   {
-    id: "28",
+    _id: "28",
     imageName: "Tempura.png",
     name: "Tempura",
     rating: 4.5,
@@ -341,13 +341,13 @@ export const products: FoodItem[] = [
     price: 21,
     repas: "non-végétarien",
     repasType: "déjeuner",
-    category: "japonaise",
+    cuisine: "japonaise",
     active: true,
   },
 ];
 
 export type User = {
-  id: number;
+  _id: number;
   name: string;
   company: string;
   role: string;
@@ -357,7 +357,7 @@ export type User = {
 
 export const users: User[] = [
   {
-    id: 1,
+    _id: 1,
     name: "Candice Schiner",
     company: "Dell",
     role: "Frontend Developer",
@@ -365,7 +365,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 2,
+    _id: 2,
     name: "John Doe",
     company: "TechCorp",
     role: "Backend Developer",
@@ -373,7 +373,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 3,
+    _id: 3,
     name: "Alice Johnson",
     company: "WebTech",
     role: "UI Designer",
@@ -381,15 +381,15 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 4,
-    name: "David Smith",
+    _id: 4,
+    name: "Dav_id Smith",
     company: "Innovate Inc.",
     role: "Fullstack Developer",
     verified: false,
     status: "Inactive",
   },
   {
-    id: 5,
+    _id: 5,
     name: "Emma Wilson",
     company: "TechGuru",
     role: "Product Manager",
@@ -397,7 +397,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 6,
+    _id: 6,
     name: "James Brown",
     company: "CodeGenius",
     role: "QA Engineer",
@@ -405,7 +405,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 7,
+    _id: 7,
     name: "Laura White",
     company: "SoftWorks",
     role: "UX Designer",
@@ -413,7 +413,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 8,
+    _id: 8,
     name: "Michael Lee",
     company: "DevCraft",
     role: "DevOps Engineer",
@@ -421,7 +421,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 9,
+    _id: 9,
     name: "Olivia Green",
     company: "WebSolutions",
     role: "Frontend Developer",
@@ -429,7 +429,7 @@ export const users: User[] = [
     status: "Active",
   },
   {
-    id: 10,
+    _id: 10,
     name: "Robert Taylor",
     company: "DataTech",
     role: "Data Analyst",
@@ -439,13 +439,13 @@ export const users: User[] = [
 ];
 
 export type Employee = {
-  id: number;
+  _id: number;
   first_name: string;
   last_name: string;
   email: string;
   phone: string;
   gender: string;
-  date_of_birth: string; // Consider using a proper date type if possible
+  date_of_birth: string; // Cons_ider using a proper date type if possible
   street: string;
   city: string;
   state: string;
@@ -457,7 +457,7 @@ export type Employee = {
   profile_picture?: string | null; // Profile picture can be a string (URL) or null (if no picture)
 };
 
-export const menuCategories: MenuCategory[] = [
+export const menuCategories: MenuCuisine[] = [
   {
     name: "Tout",
     icon: "dashboard",
