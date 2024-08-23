@@ -15,18 +15,11 @@ export default function DashboardPage() {
   const { products, status, error } = useSelector(
     (state: RootState) => state.products
   );
+  debugger;
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
-
-  if (status === "loading") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "failed") {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <PageContainer scrollable={true}>
@@ -39,14 +32,21 @@ export default function DashboardPage() {
             ))}
         </div>
 
-        <div className="mt-5">
-          <div className="grid gap-x-2 gap-y-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
-            {products &&
-              products.map((product) => (
-                <ProductCard key={product._id} food={product} />
-              ))}
+        {/* Conditional rendering for loading and error states */}
+        {status === "loading" && <div>Loading...</div>}
+        {status === "failed" && <div>Error: {error}</div>}
+
+        {/* Product cards */}
+        {status === "idle" && (
+          <div className="mt-5">
+            <div className="grid gap-x-2 gap-y-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
+              {products &&
+                products.map((product) => (
+                  <ProductCard key={product._id} food={product} />
+                ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </PageContainer>
   );

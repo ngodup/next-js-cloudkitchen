@@ -47,7 +47,7 @@ export default function ProductCard({ food }: MenuItemProps) {
             Add to Cart
           </Button>
           <Link
-            href={`/products/${food.id}`}
+            href={`/products/${food._id}`}
             className="mt-3  text-xs h-8 bg-primary text-primary-foreground rounded-sm p-2"
           >
             View
