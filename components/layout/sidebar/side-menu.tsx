@@ -1,13 +1,13 @@
 "use client";
 
 import { navItems } from "@/constants/data";
-import MainMenu from "./main-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/hooks/useSidebar";
 import MenuTitle from "./menu-title";
+import DashboardNav from "./dashboard-nav.";
 
 const SideMenu = () => {
   const { isMinimized, toggle } = useSidebar();
@@ -36,7 +36,7 @@ const SideMenu = () => {
       </header>
 
       <div className="flex-grow">
-        <MainMenu navItems={navItems} />
+        <DashboardNav navItems={navItems} />
       </div>
 
       <footer className="md:flex md:gap-2 items-center mt-4 flex-shrink-0">

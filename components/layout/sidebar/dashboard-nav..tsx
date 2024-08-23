@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Icons } from "@/components/icons";
 import {
   Tooltip,
@@ -12,13 +14,18 @@ import { cn } from "@/lib/utils";
 import { NavItem } from "@/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
 
-interface MainMenuProps {
+interface DashboardNavProps {
   navItems: NavItem[];
+  setOpen?: Dispatch<SetStateAction<boolean>>;
+  isMobileNav?: boolean;
 }
 
-const MainMenu = ({ navItems }: MainMenuProps) => {
+const DashboardNav = ({
+  navItems,
+  setOpen,
+  isMobileNav = false,
+}: DashboardNavProps) => {
   const { isMinimized } = useSidebar();
   const pathname = usePathname();
 
@@ -40,10 +47,18 @@ const MainMenu = ({ navItems }: MainMenuProps) => {
                         : "transparent",
                       item.disabled && "cursor-not-allowed opacity-80"
                     )}
+                    onClick={() => {
+                      if (setOpen) setOpen(false);
+                    }}
                   >
                     <Icon className={`ml-3 size-5 flex-none`} />
-                    {!isMinimized && (
+                    {/* {!isMinimized && (
                       <span className="mr-2 truncate">{item.title}</span>
+                    )} */}
+                    {isMobileNav || (!isMinimized && !isMobileNav) ? (
+                      <span className="mr-2 truncate">{item.title}</span>
+                    ) : (
+                      ""
                     )}
                   </Link>
                 </TooltipTrigger>
@@ -64,4 +79,4 @@ const MainMenu = ({ navItems }: MainMenuProps) => {
   );
 };
 
-export default MainMenu;
+export default DashboardNav;

@@ -41,7 +41,6 @@ export default function CommentForm({
 
   // Form submission handler
   const handleFormSubmit = (data: { comment: string }) => {
-    debugger;
     onSubmit(data);
   };
 
