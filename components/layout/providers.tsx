@@ -9,7 +9,7 @@ import { SessionProvider } from "next-auth/react";
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider store={store}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
         <SessionProvider>{children}</SessionProvider>
       </ThemeProvider>
     </ReduxProvider>

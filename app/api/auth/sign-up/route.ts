@@ -5,7 +5,15 @@ import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificaitonEmail";
 import { ApiResponse } from "@/types/ApiResponse";
 
-export async function POST(request: NextResponse) {
+async function findUserByEmail(email: string) {
+  return await UserModel.findOne({ email });
+}
+
+async function hashPassword(password: string) {
+  return await bcrypt.hash(password, 10);
+}
+
+export async function POST(request: NextRequest) {
   await dbConnect();
 
   try {
@@ -18,51 +26,38 @@ export async function POST(request: NextResponse) {
 
     if (existingVerifiedUser) {
       return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: "User is already taken",
-        },
+        { success: false, message: "User is already taken" },
         { status: 400 }
       );
     }
 
-    //Step 2: Check user existing or not
-    const existingUserByEmail = await UserModel.findOne({ email });
-
-    let verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
+    // Step 2: Check if the user exists
+    const existingUserByEmail = await findUserByEmail(email);
+    const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
 
     if (existingUserByEmail) {
       if (existingUserByEmail.isVerified) {
         return NextResponse.json<ApiResponse>(
-          {
-            success: false,
-            message: "User already exists with this email",
-          },
+          { success: false, message: "User already exists with this email" },
           { status: 400 }
         );
       } else {
-        //Step 3:Existing user without email verified, may be forgot password
-        const hashedPassword = await bcrypt.hash(password, 10);
-        existingUserByEmail.password = hashedPassword;
-        existingUserByEmail.verifyCode = verifyCode; // new verified code
-        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000);
+        // Step 3: Existing user without email verified, possibly forgot password
+        existingUserByEmail.password = await hashPassword(password);
+        existingUserByEmail.verifyCode = verifyCode;
+        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
         await existingUserByEmail.save();
       }
     } else {
       //Step 4: New user
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const expiryDate = new Date();
-      expiryDate.setHours(expiryDate.getHours() + 1);
-      //Define new user model
       const newUser = new UserModel({
         email,
-        password: hashedPassword,
+        password: await hashPassword(password),
         verifyCode,
-        verifyCodeExpiry: expiryDate,
+        verifyCodeExpiry: new Date(Date.now() + 3600000), // 1 hour expiry
         isVerified: false,
         isAdmin: false,
       });
-
       await newUser.save();
     }
 
@@ -70,27 +65,22 @@ export async function POST(request: NextResponse) {
     const emailResponse = await sendVerificationEmail(email, verifyCode);
     if (!emailResponse.success) {
       return NextResponse.json<ApiResponse>(
-        {
-          success: false,
-          message: emailResponse.message,
-        },
+        { success: false, message: "Failed to send verification email" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json(
+    return NextResponse.json<ApiResponse>(
       {
         success: true,
-        message: "User registered successfully. Please verify your account.",
+        message: "User registered successfully. Verification email sent.",
       },
       { status: 201 }
     );
   } catch (error) {
-    return Response.json(
-      {
-        success: false,
-        message: "Error registering user",
-      },
+    console.error("Error processing request:", error);
+    return NextResponse.json<ApiResponse>(
+      { success: false, message: "Internal server error" },
       { status: 500 }
     );
   }

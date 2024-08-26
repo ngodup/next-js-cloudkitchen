@@ -1,14 +1,12 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormField,
@@ -20,17 +18,18 @@ import { Input } from "@/components/ui/input";
 import { signInSchema } from "@/schemas/signInSchema";
 import LoadingButton from "@/components/loading-button";
 import ErrorMessage from "@/components/error-message";
+import { signUpSchema } from "@/schemas/signUpSchema";
+import baseAPI from "@/app/api/baseAPI";
+import { ApiResponse } from "@/types/ApiResponse";
+import { AxiosError } from "axios";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 
-export default function SignInForm() {
-  const { data: session, status } = useSession();
+export default function SignUpForm() {
+  const [signUpError, setSignUpError] = useState<string>("");
+
   const router = useRouter();
-  const [signInError, setSignInError] = useState<string>("");
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/");
-    }
-  }, [status, router]);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -40,38 +39,30 @@ export default function SignInForm() {
     },
   });
 
-  async function onGoogleAuth() {
-    const result = await signIn("google", { redirect: false });
-    if (result?.error) {
-      setSignInError(result.error);
-    } else {
-      router.replace("/");
-    }
-  }
-
-  const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     try {
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: data.email,
-        password: data.password,
+      const response = await baseAPI.post<ApiResponse>("/auth/sign-up", data);
+
+      toast({
+        title: "Success",
+        description: response.data.message,
       });
 
-      if (result?.error) {
-        const errorMessage =
-          result.error === "CredentialsSignin"
-            ? "Invalid credentials"
-            : `Error: ${result.error}`;
+      //we can use redirect
+      // router.replace(`/verify/${username}`);
+    } catch (error) {
+      const axiosError = error as AxiosError<ApiResponse>;
 
-        setSignInError(errorMessage);
-        return { message: errorMessage };
-      }
+      // Default error message
+      let errorMessage =
+        axiosError.response?.data.message ||
+        "There was a problem with your sign-up. Please try again.";
 
-      if (result?.url) {
-        router.replace("/");
-      }
-    } catch (error: any) {
-      setSignInError(error.message);
+      toast({
+        title: "Sign Up Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -116,31 +107,18 @@ export default function SignInForm() {
             />
             <LoadingButton pending={form.formState.isSubmitting} />
           </form>
-          {signInError && <ErrorMessage error={signInError} />}
+          {signUpError && <ErrorMessage error={signUpError} />}
         </Form>
 
         <span className="text-sm text-gray-500 text-center block my-2">or</span>
 
-        <div className="google-auth-container">
-          <Button variant="outline" className="w-full" onClick={onGoogleAuth}>
-            <Image
-              src="/assets/images/google-logo.svg"
-              alt="Google icon"
-              width={40}
-              height={40}
-              className="pr-4"
-            />
-            Sign in with Google account
-          </Button>
-        </div>
-
         <div className="text-center mt-4">
           Already a member?{" "}
           <Link
-            href="/auth/sign-up"
+            href="/auth/sign-in"
             className="text-gray-600 hover:text-gray-800 pl-2"
           >
-            Sign up
+            Sign in
           </Link>
         </div>
       </div>

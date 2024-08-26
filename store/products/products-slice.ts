@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { FoodItem } from "@/types";
 import baseAPI from "@/app/api/baseAPI";
 

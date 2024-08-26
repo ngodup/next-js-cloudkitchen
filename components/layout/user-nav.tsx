@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React from "react";
 import { User } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,8 +16,6 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { handleSignOut } from "@/actions/authActions";
-
 interface UserNavProps {
   className?: string;
 }
@@ -26,8 +24,10 @@ export default function UserNav({ className }: UserNavProps) {
   const { data: session, update } = useSession();
 
   const onSignOut = async () => {
-    await handleSignOut();
-    session?.user && update({ ...session.user, name: "Aditya singh" });
+    await signOut();
+    // if (session?.user) {
+    //   update({ ...session.user, name: "Aditya singh" });
+    // }
   };
 
   return (
