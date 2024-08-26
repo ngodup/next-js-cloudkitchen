@@ -1,0 +1,7 @@
+actions Folder:
+Purpose: The actions folder typically contains functions that perform specific tasks related to your application's business logic. These tasks often involve making API requests, handling database operations, dispatching Redux actions, or interacting with other services. Unlike helpers, these functions might be asynchronous and involve side effects.
+
+Examples of Files in actions:
+1. API calls: Functions for fetching data from external APIs or your own backend (e.g., fetchUserData(), createOrder()).
+2. Redux or state management actions: Functions that dispatch actions to update the global state.
+3. Database interactions: Functions that handle database operations (e.g., saving or retrieving data).

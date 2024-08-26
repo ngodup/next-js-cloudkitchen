@@ -1,10 +1,16 @@
 "use client";
-
+import { Poppins } from "next/font/google";
 import CustomModal from "@/components/custom-modal";
 import Header from "@/components/layout/header";
 import SideMenu from "@/components/layout/sidebar/side-menu";
 import { useModalStore } from "@/hooks/useModal";
 import { XCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export default function DashboardLayout({
   children,
@@ -15,7 +21,7 @@ export default function DashboardLayout({
   // const openModal = useModalStore((state) => state.modalOpen);
 
   return (
-    <div className="flex">
+    <div className={cn("flex", poppins.className)}>
       <div className="hidden lg:block">
         <SideMenu />
       </div>

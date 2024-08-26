@@ -1,25 +1,15 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-//For user Schema with type safety
 export interface User extends Document {
-  username: string;
   email: string;
   password: string;
-  isAdmin: boolean;
-  // verifyCode: string;
-  // verifyCodeExpiry: Date;
-  // isVerified: boolean;
-  // isAcceptingMessages: boolean;
-  // messages: Message[];
+  role: string;
+  verifyCode: string;
+  verifyCodeExpiry: Date;
+  isVerified: boolean;
 }
 
 const UserSchema: Schema<User> = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, "Username is required"],
-    trim: true,
-    unique: true,
-  },
   email: {
     type: String,
     required: [true, "Email is required"],
@@ -30,10 +20,26 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     type: String,
     required: [true, "Password is required"],
   },
+  role: {
+    type: String,
+    default: "user",
+  },
+  verifyCode: {
+    type: String,
+    required: [true, "Verify Code is required"],
+  },
+  verifyCodeExpiry: {
+    type: Date,
+    required: [true, "Verify Code Expiry is required"],
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
 });
 
+// Check if the model is already registered before registering it
 const UserModel =
-  (mongoose.models.User as mongoose.Model<User>) ||
-  mongoose.model<User>("User", UserSchema);
+  mongoose.models.User || mongoose.model<User>("User", UserSchema);
 
 export default UserModel;

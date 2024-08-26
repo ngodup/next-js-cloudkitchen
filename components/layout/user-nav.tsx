@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
-import { LogInIcon } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+import { User } from "lucide-react";
+import { useSession } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,16 +16,31 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
-import { useModalStore } from "@/hooks/useModal";
+import { handleSignOut } from "@/actions/authActions";
 
-export default function UserNav() {
-  const [isLogin, setIsLogin] = useState(false);
-  const { modalToggle } = useModalStore();
+interface UserNavProps {
+  className?: string;
+}
+
+export default function UserNav({ className }: UserNavProps) {
+  const { data: session, update } = useSession();
+
+  const onSignOut = async () => {
+    await handleSignOut();
+    session?.user && update({ ...session.user, name: "Aditya singh" });
+  };
 
   return (
-    <>
-      {!isLogin ? (
-        <LogInIcon onClick={modalToggle} className="text-primary" />
+    <div className={className}>
+      {!session ? (
+        <Link href="/auth/sign-in" className="text-xs hover:text-primary">
+          <div className="flex justify-star items-center rounded border border-gray p-2 gap-0">
+            <p className="block w-12">Sign in</p>
+            <div>
+              <User strokeWidth={1.5} />
+            </div>
+          </div>
+        </Link>
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -56,14 +73,13 @@ export default function UserNav() {
               <DropdownMenuItem>New Team</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem onClick={() => console.log("sss")}> */}
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={onSignOut}>
               Log out
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
-    </>
+    </div>
   );
 }

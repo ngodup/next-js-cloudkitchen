@@ -13,7 +13,7 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-2 w-full">
           <SearchInput placeholder="Search..." className="flex-grow" />
-          <UserNav />
+          <UserNav className="flex items-center flex-grow-0" />
           <ThemeToggle />
         </div>
       </nav>

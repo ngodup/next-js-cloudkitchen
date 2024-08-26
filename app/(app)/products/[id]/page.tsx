@@ -47,9 +47,7 @@ export default function ProductDetail({ params }: Props) {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
-  const handleCommentSubmit = () => {
-    console.log("click form");
-  };
+  const handleCommentSubmit = () => {};
 
   return (
     <PageContainer scrollable={true}>

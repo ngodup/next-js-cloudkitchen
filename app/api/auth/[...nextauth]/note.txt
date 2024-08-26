@@ -1,0 +1,4 @@
+Question
+1. How to update the session data ?
+2. How to control authorization on certain part of the application ?
+3. Modifying session and token on crendential ?

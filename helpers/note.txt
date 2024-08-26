@@ -1,0 +1,9 @@
+helpers Folder:
+Purpose: The helpers folder usually contains utility functions that perform generic operations, which can be reused across different parts of the project. These functions are usually stateless and independent of any particular component or application logic. They often handle pure functions or logic that doesn’t directly interact with APIs, databases, or state management.
+
+Examples of Files in helpers:
+
+1. String manipulation: Functions like capitalize(), slugify().
+2. Date formatting: Functions like formatDate().
+3. Calculation utilities: Functions for mathematical operations, formatting currency, etc.
+4. Validation functions: Email validation, form input validation, etc
