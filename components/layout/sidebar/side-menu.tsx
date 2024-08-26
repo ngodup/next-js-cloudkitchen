@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "@/hooks/useSidebar";
 import MenuTitle from "./menu-title";
 import DashboardNav from "./dashboard-nav.";
+import { useSession } from "next-auth/react";
 
 const SideMenu = () => {
   const { isMinimized, toggle } = useSidebar();
+  const { data: session } = useSession();
 
   const handleToggle = () => {
     toggle();
@@ -40,14 +42,18 @@ const SideMenu = () => {
       </div>
 
       <footer className="md:flex md:gap-2 items-center mt-4 flex-shrink-0">
-        <Avatar>
-          <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary">
-            NT
-          </AvatarFallback>
-        </Avatar>
-        <Link href="/" className={cn(isMinimized && "hidden")}>
-          Logout
-        </Link>
+        {session && (
+          <>
+            <Avatar>
+              <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary">
+                NT
+              </AvatarFallback>
+            </Avatar>
+            <Link href="/" className={cn(isMinimized && "hidden")}>
+              Logout
+            </Link>
+          </>
+        )}
       </footer>
     </aside>
   );

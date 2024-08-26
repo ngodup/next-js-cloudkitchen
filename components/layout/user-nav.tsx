@@ -56,7 +56,7 @@ export default function UserNav({ className }: UserNavProps) {
               <div className="flex flex-col space-y-1">
                 <p className="font-medium text-sm leading-none">Tamo Ngodup</p>
                 <p className="text-xs text-muted-foreground leading-none">
-                  ngodup@gmail.com
+                  {session.user.email}
                 </p>
               </div>
             </DropdownMenuLabel>

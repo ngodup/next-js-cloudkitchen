@@ -13,19 +13,17 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AUTH_GOOGLE_SECRET as string,
     }),
     CredentialsProvider({
+      id: "credentials",
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "email" },
+        email: { label: "Email", type: "email" },
         password: {
           label: "Password",
           type: "password",
-          placeholder: "Password",
         },
       },
-      async authorize(credentials) {
-        console.log("NEXTJS HERE");
-        await dbConnect(); // Ensure MongoDB connection
-        console.log("DB CONNECTION in signin nextauth");
+      async authorize(credentials: any): Promise<any> {
+        await dbConnect();
 
         const parsedCredentials = signInSchema.safeParse(credentials);
 
@@ -66,14 +64,19 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
         token.role = user.role;
+        token.username = user.username;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.role = token.role;
+      if (token) {
+        session.user._id = token.id as string;
+        session.user.role = token.role;
+        session.user.username = token.username as string;
+      }
       return session;
     },
   },

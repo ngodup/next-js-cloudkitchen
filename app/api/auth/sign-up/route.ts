@@ -13,75 +13,73 @@ async function hashPassword(password: string) {
   return await bcrypt.hash(password, 10);
 }
 
+function generateVerifyCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+function getVerifyCodeExpiry(): Date {
+  return new Date(Date.now() + 3600000); // 1 hour expiry
+}
+
+function createApiResponse(
+  success: boolean,
+  message: string,
+  status: number
+): NextResponse<ApiResponse> {
+  return NextResponse.json<ApiResponse>({ success, message }, { status });
+}
+
 export async function POST(request: NextRequest) {
   await dbConnect();
 
   try {
-    const { email, password } = await request.json();
-    //Step 1 Check existing user verfied token
-    const existingVerifiedUser = await UserModel.findOne({
-      email,
-      isVerified: true,
-    });
+    const { email, password, username } = await request.json();
 
-    if (existingVerifiedUser) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "User is already taken" },
-        { status: 400 }
-      );
-    }
+    const existingUser = await findUserByEmail(email);
+    const verifyCode = generateVerifyCode();
 
-    // Step 2: Check if the user exists
-    const existingUserByEmail = await findUserByEmail(email);
-    const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-    if (existingUserByEmail) {
-      if (existingUserByEmail.isVerified) {
-        return NextResponse.json<ApiResponse>(
-          { success: false, message: "User already exists with this email" },
-          { status: 400 }
+    if (existingUser) {
+      if (existingUser.isVerified) {
+        return createApiResponse(
+          false,
+          "User already exists with this email",
+          400
         );
-      } else {
-        // Step 3: Existing user without email verified, possibly forgot password
-        existingUserByEmail.password = await hashPassword(password);
-        existingUserByEmail.verifyCode = verifyCode;
-        existingUserByEmail.verifyCodeExpiry = new Date(Date.now() + 3600000); // 1 hour expiry
-        await existingUserByEmail.save();
       }
+      //else {
+      //   // Update existing unverified user
+      //   existingUser.password = await hashPassword(password);
+      //   existingUser.verifyCode = verifyCode;
+      //   existingUser.verifyCodeExpiry = getVerifyCodeExpiry();
+      //   await existingUser.save();
+      // }
     } else {
-      //Step 4: New user
+      // Create new user
       const newUser = new UserModel({
+        username,
         email,
         password: await hashPassword(password),
         verifyCode,
-        verifyCodeExpiry: new Date(Date.now() + 3600000), // 1 hour expiry
+        verifyCodeExpiry: getVerifyCodeExpiry(),
         isVerified: false,
         isAdmin: false,
       });
       await newUser.save();
     }
 
-    //Step 5: Saved new user then Send verification email
+    // Send verification email
     const emailResponse = await sendVerificationEmail(email, verifyCode);
     if (!emailResponse.success) {
-      return NextResponse.json<ApiResponse>(
-        { success: false, message: "Failed to send verification email" },
-        { status: 500 }
-      );
+      return createApiResponse(false, "Failed to send verification email", 500);
     }
 
-    return NextResponse.json<ApiResponse>(
-      {
-        success: true,
-        message: "User registered successfully. Verification email sent.",
-      },
-      { status: 201 }
+    return createApiResponse(
+      true,
+      "User registered successfully. Verification email sent.",
+      201
     );
   } catch (error) {
     console.error("Error processing request:", error);
-    return NextResponse.json<ApiResponse>(
-      { success: false, message: "Internal server error" },
-      { status: 500 }
-    );
+    return createApiResponse(false, "Internal server error", 500);
   }
 }
