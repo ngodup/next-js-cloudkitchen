@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -15,15 +14,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signInSchema } from "@/schemas/signInSchema";
 import LoadingButton from "@/components/loading-button";
 import ErrorMessage from "@/components/error-message";
 import { signUpSchema } from "@/schemas/signUpSchema";
-import baseAPI from "@/app/api/baseAPI";
 import { ApiResponse } from "@/types/ApiResponse";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
 
 export default function SignUpForm() {
   const [signUpError, setSignUpError] = useState<string>("");
@@ -31,23 +27,26 @@ export default function SignUpForm() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<z.infer<typeof signInSchema>>({
-    resolver: zodResolver(signInSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      username: "",
       email: "",
       password: "",
     },
   });
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
+    debugger;
     try {
-      const response = await baseAPI.post<ApiResponse>("/auth/sign-up", data);
+      const response = await axios.post<ApiResponse>("/api/auth/sign-up", data);
 
       toast({
         title: "Success",
         description: response.data.message,
       });
 
+      router.replace("/auth/sign-in");
       //we can use redirect
       // router.replace(`/verify/${username}`);
     } catch (error) {
@@ -58,11 +57,7 @@ export default function SignUpForm() {
         axiosError.response?.data.message ||
         "There was a problem with your sign-up. Please try again.";
 
-      toast({
-        title: "Sign Up Failed",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      setSignUpError(errorMessage);
     }
   };
 
@@ -74,11 +69,22 @@ export default function SignUpForm() {
             Tamo cloud kitchen
           </h1>
           <p className="mb-4">
-            Log in to discover delicious, healthy food options near you.
+            Signup to discover delicious, healthy food options near you.
           </p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              name="username"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <Input placeholder="username" {...field} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               name="email"
               control={form.control}
@@ -105,7 +111,10 @@ export default function SignUpForm() {
                 </FormItem>
               )}
             />
-            <LoadingButton pending={form.formState.isSubmitting} />
+            <LoadingButton
+              pending={form.formState.isSubmitting}
+              label="Sign up"
+            />
           </form>
           {signUpError && <ErrorMessage error={signUpError} />}
         </Form>

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { FoodItem } from "@/types";
-import baseAPI from "@/app/api/baseAPI";
+import axios from "axios";
 
 export interface ProductState {
   products: FoodItem[];
@@ -39,7 +39,7 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await baseAPI.get("/products");
+      const response = await axios.get("/api/products");
       return response.data.products; // Ensure you are returning the products array
     } catch (error) {
       // Cast the error to a more specific type

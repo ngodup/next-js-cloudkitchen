@@ -1,6 +1,12 @@
 import { Button } from "@/components/ui/button";
 
-export default function LoadingButton({ pending }: { pending: boolean }) {
+export default function LoadingButton({
+  pending,
+  label,
+}: {
+  pending: boolean;
+  label: string;
+}) {
   return (
     <Button className="w-full" type="submit" disabled={pending}>
       {pending ? (
@@ -23,7 +29,7 @@ export default function LoadingButton({ pending }: { pending: boolean }) {
           Loading...
         </div>
       ) : (
-        "Sign in"
+        <p>{label}</p>
       )}
     </Button>
   );

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
           400
         );
       }
-      //else {
+      //else { //Vefification update
       //   // Update existing unverified user
       //   existingUser.password = await hashPassword(password);
       //   existingUser.verifyCode = verifyCode;

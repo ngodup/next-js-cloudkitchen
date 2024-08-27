@@ -114,7 +114,10 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
-            <LoadingButton pending={form.formState.isSubmitting} />
+            <LoadingButton
+              pending={form.formState.isSubmitting}
+              label="Sign in"
+            />
           </form>
           {signInError && <ErrorMessage error={signInError} />}
         </Form>

@@ -9,7 +9,7 @@ import ProductQuantities from "../../components/product-quantities";
 import CommentForm from "../../components/comment-form";
 import PageContainer from "@/components/layout/page-container";
 import { useEffect, useState } from "react";
-import baseAPI from "@/app/api/baseAPI";
+import axios from "axios";
 
 type Props = {
   params: { id: string };
@@ -24,7 +24,7 @@ export default function ProductDetail({ params }: Props) {
     async function fetchProductDetails() {
       setLoading(true);
       try {
-        const response = await baseAPI.get(`/products/${params.id}`);
+        const response = await axios.get(`/api/products/${params.id}`);
         if (response.data.success) {
           setProduct(response.data.product);
         } else {
