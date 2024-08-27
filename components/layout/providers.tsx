@@ -3,14 +3,14 @@
 import React from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import ThemeProvider from "./themeToggle/theme-provider";
+import AuthProvider from "@/context/AuthProvider";
 import store from "@/store";
-import { SessionProvider } from "next-auth/react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ReduxProvider store={store}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-        <SessionProvider>{children}</SessionProvider>
+        <AuthProvider>{children}</AuthProvider>
       </ThemeProvider>
     </ReduxProvider>
   );

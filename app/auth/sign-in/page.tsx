@@ -1,8 +1,8 @@
 "use client";
 
-import { useSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -22,15 +22,8 @@ import LoadingButton from "@/components/loading-button";
 import ErrorMessage from "@/components/error-message";
 
 export default function SignInForm() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [signInError, setSignInError] = useState<string>("");
-
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/");
-    }
-  }, [status, router]);
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
@@ -44,8 +37,9 @@ export default function SignInForm() {
     const result = await signIn("google", { redirect: false });
     if (result?.error) {
       setSignInError(result.error);
-    } else {
-      router.replace("/");
+    } else if (result?.url) {
+      // router.replace(result.url); // Redirect to the specified URL after successful sign-in
+      router.push("/");
     }
   }
 
@@ -66,9 +60,9 @@ export default function SignInForm() {
         setSignInError(errorMessage);
         return { message: errorMessage };
       }
-
       if (result?.url) {
-        router.replace("/");
+        //router.replace("/"); // Redirect to the specified URL after successful sign-in
+        router.push("/");
       }
     } catch (error: any) {
       setSignInError(error.message);
@@ -109,7 +103,12 @@ export default function SignInForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Password</FormLabel>
-                  <Input type="password" {...field} placeholder="password" />
+                  <Input
+                    type="password"
+                    {...field}
+                    placeholder="password"
+                    autoComplete="current-password"
+                  />
                   <FormMessage />
                 </FormItem>
               )}

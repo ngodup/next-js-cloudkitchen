@@ -1,57 +1,34 @@
-"use client";
-
-import { useSelector } from "react-redux";
 import PageContainer from "@/components/layout/page-container";
-import { menuCategories } from "@/constants/data";
-import MenuCuisineItem from "./components/menu-cuisine";
-import { RootState } from "@/types";
-import ProductCard from "./components/product-card";
-import { useEffect } from "react";
-import { fetchProducts } from "@/store/products/products-slice";
-import { useAppDispatch } from "@/store";
-import { Card } from "@/components/ui/card";
+import HomePageClient from "./components/HomePageClient";
 
-export default function DashboardPage() {
-  const dispatch = useAppDispatch();
-  const { products, status, error } = useSelector(
-    (state: RootState) => state.products
-  );
+// Server-side function to fetch products during SSR
+async function fetchProducts() {
+  try {
+    const res = await fetch("/api/products", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    if (!res.ok) throw new Error("Failed to fetch products");
+
+    const data = await res.json();
+    return data.products || [];
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
+}
+
+// This is a Server Component, fetching products server-side for the initial render
+export default async function HomePage() {
+  // Fetch products on the server-side before rendering the page
+  const initialProducts = await fetchProducts();
 
   return (
     <PageContainer scrollable={true}>
-      <div>
-        {/* Menu category cards */}
-        <div className="flex flex-wrap gap-2">
-          {menuCategories &&
-            menuCategories.map((menu, index) => (
-              <MenuCuisineItem key={index} menu={menu} />
-            ))}
-        </div>
-
-        {/* Conditional rendering for loading and error states */}
-        {status === "loading" && (
-          <Card className="w-full p-10">Loading...</Card>
-        )}
-        {status === "failed" && (
-          <Card className="w-full p-10">Error: {error}</Card>
-        )}
-
-        {/* Product cards */}
-        {status === "idle" && (
-          <div className="mt-5">
-            <div className="grid gap-x-2 gap-y-6 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]">
-              {products &&
-                products.map((product) => (
-                  <ProductCard key={product._id} food={product} />
-                ))}
-            </div>
-          </div>
-        )}
-      </div>
+      <HomePageClient initialProducts={initialProducts} />
     </PageContainer>
   );
 }

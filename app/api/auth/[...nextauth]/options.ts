@@ -79,9 +79,19 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Redirect to the home page after sign-in
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Redirect to the home page by default
+      return baseUrl;
+    },
   },
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60, // Session duration in seconds (1 hour)
+  },
+  jwt: {
+    maxAge: 60 * 60, // JWT token lifespan in seconds (1 hour)
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

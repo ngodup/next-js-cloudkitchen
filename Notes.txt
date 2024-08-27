@@ -1,3 +1,23 @@
+Approach:
+__________
+
+	1.	Server Component for SEO and Performance: The homepage should be a server component to leverage server-side rendering (SSR) for better SEO and performance.
+	2.	Client-Side Interactivity: Use client components where interactive elements are necessary (e.g., ProductCard).
+
+Login page client component to home server data fetching at server cause issues blank page from going from login to home page, 
+home first is server initial fetch and later fetch using useEffect 
+Server side rendering initial and the 
+   <PageContainer scrollable={true}>
+      <HomePageClient initialProducts={initialProducts} />
+    </PageContainer>
+
+ISSUES FACED:
+-----------
+sign in login with home page refresh,
+NEXT AUTH
+
+
+
 TOPIC SideMenu:
 --------------
 We homeve
