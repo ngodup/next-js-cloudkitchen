@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Create new user
       const newUser = new UserModel({
-        username,
+        username: username.toLowerCase(),
         email,
         password: await hashPassword(password),
         verifyCode,
