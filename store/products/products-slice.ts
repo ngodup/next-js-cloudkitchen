@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { FoodItem } from "@/types";
+import { IFoodItem } from "@/types";
 import axios from "axios";
 
 export interface ProductState {
-  products: FoodItem[];
+  products: IFoodItem[];
   status: "idle" | "loading" | "failed";
   error: string | null;
 }

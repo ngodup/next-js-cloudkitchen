@@ -1,6 +1,5 @@
 "use client";
 
-import { FoodItem } from "@/types";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -11,13 +10,14 @@ import PageContainer from "@/components/layout/page-container";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { IFoodItem } from "@/types";
 
 type Props = {
   params: { id: string };
 };
 
 export default function ProductDetail({ params }: Props) {
-  const [product, setProduct] = useState<FoodItem | null>(null);
+  const [product, setProduct] = useState<IFoodItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { data: session } = useSession();

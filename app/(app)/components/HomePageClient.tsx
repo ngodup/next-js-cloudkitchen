@@ -5,12 +5,12 @@ import { menuCategories } from "@/constants/data";
 import MenuCuisineItem from "./menu-cuisine";
 import ProductCard from "./product-card";
 import axios from "axios";
-import { FoodItem } from "@/types";
+import { IFoodItem } from "@/types";
 
 export default function HomePageClient({
   initialProducts,
 }: {
-  initialProducts: FoodItem[];
+  initialProducts: IFoodItem[];
 }) {
   const [products, setProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(false);

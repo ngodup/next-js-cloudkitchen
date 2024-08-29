@@ -1,6 +1,6 @@
-import { MenuCuisine, NavItem, FoodItem } from "@/types";
+import { MenuCuisine, NavItem, IFoodItem } from "@/types";
 
-export const products: FoodItem[] = [
+export const products: IFoodItem[] = [
   {
     _id: "1",
     imageName: "Quiche-Lorraine.png",

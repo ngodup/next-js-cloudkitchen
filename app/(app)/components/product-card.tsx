@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { FoodItem } from "@/types";
+import { IFoodItem } from "@/types";
 import { LeafyGreenIcon, BeefIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 interface MenuItemProps {
-  food: FoodItem;
+  food: IFoodItem;
 }
 
 export default function ProductCard({ food }: MenuItemProps) {
