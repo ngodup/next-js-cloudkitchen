@@ -43,10 +43,13 @@ export default function CommentForm({
       toast({
         variant: "destructive",
         description: "Please login to add a comment",
+        className:
+          "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 p-4 max-w-xs border border-red-500 rounded shadow-lg flex items-center justify-center",
       });
       return;
     }
     onSubmit(data);
+    form.reset(); // Reset the form after successful submission
   };
 
   return (

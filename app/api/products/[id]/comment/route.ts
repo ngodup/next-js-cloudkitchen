@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newComment = await CommentModel.create({
+      createdAt: new Date(),
       content,
       productId,
       userId,

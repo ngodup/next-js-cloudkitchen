@@ -11,6 +11,34 @@ Server side rendering initial and the
       <HomePageClient initialProducts={initialProducts} />
     </PageContainer>
 
+
+USING KEY ATTRIBUTE TO FORCE COMMPENT TO Resetting
+_________________________________________________
+Resetting the comment input in Comment Component when user submit the comment in Product details here is had used,
+
+The key prop is indeed not explicitly defined in the CommentForm component, as it's a special prop in React that doesn't need to be explicitly declared in the component's props interface.
+Let me clarify how this works and why it's effective:
+
+In React, the key prop is a special attribute that helps React identify which items in a list have changed, been added, or been removed. It's also used to force a component to re-mount.
+When you change the key prop on a component, React will unmount the existing instance of the component and mount a new one. This effectively resets the component to its initial state.
+In our case, we're using this behavior to our advantage. By changing the key value after a successful comment submission, we force the CommentForm to re-mount, which resets all of its internal state, including the form values.
+
+You're correct that we don't need to modify the CommentForm component itself to handle the key prop. The reset happens automatically due to React's behavior with keys.
+To make this clearer, let's revisit the relevant part of the ProductDetail component:
+ProductDetail Component Key UsageClick to open code
+Here's what's happening:
+
+We maintain a key state in the parent ProductDetail component.
+After a successful comment submission, we increment this key.
+The key prop is passed to the CommentForm component.
+When the key changes, React unmounts the old CommentForm instance and mounts a new one, effectively resetting it.
+
+This approach is effective and doesn't require any changes to the CommentForm component itself. The reset happens due to React's handling of the key prop, not because of any logic within CommentForm.
+
+
+
+_________________________________________________
+
 ISSUES FACED:
 -----------
 sign in login with home page refresh,

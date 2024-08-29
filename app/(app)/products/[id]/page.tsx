@@ -8,9 +8,11 @@ import ProductQuantities from "../../components/product-quantities";
 import CommentForm from "../../components/comment-form";
 import PageContainer from "@/components/layout/page-container";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { IFoodItem } from "@/types";
+import { ApiResponse } from "@/types/ApiResponse";
+import { useToast } from "@/components/ui/use-toast";
 
 type Props = {
   params: { id: string };
@@ -20,7 +22,10 @@ export default function ProductDetail({ params }: Props) {
   const [product, setProduct] = useState<IFoodItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [key, setKey] = useState(0); // Add this line to create a key for the CommentForm
   const { data: session } = useSession();
+
+  const { toast } = useToast();
 
   useEffect(() => {
     async function fetchProductDetails() {
@@ -46,11 +51,46 @@ export default function ProductDetail({ params }: Props) {
     }
   }, [params.id]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  const handleCommentSubmit = async ({ comment }: { comment: string }) => {
+    if (session && session.user) {
+      try {
+        const response = await axios.post<ApiResponse>(
+          `/api/products/${params.id}/comment`,
+          {
+            content: comment,
+            userId: session.user._id,
+            productId: params.id,
+          }
+        );
 
-  const handleCommentSubmit = () => {};
+        toast({
+          description: `Comment added successfully to the ${product?.name}`,
+          className:
+            "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 p-4 max-w-xs bg-primary text-primary-foreground rounded shadow-lg border border-primary flex items-center justify-center",
+        });
 
+        // Reset the form by updating the key
+        setKey((prevKey) => prevKey + 1);
+
+        // Optionally, refresh the product details to show the new comment
+        // fetchProductDetails();
+      } catch (error) {
+        const axiosError = error as AxiosError<ApiResponse>;
+        let errorMessage =
+          axiosError.response?.data.message ||
+          "There was a problem with your comment submission. Please try again.";
+
+        toast({
+          title: "Comment Submission Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  if (loading) return <Card>Loading...</Card>;
+  if (error) return <Card>{error}</Card>;
   return (
     <PageContainer scrollable={true}>
       {product ? (
@@ -99,6 +139,7 @@ export default function ProductDetail({ params }: Props) {
           </CardContent>
           <CardFooter>
             <CommentForm
+              key={key} // Add this line to reset the form when key changes
               className="w-full"
               onSubmit={handleCommentSubmit}
               isUserLoggedIn={!!session}

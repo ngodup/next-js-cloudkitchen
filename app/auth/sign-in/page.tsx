@@ -95,9 +95,6 @@ export default function SignInForm() {
                     {...field}
                     className="border-gray-300 focus:ring-2 focus:ring-green-500"
                   />
-                  <p className="text-sm text-gray-400">
-                    We will send you a verification code
-                  </p>
                   <FormMessage />
                 </FormItem>
               )}
