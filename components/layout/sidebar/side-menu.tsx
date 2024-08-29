@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "@/hooks/useSidebar";
 import MenuTitle from "./menu-title";
 import DashboardNav from "./dashboard-nav.";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 
 const SideMenu = () => {
   const { isMinimized, toggle } = useSidebar();
@@ -16,6 +16,10 @@ const SideMenu = () => {
 
   const handleToggle = () => {
     toggle();
+  };
+
+  const onSignOut = async () => {
+    await signOut();
   };
 
   return (
@@ -49,7 +53,11 @@ const SideMenu = () => {
                 NT
               </AvatarFallback>
             </Avatar>
-            <Link href="/" className={cn(isMinimized && "hidden")}>
+            <Link
+              href="/"
+              onClick={onSignOut}
+              className={cn(isMinimized && "hidden")}
+            >
               Logout
             </Link>
           </>

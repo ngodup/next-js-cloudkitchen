@@ -49,7 +49,7 @@ export interface FooterItem {
 export type MainNavItem = NavItemWithOptionalChildren;
 export type SidebarNavItem = NavItemWithChildren;
 
-export interface FoodItem {
+export interface IFoodItem {
   _id?: string;
   imageName: string;
   name: string;
@@ -60,6 +60,14 @@ export interface FoodItem {
   repasType: string;
   cuisine: string;
   active: boolean;
+}
+
+export interface IComment {
+  _id?: string;
+  content: string;
+  createdAt: Date;
+  productId: string;
+  userId: string;
 }
 
 /* Start of Redux related type */

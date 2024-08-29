@@ -1,14 +1,28 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function LoadingButton({
   pending,
   label,
+  className,
 }: {
   pending: boolean;
   label: string;
+  className: string;
 }) {
   return (
-    <Button className="w-full" type="submit" disabled={pending}>
+    <Button
+      className={cn(
+        "w-full py-2 rounded-lg shadow-lg transition duration-200 ease-in-out font-semibold text-white",
+        {
+          "bg-gray-400 cursor-not-allowed": pending,
+          "bg-green-500 hover:bg-green-600": !pending,
+        },
+        className // Add any custom className passed as a prop
+      )}
+      type="submit"
+      disabled={pending}
+    >
       {pending ? (
         <div className="flex items-center justify-center">
           <svg

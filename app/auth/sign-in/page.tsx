@@ -70,13 +70,13 @@ export default function SignInForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-lightGreen">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-green-400 to-lightGreen">
+      <div className="w-full max-w-md p-10 space-y-8 bg-white rounded-2xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
         <div className="text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-            Tamo cloud kitchen
+          <h1 className="text-5xl font-bold tracking-tight lg:text-6xl text-gray-800 mb-6">
+            Tamo Cloud Kitchen
           </h1>
-          <p className="mb-4">
+          <p className="mb-6 text-lg text-gray-600">
             Log in to discover delicious, healthy food options near you.
           </p>
         </div>
@@ -87,27 +87,35 @@ export default function SignInForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email/Username</FormLabel>
-                  <Input placeholder="email/username" {...field} />
-                  <p className="text-muted text-gray-400 text-sm">
+                  <FormLabel className="text-gray-700 font-medium">
+                    Email/Username
+                  </FormLabel>
+                  <Input
+                    placeholder="Enter your email/username"
+                    {...field}
+                    className="border-gray-300 focus:ring-2 focus:ring-green-500"
+                  />
+                  <p className="text-sm text-gray-400">
                     We will send you a verification code
                   </p>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               name="password"
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Password
+                  </FormLabel>
                   <Input
                     type="password"
                     {...field}
-                    placeholder="password"
+                    placeholder="Enter your password"
                     autoComplete="current-password"
+                    className="border-gray-300 focus:ring-2 focus:ring-green-500"
                   />
                   <FormMessage />
                 </FormItem>
@@ -116,33 +124,46 @@ export default function SignInForm() {
             <LoadingButton
               pending={form.formState.isSubmitting}
               label="Sign in"
+              className="w-full bg-green-500 text-white py-2 rounded-lg shadow hover:bg-green-600 transition duration-150 ease-in-out"
             />
           </form>
           {signInError && <ErrorMessage error={signInError} />}
         </Form>
 
-        <span className="text-sm text-gray-500 text-center block my-2">or</span>
+        <span className="text-sm text-gray-500 text-center block my-4">or</span>
 
         <div className="google-auth-container">
-          <Button variant="outline" className="w-full" onClick={onGoogleAuth}>
+          <Button
+            variant="outline"
+            className="w-full border border-gray-300 text-gray-600 hover:bg-gray-50 py-2 rounded-lg shadow"
+            onClick={onGoogleAuth}
+          >
             <Image
               src="/assets/images/google-logo.svg"
               alt="Google icon"
-              width={40}
-              height={40}
-              className="pr-4"
+              width={20}
+              height={20}
+              className="mr-3"
             />
-            Sign in with Google account
+            Sign in with Google
           </Button>
         </div>
 
-        <div className="text-center mt-4">
-          Already a member?{" "}
+        <div className="w-full flex mt-6 justify-between items-center">
+          <div className="text-gray-600">
+            Already a member?{" "}
+            <Link
+              href="/auth/sign-up"
+              className="text-green-500 hover:text-green-700 font-semibold pl-1"
+            >
+              Sign up
+            </Link>
+          </div>
           <Link
-            href="/auth/sign-up"
-            className="text-gray-600 hover:text-gray-800 pl-2"
+            href="/"
+            className="text-green-500 hover:text-green-700 font-semibold"
           >
-            Sign up
+            Home
           </Link>
         </div>
       </div>

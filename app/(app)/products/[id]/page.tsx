@@ -10,6 +10,7 @@ import CommentForm from "../../components/comment-form";
 import PageContainer from "@/components/layout/page-container";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSession } from "next-auth/react";
 
 type Props = {
   params: { id: string };
@@ -19,6 +20,7 @@ export default function ProductDetail({ params }: Props) {
   const [product, setProduct] = useState<FoodItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   useEffect(() => {
     async function fetchProductDetails() {
@@ -96,7 +98,11 @@ export default function ProductDetail({ params }: Props) {
             </div>
           </CardContent>
           <CardFooter>
-            <CommentForm className="w-full" onSubmit={handleCommentSubmit} />
+            <CommentForm
+              className="w-full"
+              onSubmit={handleCommentSubmit}
+              isUserLoggedIn={!!session}
+            />
           </CardFooter>
         </Card>
       ) : (

@@ -1,11 +1,28 @@
-import { FoodItem } from ".";
+import { NextResponse } from "next/server";
+import { IFoodItem, IComment } from ".";
 
-export interface ApiResponse {
+// Base API response interface
+export interface ApiResponse<T = undefined> {
   success: boolean;
   message: string;
+  data?: T;
 }
 
-// Interface for a product-specific API response, extending the base response
-export interface ApiProductResponse extends ApiResponse {
-  products: FoodItem[];
+// Type aliases for specific response types
+export type ApiProductResponse = ApiResponse<IFoodItem>;
+export type ApiProductsResponse = ApiResponse<IFoodItem[]>;
+export type ApiCommentResponse = ApiResponse<IComment>;
+export type ApiCommentsResponse = ApiResponse<IComment[]>;
+
+// Helper function to create API responses
+export function createApiResponse<T>(
+  success: boolean,
+  message: string,
+  status: number,
+  data?: T
+): NextResponse<ApiResponse<T>> {
+  return NextResponse.json<ApiResponse<T>>(
+    { success, message, data },
+    { status }
+  );
 }

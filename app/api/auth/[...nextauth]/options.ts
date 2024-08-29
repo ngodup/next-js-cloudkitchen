@@ -6,6 +6,52 @@ import UserModel from "@/model/User";
 import { signInSchema } from "@/schemas/signInSchema";
 import dbConnect from "@/lib/dbConnect";
 
+interface AuthCredentials {
+  email: string;
+  password: string;
+}
+
+interface AuthResponse {
+  success: boolean;
+  message: string;
+  user?: any; // You can replace 'any' with a more specific type if needed
+}
+
+async function authorize(credentials: AuthCredentials): Promise<AuthResponse> {
+  await dbConnect();
+
+  const parsedCredentials = signInSchema.safeParse(credentials);
+
+  if (!parsedCredentials.success) {
+    throw new Error("Invalid credentials");
+  }
+
+  const { email, password } = parsedCredentials.data;
+
+  try {
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      throw new Error("No user found with this email");
+    }
+
+    // if (!user.isVerified) {
+    //   throw new Error("Please verify your account before logging in");
+    // }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (isPasswordCorrect) {
+      return user;
+    } else {
+      throw new Error("Incorrect password");
+    }
+  } catch (error) {
+    console.error("Login credential error:", error);
+    throw new Error("Login credential error");
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -23,41 +69,7 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials: any): Promise<any> {
-        await dbConnect();
-
-        const parsedCredentials = signInSchema.safeParse(credentials);
-
-        if (!parsedCredentials.success) {
-          throw new Error("Invalid credentials");
-        }
-
-        const { email, password } = parsedCredentials.data;
-
-        try {
-          const user = await UserModel.findOne({ email });
-
-          if (!user) {
-            throw new Error("No user found with this email");
-          }
-
-          // if (!user.isVerified) {
-          //   throw new Error("Please verify your account before logging in");
-          // }
-
-          const isPasswordCorrect = await bcrypt.compare(
-            password,
-            user.password
-          );
-
-          if (isPasswordCorrect) {
-            return user;
-          } else {
-            throw new Error("Incorrect password");
-          }
-        } catch (error) {
-          console.error("Login credential error:", error);
-          throw new Error("Login credential error");
-        }
+        return authorize(credentials);
       },
     }),
   ],
@@ -73,7 +85,7 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        session.user._id = token.id as string;
+        session.user._id = token._id as string;
         session.user.role = token.role;
         session.user.username = token.username as string;
       }

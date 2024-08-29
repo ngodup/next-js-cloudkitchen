@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Form,
   FormControl,
@@ -11,6 +12,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
 interface CommentFormProps {
@@ -19,6 +21,7 @@ interface CommentFormProps {
   submitLabel?: string;
   placeholder?: string;
   className?: string;
+  isUserLoggedIn: boolean;
 }
 
 export default function CommentForm({
@@ -26,51 +29,52 @@ export default function CommentForm({
   onSubmit,
   submitLabel = "Submit Comment",
   placeholder = "Add your comment...",
+  isUserLoggedIn,
   className,
 }: CommentFormProps) {
-  // Use React Hook Form
-  const formMethods = useForm({
+  const { toast } = useToast();
+  const form = useForm({
     defaultValues: { comment: existingComment },
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = formMethods;
-
   // Form submission handler
   const handleFormSubmit = (data: { comment: string }) => {
+    if (!isUserLoggedIn) {
+      toast({
+        variant: "destructive",
+        description: "Please login to add a comment",
+      });
+      return;
+    }
     onSubmit(data);
   };
 
   return (
     <div className={cn("mt-4 w-full", className)}>
-      <Form {...formMethods}>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleFormSubmit)}>
           <FormField
+            control={form.control}
             name="comment"
+            rules={{
+              required: "Comment is required",
+              minLength: {
+                value: 5,
+                message: "Comment must be at least 5 characters long",
+              },
+            }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Comment</FormLabel>
                 <FormControl>
                   <Textarea
-                    {...register("comment", {
-                      required: "Comment is required",
-                      minLength: {
-                        value: 5,
-                        message: "Comment must be at least 5 characters long",
-                      },
-                    })}
                     placeholder={placeholder}
                     className="w-full rounded-md border border-gray-300 p-3 focus:border-blue-500"
                     rows={4}
-                    {...field} // Connects the form field to React Hook Form
+                    {...field}
                   />
                 </FormControl>
-                {errors.comment && (
-                  <FormMessage>{errors.comment.message}</FormMessage>
-                )}
+                <FormMessage />
               </FormItem>
             )}
           />
