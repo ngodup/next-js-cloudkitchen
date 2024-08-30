@@ -68,6 +68,7 @@ export interface IComment {
   createdAt: Date;
   productId: string;
   userId: string;
+  rating?: number;
 }
 
 /* Start of Redux related type */

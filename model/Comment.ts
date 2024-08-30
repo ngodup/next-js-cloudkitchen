@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface Comment extends Document {
   content: string;
+  rating?: string;
   createdAt: Date;
   productId: mongoose.Types.ObjectId;
   userId: mongoose.Types.ObjectId;
@@ -12,6 +13,9 @@ const CommentSchema: Schema<Comment> = new mongoose.Schema({
     type: String,
     required: [true, "Comment content is required"],
     maxlength: [400, "Comment content cannot exceed 400 characters"],
+  },
+  rating: {
+    type: Number,
   },
   createdAt: {
     type: Date,

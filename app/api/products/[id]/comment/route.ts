@@ -8,22 +8,99 @@ import { IComment } from "@/types";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 
-// Helper function to transform MongoDB document to IComment
-function transformComment(comment: any): IComment {
-  return {
+interface TransformedComment extends IComment {
+  userName?: string;
+  email?: string;
+}
+
+function transformComment(comment: any): TransformedComment {
+  const transformedComment: TransformedComment = {
     _id: comment._id.toString(),
     content: comment.content,
     createdAt: comment.createdAt,
     productId: comment.productId.toString(),
-    userId: comment.userId.toString(),
+    userId: comment.userId._id
+      ? comment.userId._id.toString()
+      : comment.userId.toString(),
   };
+
+  if (comment.rating !== undefined) {
+    transformedComment.rating = comment.rating;
+  }
+
+  if (comment.userId.username) {
+    transformedComment.userName = comment.userId.username;
+  }
+
+  if (comment.userId.email) {
+    transformedComment.email = comment.userId.email;
+  }
+
+  return transformedComment;
+}
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await dbConnect();
+
+    const { id } = params;
+
+    if (!id) {
+      return NextResponse.json(
+        createApiResponse<undefined>(false, "Missing product id", 400)
+      );
+    }
+
+    const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
+
+    const comments = await CommentModel.find({ productId: id })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate("userId", "username email")
+      .lean();
+
+    const totalComments = await CommentModel.countDocuments({ productId: id });
+
+    const transformedComments = comments.map(transformComment);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Comments retrieved successfully",
+        comments: transformedComments,
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalComments / limit),
+          totalComments,
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error getting comments for the product:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      createApiResponse<undefined>(
+        false,
+        `Error retrieving comments: ${errorMessage}`,
+        500
+      )
+    );
+  }
 }
 
 export async function POST(request: NextRequest) {
   try {
     await dbConnect();
 
-    // Use the cookies from the request object to get the session
+    //Step 1: Check if user is login or not
     const session = await getServerSession({
       req: { headers: request.headers },
       ...authOptions,
@@ -35,11 +112,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { content, userId, productId } = await request.json();
+    const { content, rating, userId, productId } = await request.json();
 
     if (!content || !userId || !productId) {
       return NextResponse.json(
         createApiResponse<undefined>(false, "Missing required fields", 400)
+      );
+    }
+
+    if (
+      rating !== undefined &&
+      (typeof rating !== "number" || rating < 1 || rating > 5)
+    ) {
+      return NextResponse.json(
+        createApiResponse<undefined>(
+          false,
+          "Invalid rating. Must be a number between 1 and 5",
+          400
+        )
       );
     }
 
@@ -60,19 +150,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newComment = await CommentModel.create({
+    const commentData: Partial<IComment> = {
       createdAt: new Date(),
       content,
       productId,
       userId,
-    });
+    };
+
+    if (rating !== undefined || rating !== 0) {
+      commentData.rating = rating;
+    }
+
+    const newComment = await CommentModel.create(commentData);
 
     const transformedComment = transformComment(newComment);
+
+    if (rating !== undefined || rating !== 0) {
+      await updateProductRating(productId);
+    }
 
     return NextResponse.json(
       createApiResponse<IComment>(
         true,
-        "Comment added successfully",
+        rating !== undefined
+          ? "Comment and rating added successfully"
+          : "Comment added successfully",
         201,
         transformedComment
       )
@@ -89,4 +191,22 @@ export async function POST(request: NextRequest) {
       )
     );
   }
+}
+
+async function updateProductRating(productId: string) {
+  const allProductComments = await CommentModel.find({
+    productId,
+    rating: { $exists: true },
+  });
+
+  const totalRating = allProductComments.reduce((sum: number, comment: any) => {
+    return sum + (comment.rating || 0);
+  }, 0);
+
+  const averageRating =
+    allProductComments.length > 0 ? totalRating / allProductComments.length : 0;
+
+  await ProductModel.findByIdAndUpdate(productId, {
+    rating: averageRating,
+  });
 }

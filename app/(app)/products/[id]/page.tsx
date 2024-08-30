@@ -3,16 +3,19 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import ProductRating from "../../components/product-rating";
+import { Separator } from "@/components/ui/separator";
 import ProductQuantities from "../../components/product-quantities";
 import CommentForm from "../../components/comment-form";
 import PageContainer from "@/components/layout/page-container";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { IFoodItem } from "@/types";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useToast } from "@/components/ui/use-toast";
+import CommentsList from "../../components/CommentsList";
+import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";
+import Rating from "../../components/rating";
 
 type Props = {
   params: { id: string };
@@ -21,67 +24,67 @@ type Props = {
 export default function ProductDetail({ params }: Props) {
   const [product, setProduct] = useState<IFoodItem | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRating, setUserRating] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
-  const [key, setKey] = useState(0); // Add this line to create a key for the CommentForm
+  const [refreshComments, setRefreshComments] = useState(0);
   const { data: session } = useSession();
-
   const { toast } = useToast();
 
-  useEffect(() => {
-    async function fetchProductDetails() {
-      setLoading(true);
-      try {
-        const response = await axios.get(`/api/products/${params.id}`);
-        if (response.data.success) {
-          setProduct(response.data.product);
-        } else {
-          setError("Product not found");
-        }
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        setError((error as Error).message || "Failed to fetch product details");
+  const fetchProductDetails = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/api/products/${params.id}`);
+      if (response.data.success) {
+        setProduct(response.data.product);
+      } else {
+        setError("Product not found");
       }
+    } catch (error) {
+      setError((error as Error).message || "Failed to fetch product details");
+    } finally {
+      setLoading(false);
     }
+  }, [params.id]);
 
+  useEffect(() => {
     if (params.id) {
       fetchProductDetails();
     } else {
       notFound();
     }
-  }, [params.id]);
+  }, [params.id, fetchProductDetails]);
+
+  const handleRatingChange = (newRating: number) => {
+    setUserRating(newRating);
+  };
 
   const handleCommentSubmit = async ({ comment }: { comment: string }) => {
     if (session && session.user) {
       try {
-        const response = await axios.post<ApiResponse>(
-          `/api/products/${params.id}/comment`,
-          {
-            content: comment,
-            userId: session.user._id,
-            productId: params.id,
-          }
-        );
-
-        toast({
-          description: `Comment added successfully to the ${product?.name}`,
-          className:
-            "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 p-4 max-w-xs bg-primary text-primary-foreground rounded shadow-lg border border-primary flex items-center justify-center",
+        await axios.post<ApiResponse>(`/api/products/${params.id}/comment`, {
+          content: comment,
+          rating: userRating,
+          userId: session.user._id,
+          productId: params.id,
         });
 
-        // Reset the form by updating the key
-        setKey((prevKey) => prevKey + 1);
+        toast({
+          description: `Review added successfully to ${product?.name}`,
+          className: "bg-primary text-primary-foreground",
+        });
 
-        // Optionally, refresh the product details to show the new comment
-        // fetchProductDetails();
+        // Reset user rating after submission
+        setUserRating(0);
+        // Trigger a refresh of the comments list
+        setRefreshComments((prev) => prev + 1);
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
         let errorMessage =
           axiosError.response?.data.message ||
-          "There was a problem with your comment submission. Please try again.";
+          "Review submission failed. Please try again.";
 
         toast({
-          title: "Comment Submission Failed",
+          title: "Error",
           description: errorMessage,
           variant: "destructive",
         });
@@ -89,65 +92,89 @@ export default function ProductDetail({ params }: Props) {
     }
   };
 
-  if (loading) return <Card>Loading...</Card>;
-  if (error) return <Card>{error}</Card>;
+  if (loading) return <Card className="m-10 p-6 text-center">Loading...</Card>;
+  if (error)
+    return <Card className="m-10 p-6 text-center text-red-500">{error}</Card>;
+
   return (
     <PageContainer scrollable={true}>
       {product ? (
-        <Card className="m-10">
-          <CardContent className="p-4 flex flex-wrap md:flex-nowrap gap-2">
-            <div className="w-full md:w-1/2">
-              <Image
-                src={`/assets/images/${product.imageName}`}
-                alt={product.imageName}
-                width={270}
-                height={200}
-                className="w-full h-auto rounded-xl"
-              />
-            </div>
-            <div className="w-full md:w-1/2">
-              <h3 className="font-semibold text-lg">{product.name}</h3>
-              <div className="mb-4">
-                <p className="text-sm">
-                  <span className="font-semibold">Description: </span>
-                  La quiche lorraine est une variante de quiche, une tarte salée
-                  de la cuisine lorraine et de la cuisine française, à base de
-                  pâte brisée ou de pâte feuilletée, de migaine et de lardons.
-                </p>
+        <Card className="m-10 overflow-hidden">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="w-full md:w-1/2">
+                <Image
+                  src={`/assets/images/${product.imageName}`}
+                  alt={product.name}
+                  width={540}
+                  height={400}
+                  className="w-full h-auto rounded-lg shadow-md"
+                />
               </div>
-              <div className="flex justify-between">
-                <p>
-                  <span className="font-semibold">Prix :</span> €{product.price}
+              <div className="w-full md:w-1/2 space-y-6">
+                <h1 className="text-3xl font-bold text-primary">
+                  {product.name}
+                </h1>
+                <Rating value={product.rating} readOnly />
+                <p className="text-lg font-semibold text-primary">
+                  €{product.price.toFixed(2)}
                 </p>
-                <ProductRating rating={product.rating} />
-              </div>
-              {/* Quantity component */}
-              <ProductQuantities className="mt-5" />
-              {/* Food menu category */}
-              <div className="flex gap-4 mt-5 text-sm">
-                <Card className="bg-blue-700 text-primary-foreground p-2">
-                  {product.cuisine}
-                </Card>
-                <Card className="bg-primary text-primary-foreground p-2">
-                  {product.repas}
-                </Card>
-                <Card className="bg-lightGreen text-black p-2">
-                  {product.repasType}
-                </Card>
+                <Separator />
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Description</h2>
+                  <p className="text-muted-foreground">
+                    La quiche lorraine est une variante de quiche, une tarte
+                    salée de la cuisine lorraine et de la cuisine française, à
+                    base de pâte brisée ou de pâte feuilletée, de migaine et de
+                    lardons.
+                  </p>
+                </div>
+                <Separator />
+                <ProductQuantities className="w-1/2" />
+                <div className="flex flex-wrap gap-4">
+                  <Card className="bg-blue-100 text-blue-800 p-2 flex items-center">
+                    <Utensils className="mr-2 h-4 w-4" />
+                    {product.cuisine}
+                  </Card>
+                  <Card className="bg-green-100 text-green-800 p-2 flex items-center">
+                    <Clock className="mr-2 h-4 w-4" />
+                    {product.repas}
+                  </Card>
+                  <Card className="bg-yellow-100 text-yellow-800 p-2 flex items-center">
+                    <Tag className="mr-2 h-4 w-4" />
+                    {product.repasType}
+                  </Card>
+                </div>
               </div>
             </div>
           </CardContent>
-          <CardFooter>
-            <CommentForm
-              key={key} // Add this line to reset the form when key changes
-              className="w-full"
-              onSubmit={handleCommentSubmit}
-              isUserLoggedIn={!!session}
-            />
+          <Separator className="my-6" />
+          <CardFooter className="flex flex-col p-6">
+            <div className="w-full max-w-3xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4 flex items-center">
+                <MessageSquare className="mr-2" /> Customer Reviews
+              </h2>
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold mb-2">Your Rating</h3>
+                <Rating
+                  value={userRating}
+                  onRatingChange={handleRatingChange}
+                />
+              </div>
+              <CommentForm
+                className="w-full mb-6"
+                onSubmit={handleCommentSubmit}
+                isUserLoggedIn={!!session}
+              />
+              <CommentsList
+                productId={params.id}
+                refreshTrigger={refreshComments}
+              />
+            </div>
           </CardFooter>
         </Card>
       ) : (
-        <Card>Product not found</Card>
+        <Card className="m-10 p-6 text-center">Product not found</Card>
       )}
     </PageContainer>
   );
