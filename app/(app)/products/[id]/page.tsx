@@ -73,9 +73,7 @@ export default function ProductDetail({ params }: Props) {
           className: "bg-primary text-primary-foreground",
         });
 
-        // Reset user rating after submission
         setUserRating(0);
-        // Trigger a refresh of the comments list
         setRefreshComments((prev) => prev + 1);
       } catch (error) {
         const axiosError = error as AxiosError<ApiResponse>;
@@ -130,7 +128,9 @@ export default function ProductDetail({ params }: Props) {
                   </p>
                 </div>
                 <Separator />
-                <ProductQuantities className="w-1/2" />
+                {product && (
+                  <ProductQuantities className="w-1/2" product={product} />
+                )}
                 <div className="flex flex-wrap gap-4">
                   <Card className="bg-blue-100 text-blue-800 p-2 flex items-center">
                     <Utensils className="mr-2 h-4 w-4" />

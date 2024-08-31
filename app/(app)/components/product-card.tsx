@@ -6,12 +6,27 @@ import { IFoodItem } from "@/types";
 import { LeafyGreenIcon, BeefIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { addToCart } from "@/store/cart/cart-slice";
+import { useAppDispatch } from "@/store";
 
 interface MenuItemProps {
   food: IFoodItem;
 }
 
 export default function ProductCard({ food }: MenuItemProps) {
+  const dispatch = useAppDispatch();
+
+  const onAddToCart = () => {
+    dispatch(
+      addToCart({
+        productId: food._id || "",
+        name: food.name,
+        imageName: food.imageName,
+        price: food.price,
+      })
+    );
+  };
+
   return (
     <Card className="w-[250px] flex flex-col rounded-lg overflow-hidden">
       <CardHeader className="p-2 flex-shrink-0">
@@ -43,7 +58,10 @@ export default function ProductCard({ food }: MenuItemProps) {
         </div>
 
         <div className="flex justify-between gap-2">
-          <Button className="mt-3 w-full text-xs h-8 bg-lightGreen text-gray-600">
+          <Button
+            className="mt-3 w-full text-xs h-8 bg-lightGreen text-gray-600"
+            onClick={onAddToCart}
+          >
             Add to Cart
           </Button>
           <Link

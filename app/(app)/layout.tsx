@@ -3,6 +3,7 @@
 import { Poppins } from "next/font/google";
 import Header from "@/components/layout/header";
 import SideMenu from "@/components/layout/sidebar/side-menu";
+import Cart from "@/components/Cart"; // Make sure this import path is correct
 import { cn } from "@/lib/utils";
 
 const poppins = Poppins({
@@ -20,12 +21,11 @@ export default function HomeLayout({
       <div className="hidden lg:block">
         <SideMenu />
       </div>
-
-      <main className="w-full flex-1 overflow-hidden">
-        {/* header for page client */}
+      <div className="flex-1 overflow-hidden">
         <Header />
-        {children}
-      </main>
+        <main className="p-4">{children}</main>
+      </div>
+      <Cart />
     </div>
   );
 }
