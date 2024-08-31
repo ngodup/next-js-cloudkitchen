@@ -1,34 +1,42 @@
+// app/(app)/page.tsx
+import { headers } from "next/headers";
 import PageContainer from "@/components/layout/page-container";
 import HomePageClient from "./components/HomePageClient";
 
-// Server-side function to fetch products during SSR
-async function fetchProducts() {
+async function fetchProducts(page = 1, limit = 12) {
   try {
-    const res = await fetch("/api/products", {
+    const headersList = headers();
+    const protocol = headersList.get("x-forwarded-proto") || "http";
+    const host = headersList.get("host") || "localhost:3000";
+
+    const apiUrl = `${protocol}://${host}/api/products?page=${page}&limit=${limit}`;
+
+    const res = await fetch(apiUrl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
+      cache: "no-store",
     });
 
     if (!res.ok) throw new Error("Failed to fetch products");
 
-    const data = await res.json();
-    return data.products || [];
+    return await res.json();
   } catch (error) {
     console.error("Error fetching products:", error);
-    return [];
+    return {
+      products: [],
+      pagination: { currentPage: 1, totalPages: 1, totalProducts: 0 },
+    };
   }
 }
 
-// This is a Server Component, fetching products server-side for the initial render
 export default async function HomePage() {
-  // Fetch products on the server-side before rendering the page
-  const initialProducts = await fetchProducts();
+  const initialData = await fetchProducts();
 
   return (
     <PageContainer scrollable={true}>
-      <HomePageClient initialProducts={initialProducts} />
+      <HomePageClient initialData={initialData} />
     </PageContainer>
   );
 }

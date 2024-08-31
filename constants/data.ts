@@ -237,7 +237,7 @@ export const products: IFoodItem[] = [
   },
   {
     _id: "20",
-    imageName: "Dropa Khatsa.png",
+    imageName: "Dropa-Khatsa.png",
     name: "Dropa Khatsa",
     rating: 4.5,
     reviews: 123,
@@ -286,7 +286,7 @@ export const products: IFoodItem[] = [
 
   {
     _id: "24",
-    imageName: "Bún chả.png",
+    imageName: "Búnchả.png",
     name: "Bún chả",
     rating: 4.5,
     reviews: 123,
