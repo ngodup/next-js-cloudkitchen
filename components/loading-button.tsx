@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+interface LoadingButtonProps {
+  pending: boolean;
+  label: string;
+  className?: string;
+}
 export default function LoadingButton({
   pending,
   label,
   className,
-}: {
-  pending: boolean;
-  label: string;
-  className: string;
-}) {
+}: LoadingButtonProps) {
   return (
     <Button
       className={cn(

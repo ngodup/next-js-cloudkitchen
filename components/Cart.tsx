@@ -8,6 +8,7 @@ import {
   removeFromCart,
   clearCart,
   updateQuantity,
+  selectCartTotalItems,
 } from "@/store/cart/cart-slice";
 import {
   Sheet,
@@ -16,11 +17,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/useCar";
+import Link from "next/link";
 
 const Cart = () => {
   const dispatch = useAppDispatch();
   const cartProducts = useAppSelector(selectCartProducts);
   const totalAmount = useAppSelector(selectCartTotalPrice);
+  const totalProduct = useAppSelector(selectCartTotalItems);
   const { isOpen, closeCart } = useCart();
 
   const handleRemoveItem = (productId: string) => {
@@ -92,7 +95,11 @@ const Cart = () => {
           <Button className="w-full mt-2" onClick={handleClearCart}>
             Clear Cart
           </Button>
-          <Button className="w-full mt-2">Checkout</Button>
+          <Link href="/checkout" legacyBehavior>
+            <Button className="w-full mt-2" disabled={totalProduct <= 0}>
+              Checkout
+            </Button>
+          </Link>
         </div>
       </SheetContent>
     </Sheet>

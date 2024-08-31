@@ -71,10 +71,19 @@ export interface IComment {
   rating?: number;
 }
 
+export interface IOrderProduct {
+  productId: string;
+  quantity: number;
+  price: number;
+  name: string;
+  imageName: string;
+}
+
 /* Start of Redux related type */
 
 export interface RootState {
   products: ProductState;
+  carts: IOrderProduct;
 }
 
 /* End here redux related type */
