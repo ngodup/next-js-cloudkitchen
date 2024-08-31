@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  MessageSquare,
-  ChevronLeft,
-  ChevronRight,
-  Mail,
-  Star,
-} from "lucide-react";
-import { IComment } from "@/types";
+import { MessageSquare, Mail, Star } from "lucide-react";
 import Rating from "./rating";
+import { IComment } from "@/types";
 
 interface IExtendComment extends IComment {
-  userName: string;
+  username: string;
   email: string;
 }
 
@@ -29,24 +23,24 @@ export default function CommentsList({
   refreshTrigger,
 }: CommentsListProps) {
   const [comments, setComments] = useState<IExtendComment[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchComments = async (page: number) => {
+  const fetchComments = async (pageNum: number) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        `http://localhost:3000/api/products/${productId}/comment`,
-        {
-          params: { page },
-        }
+      const response = await axios.get(`/api/products/${productId}/comment`, {
+        params: { page: pageNum, limit: 5 },
+      });
+      const newComments = response.data.comments;
+      setComments((prev) =>
+        pageNum === 1 ? newComments : [...prev, ...newComments]
       );
-      setComments(response.data.comments);
-      setCurrentPage(response.data.pagination.currentPage);
-      setTotalPages(response.data.pagination.totalPages);
+      setHasMore(newComments.length === 5);
+      setPage(pageNum);
     } catch (err) {
       setError("Failed to fetch comments. Please try again later.");
     } finally {
@@ -58,15 +52,9 @@ export default function CommentsList({
     fetchComments(1);
   }, [productId, refreshTrigger]);
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      fetchComments(currentPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      fetchComments(currentPage - 1);
+  const handleLoadMore = () => {
+    if (!isLoading && hasMore) {
+      fetchComments(page + 1);
     }
   };
 
@@ -100,91 +88,65 @@ export default function CommentsList({
         <MessageSquare className="mr-2" /> Customer Reviews
       </h2>
 
-      {isLoading ? (
-        <CommentsSkeleton />
-      ) : comments.length > 0 ? (
-        <>
-          {comments.map((comment) => (
-            <Card
-              key={comment._id}
-              className="mb-6 border-primary/10 shadow-sm"
-            >
-              <CardContent className="pt-6">
-                <div className="flex items-start space-x-4">
-                  {/* <Avatar className="h-12 w-12">
-                    <AvatarImage
-                      src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.userName}`}
-                    />
-                    <AvatarFallback className="bg-primary">
-                      {comment.userName.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar> */}
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {getInitials(comment.userName, comment.email)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-popover-foreground">
-                        {comment.userName || comment.email.split("@")[0]}
-                      </p>
-                      <div className="flex items-center">
-                        {comment.rating && (
-                          <Rating value={comment.rating} readOnly />
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <p className="mt-2 text-sm text-popover-foreground">
-                      {comment.content}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-2 flex items-center">
-                      <Mail className="mr-1 h-3 w-3" /> {comment.email}
-                    </p>
+      {comments.map((comment) => (
+        <Card key={comment._id} className="mb-6 border-primary/10 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-4">
+              <Avatar className="h-12 w-12">
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {getInitials(comment.username, comment.email)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-popover-foreground">
+                    {comment.username}
+                  </p>
+                  <div className="flex items-center">
+                    {comment.rating && (
+                      <Rating value={comment.rating} readOnly />
+                    )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+                <p className="text-xs text-muted-foreground mt-1">
+                  {new Date(comment.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="mt-2 text-sm text-popover-foreground">
+                  {comment.content}
+                </p>
+                <p className="text-xs text-muted-foreground mt-2 flex items-center">
+                  <Mail className="mr-1 h-3 w-3" /> {comment.email}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
 
-          {totalPages > 1 && (
-            <CardFooter className="flex justify-between items-center mt-4">
-              <Button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                variant="outline"
-                size="sm"
-                className="text-primary hover:text-primary-foreground hover:bg-primary"
-              >
-                <ChevronLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              <span className="text-sm text-muted-foreground">
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                variant="outline"
-                size="sm"
-                className="text-primary hover:text-primary-foreground hover:bg-primary"
-              >
-                Next <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
-          )}
-        </>
-      ) : (
+      {isLoading && <CommentsSkeleton />}
+
+      {hasMore && (
+        <div className="text-center mt-4">
+          <Button
+            onClick={handleLoadMore}
+            disabled={isLoading}
+            variant="outline"
+            className="text-primary hover:text-primary-foreground hover:bg-primary"
+          >
+            {isLoading ? "Loading..." : "Load More Reviews"}
+          </Button>
+        </div>
+      )}
+
+      {!hasMore && comments.length === 0 && (
         <Card className="mb-6 border-primary/10 shadow-sm">
           <CardContent className="pt-6">
             <p className="text-center text-muted-foreground">
-              No comments yet. Be the first to review this product!
+              No reviews yet. Be the first to review this product!
             </p>
           </CardContent>
         </Card>

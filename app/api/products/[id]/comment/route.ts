@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
 
-    //Step 1: Check if user is login or not
+    // Step 1: Check if user is logged in
     const session = await getServerSession({
       req: { headers: request.headers },
       ...authOptions,
@@ -120,14 +120,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if rating is provided and valid
     if (
       rating !== undefined &&
-      (typeof rating !== "number" || rating < 1 || rating > 5)
+      (typeof rating !== "number" || rating < 0 || rating > 5)
     ) {
       return NextResponse.json(
         createApiResponse<undefined>(
           false,
-          "Invalid rating. Must be a number between 1 and 5",
+          "Invalid rating. Must be a number between 0 and 5",
           400
         )
       );
@@ -157,22 +158,25 @@ export async function POST(request: NextRequest) {
       userId,
     };
 
-    if (rating !== undefined || rating !== 0) {
+    // Only add rating if it's provided and not zero
+    if (rating !== undefined && rating !== 0) {
       commentData.rating = rating;
     }
 
     const newComment = await CommentModel.create(commentData);
-
     const transformedComment = transformComment(newComment);
 
-    if (rating !== undefined || rating !== 0) {
+    console.log("Added comments at backend : ", transformedComment);
+
+    // Update product rating only if a valid rating was provided
+    if (rating !== undefined && rating !== 0) {
       await updateProductRating(productId);
     }
 
     return NextResponse.json(
       createApiResponse<IComment>(
         true,
-        rating !== undefined
+        rating !== undefined && rating !== 0
           ? "Comment and rating added successfully"
           : "Comment added successfully",
         201,
@@ -196,7 +200,7 @@ export async function POST(request: NextRequest) {
 async function updateProductRating(productId: string) {
   const allProductComments = await CommentModel.find({
     productId,
-    rating: { $exists: true },
+    rating: { $exists: true, $ne: 0 },
   });
 
   const totalRating = allProductComments.reduce((sum: number, comment: any) => {
