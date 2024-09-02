@@ -18,7 +18,7 @@ const initialState: CartState = {
   totalPrice: 0,
   status: "pending",
 };
-
+// const { products, totalItems, totalPrice, status } = body;
 const cartSlice = createSlice({
   name: "cart",
   initialState,

@@ -3,7 +3,6 @@
 import { navItems } from "@/constants/data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/hooks/useSidebar";
 import MenuTitle from "./menu-title";
@@ -31,14 +30,6 @@ const SideMenu = () => {
     >
       <header className="border-b pb-2 dark:border-b-black border-b-green-600 mb-4 flex items-center justify-between">
         <MenuTitle />
-        <ChevronLeft
-          className={cn(
-            "z-50 absolute -right-0 cursor-pointer border rounded-full text-3xl text-foreground",
-            isMinimized && "rotate-180",
-            "mr-[-12px] my-1"
-          )}
-          onClick={handleToggle}
-        />
       </header>
 
       <div className="flex-grow">
@@ -63,6 +54,32 @@ const SideMenu = () => {
           </>
         )}
       </footer>
+
+      {/* Collapsible icon */}
+      <div
+        className="absolute -right-3 top-4 w-6 h-6 bg-background border border-border rounded-full flex items-center justify-center cursor-pointer z-50 shadow-md"
+        onClick={handleToggle}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className={cn(
+            "transition-transform duration-200",
+            isMinimized ? "rotate-180" : ""
+          )}
+        >
+          <path
+            d="M10 12L6 8L10 4"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </aside>
   );
 };

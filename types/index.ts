@@ -79,6 +79,16 @@ export interface IOrderProduct {
   imageName: string;
 }
 
+export interface IOrder {
+  _id: string;
+  userId: string;
+  products: IOrderProduct[];
+  totalItems: number;
+  totalPrice: number;
+  status: string;
+  orderDate: string;
+}
+
 /* Start of Redux related type */
 
 export interface RootState {

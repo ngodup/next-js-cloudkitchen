@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { MobileSidebar } from "./sidebar/mobile-sidebar";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/hooks/useCar";
+import { useCart } from "@/hooks/useCart";
 
 export default function Header() {
   const { toggleCart, itemCount } = useCart();

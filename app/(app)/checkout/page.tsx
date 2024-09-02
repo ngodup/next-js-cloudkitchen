@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAppSelector } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store";
 import {
+  clearCart,
   selectCartProducts,
   selectCartTotalPrice,
 } from "@/store/cart/cart-slice";
@@ -14,22 +15,24 @@ import PaymentForm from "@/components/checkout/PaymentForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import { useCart } from "@/hooks/useCar";
+import axios from "axios";
+import { ApiResponse } from "@/types/ApiResponse";
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const cartItems = useAppSelector(selectCartProducts);
   const totalPrice = useAppSelector(selectCartTotalPrice);
   const { data: session, status } = useSession();
-  const { openCart } = useCart();
+  // const { openCart } = useCart();
   const router = useRouter();
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/sign-in?redirect=/checkout");
     } else if (cartItems.length === 0) {
-      router.push("/cart");
+      router.push("/checkout");
     }
   }, [cartItems, status, router]);
 
@@ -48,22 +51,43 @@ export default function CheckoutPage() {
     }
 
     try {
-      // Implement order submission logic here
-      // For example:
-      // const response = await submitOrder(cartItems, session.user.id);
-      console.log("Placing order...");
-      toast({
-        title: "Order Placed",
-        description: "Your order has been successfully placed!",
-      });
-      // Clear cart and redirect to order confirmation page
-      // clearCart();
-      // router.push("/order-confirmation");
+      const response = await axios.post<ApiResponse<{ _id: string }>>(
+        "/api/orders",
+        {
+          products: cartItems,
+          totalItems: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+          totalPrice,
+        }
+      );
+
+      if (
+        response.data.success &&
+        response.data.data &&
+        response.data.data._id
+      ) {
+        console.log("Order placed:", response.data);
+        toast({
+          title: "Order Placed",
+          description: "Your order has been successfully placed!",
+        });
+
+        dispatch(clearCart());
+        router.push(`/order-confirmation/${response.data.data._id}`);
+      } else {
+        // If we don't have the expected data, throw an error
+        throw new Error(
+          response.data.message || "Failed to place order: No order ID received"
+        );
+      }
     } catch (error) {
+      console.error("Error placing order:", error);
       toast({
         variant: "destructive",
         title: "Order Failed",
-        description: "There was an error placing your order. Please try again.",
+        description:
+          error instanceof Error
+            ? error.message
+            : "There was an error placing your order. Please try again.",
       });
     }
   };

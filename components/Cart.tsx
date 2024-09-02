@@ -16,7 +16,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useCart } from "@/hooks/useCar";
+import { useCart } from "@/hooks/useCart";
 import Link from "next/link";
 
 const Cart = () => {

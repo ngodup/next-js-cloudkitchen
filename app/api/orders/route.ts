@@ -16,6 +16,41 @@ export enum OrderStatus {
   Cancelled = "cancelled",
 }
 
+export async function GET(req: NextRequest) {
+  try {
+    await dbConnect();
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user?._id) {
+      return NextResponse.json(
+        createApiResponse<undefined>(false, "Not Authenticated", 401),
+        { status: 401 }
+      );
+    }
+
+    const userId = session.user._id;
+    const userOrders = await OrderModel.find({ userId: userId });
+
+    return NextResponse.json(
+      createApiResponse<Order[]>(
+        true,
+        "User orders retrieved successfully",
+        200,
+        userOrders
+      ),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error retrieving user orders:", error);
+    const message =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    return NextResponse.json(
+      createApiResponse<undefined>(false, message, 500),
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -28,10 +63,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { products, totalItems, totalPrice, status } = body;
+    const userId = session.user._id; // Explicitly declare userId
+    console.log(`Creating order for user: ${userId}`); // Log for clarity
 
-    if (!isValidOrderData(products, totalItems, totalPrice, status)) {
+    const { products, totalItems, totalPrice } = await req.json();
+
+    if (!isValidOrderData(products, totalItems, totalPrice)) {
       return NextResponse.json(
         createApiResponse<undefined>(false, "Invalid order data", 400),
         { status: 400 }
@@ -39,12 +76,14 @@ export async function POST(req: NextRequest) {
     }
 
     const newOrder = await createOrder(
-      session.user._id,
+      userId,
       products,
       totalItems,
       totalPrice,
-      status
+      OrderStatus.Pending
     );
+
+    console.log(`Order created: ${newOrder._id} for user: ${userId}`); // Log for clarity
 
     return NextResponse.json(
       createApiResponse<Order>(
@@ -69,8 +108,7 @@ export async function POST(req: NextRequest) {
 function isValidOrderData(
   products: OrderProduct[],
   totalItems: number,
-  totalPrice: number,
-  status?: string
+  totalPrice: number
 ): boolean {
   return (
     Array.isArray(products) &&
@@ -79,8 +117,7 @@ function isValidOrderData(
     typeof totalItems === "number" &&
     typeof totalPrice === "number" &&
     totalItems > 0 &&
-    totalPrice > 0 &&
-    (status === undefined || isValidStatus(status))
+    totalPrice > 0
   );
 }
 
@@ -103,7 +140,7 @@ async function createOrder(
   products: OrderProduct[],
   totalItems: number,
   totalPrice: number,
-  status?: string
+  status: OrderStatus
 ): Promise<Order> {
   const newOrder = new OrderModel({
     userId,
@@ -115,7 +152,7 @@ async function createOrder(
     totalItems,
     totalPrice,
     orderDate: new Date(),
-    status: status || OrderStatus.Pending,
+    status,
   });
 
   return await newOrder.save();
