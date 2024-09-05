@@ -4,7 +4,7 @@ import dbConnect from "@/lib/dbConnect";
 import { createApiResponse } from "@/types/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
 import OrderModel, { OrderStatus, IOrder, IOrderProduct } from "@/model/Order";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,8 +17,45 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const userId = session.user._id;
-    const userOrders = await OrderModel.find({ userId: userId });
+    const userId = new Types.ObjectId(session.user._id);
+
+    const userOrders = await OrderModel.aggregate([
+      {
+        $match: { userId: userId },
+      },
+      { $unwind: "$products" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" },
+      {
+        $group: {
+          _id: "$_id",
+          userId: { $first: "$userId" },
+          products: {
+            $push: {
+              productId: "$products.productId",
+              quantity: "$products.quantity",
+              price: "$products.price",
+              name: "$productDetails.name",
+              imageName: "$productDetails.imageName",
+            },
+          },
+          totalItems: { $first: "$totalItems" },
+          totalPrice: { $first: "$totalPrice" },
+          status: { $first: "$status" },
+          addressId: { $first: "$addressId" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]);
 
     return NextResponse.json(
       {
