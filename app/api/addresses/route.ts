@@ -12,8 +12,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401),
-        { status: 401 }
+        createApiResponse<undefined>(false, "Not Authenticated", 401)
       );
     }
 
@@ -33,10 +32,7 @@ export async function GET(req: NextRequest) {
     console.error("Error retrieving addresses:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      createApiResponse<undefined>(false, message, 500),
-      { status: 500 }
-    );
+    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
   }
 }
 
@@ -169,9 +165,6 @@ export async function DELETE(req: NextRequest) {
     console.error("Error deleting address:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      createApiResponse<undefined>(false, message, 500),
-      { status: 500 }
-    );
+    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
   }
 }

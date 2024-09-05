@@ -41,7 +41,7 @@ const SideMenu = () => {
           <>
             <Avatar>
               <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary">
-                NT
+                {(session.user?.username?.[0] || "U").toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <Link

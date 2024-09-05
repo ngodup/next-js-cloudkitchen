@@ -13,8 +13,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401),
-        { status: 401 }
+        createApiResponse<undefined>(false, "Not Authenticated", 401)
       );
     }
 

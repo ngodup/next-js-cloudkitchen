@@ -61,7 +61,6 @@ export default function SignInForm() {
         return { message: errorMessage };
       }
       if (result?.url) {
-        //router.replace("/"); // Redirect to the specified URL after successful sign-in
         router.push("/");
       }
     } catch (error: any) {

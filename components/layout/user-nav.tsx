@@ -25,9 +25,6 @@ export default function UserNav({ className }: UserNavProps) {
 
   const onSignOut = async () => {
     await signOut();
-    // if (session?.user) {
-    //   update({ ...session.user, name: "Aditya singh" });
-    // }
   };
 
   return (
@@ -46,15 +43,19 @@ export default function UserNav({ className }: UserNavProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
-                {/* <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback> */}
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>
+                  {(session.user?.username?.[0] || "U").toUpperCase()}
+                </AvatarFallback>
+                {/* <AvatarFallback>CN</AvatarFallback> */}
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="font-medium text-sm leading-none">Tamo Ngodup</p>
+                <p className="font-medium text-sm leading-none">
+                  {session.user.username}
+                </p>
                 <p className="text-xs text-muted-foreground leading-none">
                   {session.user.email}
                 </p>

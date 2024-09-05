@@ -494,10 +494,10 @@ export const navItems: NavItem[] = [
     label: "Home",
   },
   {
-    title: "Profile",
-    href: "/profile",
+    title: "Account",
+    href: "/account",
     icon: "profile",
-    label: "profile",
+    label: "acount",
   },
   {
     title: "Settings",

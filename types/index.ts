@@ -79,14 +79,14 @@ export interface IOrderProduct {
   imageName: string;
 }
 
-export interface IOrder {
-  _id: string;
-  userId: string;
-  products: IOrderProduct[];
-  totalItems: number;
-  totalPrice: number;
-  status: string;
-  orderDate: string;
+export interface IUserProfile {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  dateOfBirth?: Date;
+  gender?: string;
+  bio?: string;
+  avatarUrl: string;
 }
 
 export interface IAddress {
@@ -98,6 +98,15 @@ export interface IAddress {
   country: string;
   isDefault: boolean;
   createdAt: Date;
+}
+export interface IOrder {
+  _id: string;
+  userId: string;
+  products: IOrderProduct[];
+  totalItems: number;
+  totalPrice: number;
+  status: string;
+  orderDate: string;
 }
 
 /* Start of Redux related type */

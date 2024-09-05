@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface User extends Document {
+export interface UserAuth extends Document {
   username: string;
   email: string;
   password: string;
@@ -10,7 +10,7 @@ export interface User extends Document {
   isVerified: boolean;
 }
 
-const UserSchema: Schema<User> = new mongoose.Schema({
+const UserAuthSchema: Schema<UserAuth> = new mongoose.Schema({
   username: {
     type: String,
     required: [true, "Username is required"],
@@ -45,6 +45,6 @@ const UserSchema: Schema<User> = new mongoose.Schema({
 
 // Check if the model is already registered before registering it
 const UserModel =
-  mongoose.models.User || mongoose.model<User>("User", UserSchema);
+  mongoose.models.User || mongoose.model<UserAuth>("User", UserAuthSchema);
 
 export default UserModel;
