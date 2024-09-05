@@ -89,6 +89,17 @@ export interface IOrder {
   orderDate: string;
 }
 
+export interface IAddress {
+  _id: string;
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  isDefault: boolean;
+  createdAt: Date;
+}
+
 /* Start of Redux related type */
 
 export interface RootState {

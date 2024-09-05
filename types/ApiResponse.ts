@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { IFoodItem, IComment, IOrder } from ".";
 
 // Base API response interface
+
 export interface ApiResponse<T = undefined> {
   success: boolean;
   message: string;

@@ -1,57 +1,53 @@
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface OrderProduct {
+// Define OrderStatus enum
+export enum OrderStatus {
+  Pending = "pending",
+  Processing = "processing",
+  Shipped = "shipped",
+  Delivered = "delivered",
+  Cancelled = "cancelled",
+}
+
+export interface IOrderProduct {
   productId: mongoose.Types.ObjectId;
   quantity: number;
   price: number;
 }
 
-export interface Order extends Document {
+export interface IOrder extends Document {
   userId: mongoose.Types.ObjectId;
-  products: OrderProduct[];
+  products: IOrderProduct[];
   totalItems: number;
   totalPrice: number;
-  orderDate: Date;
-  status: string;
+  status: OrderStatus;
+  addressId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const OrderProductSchema: Schema<OrderProduct> = new Schema({
+const OrderProductSchema: Schema = new Schema({
   productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
   quantity: { type: Number, required: true },
   price: { type: Number, required: true },
 });
 
-const OrderSchema: Schema<Order> = new Schema({
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: [true, "User ID is required"],
-  },
-  products: {
-    type: [OrderProductSchema],
-    required: [true, "Order must contain at least one product"],
-  },
-  totalItems: {
-    type: Number,
-    required: [true, "Total number of items is required"],
-  },
-  totalPrice: {
-    type: Number,
-    required: [true, "Total price is required"],
-  },
-  orderDate: {
-    type: Date,
-    default: Date.now,
-  },
+const OrderSchema: Schema = new Schema({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  products: [OrderProductSchema],
+  totalItems: { type: Number, required: true },
+  totalPrice: { type: Number, required: true },
   status: {
     type: String,
-    default: "pending",
-    enum: ["pending", "processing", "shipped", "delivered", "cancelled"],
+    enum: Object.values(OrderStatus),
+    default: OrderStatus.Pending,
   },
+  addressId: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const OrderModel =
-  (mongoose.models.Order as mongoose.Model<Order>) ||
-  mongoose.model<Order>("Order", OrderSchema);
+  mongoose.models.Order || mongoose.model<IOrder>("Order", OrderSchema);
 
 export default OrderModel;

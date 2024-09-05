@@ -17,8 +17,7 @@ export async function GET(
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401),
-        { status: 401 }
+        createApiResponse<undefined>(false, "Not Authenticated", 401)
       );
     }
 
@@ -30,8 +29,7 @@ export async function GET(
     if (!Types.ObjectId.isValid(orderId)) {
       console.log(`Invalid ObjectId: ${orderId}`);
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Invalid order ID", 400),
-        { status: 400 }
+        createApiResponse<undefined>(false, "Invalid order ID", 400)
       );
     }
 
@@ -80,8 +78,7 @@ export async function GET(
           false,
           "Order not found or unauthorized",
           404
-        ),
-        { status: 404 }
+        )
       );
     }
 
@@ -99,9 +96,6 @@ export async function GET(
     console.error("Error retrieving order:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      createApiResponse<undefined>(false, message, 500),
-      { status: 500 }
-    );
+    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
   }
 }

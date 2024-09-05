@@ -1,20 +1,10 @@
-// app/api/orders/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
 import { createApiResponse } from "@/types/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
-import OrderModel, { Order, OrderProduct } from "@/model/Order";
-
-// Define valid order statuses
-export enum OrderStatus {
-  Pending = "pending",
-  Processing = "processing",
-  Shipped = "shipped",
-  Delivered = "delivered",
-  Cancelled = "cancelled",
-}
+import OrderModel, { OrderStatus, IOrder, IOrderProduct } from "@/model/Order";
+import mongoose from "mongoose";
 
 export async function GET(req: NextRequest) {
   try {
@@ -32,22 +22,18 @@ export async function GET(req: NextRequest) {
     const userOrders = await OrderModel.find({ userId: userId });
 
     return NextResponse.json(
-      createApiResponse<Order[]>(
-        true,
-        "User orders retrieved successfully",
-        200,
-        userOrders
-      ),
+      {
+        success: true,
+        message: "User orders retrieved successfully",
+        orders: userOrders,
+      },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error retrieving user orders:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      createApiResponse<undefined>(false, message, 500),
-      { status: 500 }
-    );
+    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
   }
 }
 
@@ -58,20 +44,18 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401),
-        { status: 401 }
+        createApiResponse<undefined>(false, "Not Authenticated", 401)
       );
     }
 
-    const userId = session.user._id; // Explicitly declare userId
-    console.log(`Creating order for user: ${userId}`); // Log for clarity
+    const userId = session.user._id;
+    console.log(`Creating order for user: ${userId}`);
 
-    const { products, totalItems, totalPrice } = await req.json();
+    const { products, totalItems, totalPrice, addressId } = await req.json();
 
-    if (!isValidOrderData(products, totalItems, totalPrice)) {
+    if (!isValidOrderData(products, totalItems, totalPrice, addressId)) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Invalid order data", 400),
-        { status: 400 }
+        createApiResponse<undefined>(false, "Invalid order data", 400)
       );
     }
 
@@ -80,35 +64,32 @@ export async function POST(req: NextRequest) {
       products,
       totalItems,
       totalPrice,
-      OrderStatus.Pending
+      addressId
     );
 
-    console.log(`Order created: ${newOrder._id} for user: ${userId}`); // Log for clarity
+    console.log(`Order created: ${newOrder._id} for user: ${userId}`);
 
     return NextResponse.json(
-      createApiResponse<Order>(
-        true,
-        "Order created successfully",
-        201,
-        newOrder
-      ),
+      {
+        success: true,
+        message: "Order created successfully",
+        order: newOrder,
+      },
       { status: 201 }
     );
   } catch (error) {
     console.error("Error creating order:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(
-      createApiResponse<undefined>(false, message, 500),
-      { status: 500 }
-    );
+    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
   }
 }
 
 function isValidOrderData(
-  products: OrderProduct[],
+  products: IOrderProduct[],
   totalItems: number,
-  totalPrice: number
+  totalPrice: number,
+  addressId: string
 ): boolean {
   return (
     Array.isArray(products) &&
@@ -117,13 +98,15 @@ function isValidOrderData(
     typeof totalItems === "number" &&
     typeof totalPrice === "number" &&
     totalItems > 0 &&
-    totalPrice > 0
+    totalPrice > 0 &&
+    typeof addressId === "string" &&
+    addressId.length > 0
   );
 }
 
-function isValidProduct(product: OrderProduct): boolean {
+function isValidProduct(product: IOrderProduct): boolean {
   return (
-    typeof product.productId === "string" &&
+    mongoose.Types.ObjectId.isValid(product.productId) &&
     typeof product.quantity === "number" &&
     typeof product.price === "number" &&
     product.quantity > 0 &&
@@ -131,17 +114,13 @@ function isValidProduct(product: OrderProduct): boolean {
   );
 }
 
-function isValidStatus(status: string): boolean {
-  return Object.values(OrderStatus).includes(status as OrderStatus);
-}
-
 async function createOrder(
   userId: string,
-  products: OrderProduct[],
+  products: IOrderProduct[],
   totalItems: number,
   totalPrice: number,
-  status: OrderStatus
-): Promise<Order> {
+  addressId: string
+): Promise<IOrder> {
   const newOrder = new OrderModel({
     userId,
     products: products.map((product) => ({
@@ -151,8 +130,8 @@ async function createOrder(
     })),
     totalItems,
     totalPrice,
-    orderDate: new Date(),
-    status,
+    status: OrderStatus.Pending,
+    addressId,
   });
 
   return await newOrder.save();

@@ -12,40 +12,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { addressSchema } from "@/schemas/addressSchema";
 
-const formSchema = z.object({
-  street: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State/Province is required"),
-  zip: z.string().min(1, "ZIP/Postal Code is required"),
-  country: z.string().min(1, "Country is required"),
-});
-
-type FormData = z.infer<typeof formSchema>;
+export type AddressFormData = z.infer<typeof addressSchema>;
 
 interface AddressFormProps {
-  onNext: (data: FormData) => void;
+  initialData?: Partial<AddressFormData>;
+  onSubmit: (data: AddressFormData) => void;
+  onCancel?: () => void;
 }
 
-const AddressForm: React.FC<AddressFormProps> = ({ onNext }) => {
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+const AddressForm: React.FC<AddressFormProps> = ({
+  initialData,
+  onSubmit,
+  onCancel,
+}) => {
+  const form = useForm<AddressFormData>({
+    resolver: zodResolver(addressSchema),
     defaultValues: {
-      street: "",
-      city: "",
-      state: "",
-      zip: "",
-      country: "",
+      street: initialData?.street || "",
+      city: initialData?.city || "",
+      state: initialData?.state || "",
+      zip: initialData?.zip || "",
+      country: initialData?.country || "",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    onNext(data);
+  const handleSubmit = (data: AddressFormData) => {
+    onSubmit(data);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="street"
@@ -111,7 +110,16 @@ const AddressForm: React.FC<AddressFormProps> = ({ onNext }) => {
             </FormItem>
           )}
         />
-        <Button type="submit">Next</Button>
+        <div className="flex justify-between">
+          <Button type="submit">
+            {initialData ? "Update Address" : "Add Address"}
+          </Button>
+          {onCancel && (
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancel
+            </Button>
+          )}
+        </div>
       </form>
     </Form>
   );
