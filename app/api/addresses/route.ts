@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
 
     const userId = session.user._id;
     const addresses = await AddressModel.find({ userId });
-    console.log("USER information on ADDRESSS : ", addresses);
 
     return NextResponse.json(
       {
@@ -93,7 +92,6 @@ export async function PUT(req: NextRequest) {
 
     const userId = session.user._id;
     const { addressId, ...addressData } = await req.json();
-    console.log("Address id put :", addressId);
 
     const updatedAddress = await AddressModel.findOneAndUpdate(
       { _id: addressId, userId },

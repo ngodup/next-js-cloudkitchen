@@ -4,14 +4,15 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { IUserProfile, IAddress } from "@/types";
+import { PersonalInfo } from "./PersonalInfo";
+import { userProfileSchema } from "@/schemas/userProfileShcema";
 
 const AccountPage = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
@@ -65,34 +66,23 @@ const AccountPage = () => {
   };
 
   const handleProfileSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    data: z.infer<typeof userProfileSchema>
   ) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const profileData = Object.fromEntries(formData);
-
     try {
       const method = userProfile ? "put" : "post";
-      const response = await axios[method]("/api/user-profile", profileData);
-      debugger;
-      if (response.data.success) {
-        // Explicitly update the state with the new profile data
-        setUserProfile(response.data.userProfile);
-        setIsEditing(false);
-        toast({
-          title: "Success",
-          description: userProfile
-            ? "Profile updated successfully"
-            : "Profile created successfully",
-        });
-      } else {
-        // Handle unsuccessful response
-        toast({
-          title: "Error",
-          description: response.data.message || "Failed to save profile",
-          variant: "destructive",
-        });
-      }
+      const response = await axios[method]("/api/user-profile", data);
+
+      setUserProfile(response.data.userProfile);
+      setIsEditing(false);
+
+      setUserProfile(response.data.userProfile);
+      setIsEditing(false);
+      toast({
+        title: "Success",
+        description: userProfile
+          ? "Profile updated successfully"
+          : "Profile created successfully",
+      });
     } catch (error) {
       console.error("Error saving profile:", error);
       toast({
@@ -102,6 +92,45 @@ const AccountPage = () => {
       });
     }
   };
+
+  // const handleProfileSubmit = async (
+  //   event: React.FormEvent<HTMLFormElement>
+  // ) => {
+  //   event.preventDefault();
+  //   const formData = new FormData(event.currentTarget);
+  //   const profileData = Object.fromEntries(formData);
+
+  //   try {
+  //     const method = userProfile ? "put" : "post";
+  //     const response = await axios[method]("/api/user-profile", profileData);
+  //     debugger;
+  //     if (response.data.success) {
+  //       // Explicitly update the state with the new profile data
+  //       setUserProfile(response.data.userProfile);
+  //       setIsEditing(false);
+  //       toast({
+  //         title: "Success",
+  //         description: userProfile
+  //           ? "Profile updated successfully"
+  //           : "Profile created successfully",
+  //       });
+  //     } else {
+  //       // Handle unsuccessful response
+  //       toast({
+  //         title: "Error",
+  //         description: response.data.message || "Failed to save profile",
+  //         variant: "destructive",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving profile:", error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to save profile",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -141,100 +170,13 @@ const AccountPage = () => {
             </TabsList>
 
             <TabsContent value="personal">
-              {!isEditing ? (
-                <div className="space-y-2">
-                  <p>
-                    <strong>First Name:</strong>{" "}
-                    {userProfile?.firstName || "Not provided"}
-                  </p>
-                  <p>
-                    <strong>Last Name:</strong>{" "}
-                    {userProfile?.lastName || "Not provided"}
-                  </p>
-                  <p>
-                    <strong>Phone:</strong>{" "}
-                    {userProfile?.phoneNumber || "Not provided"}
-                  </p>
-                  <p>
-                    <strong>Date of Birth:</strong>{" "}
-                    {userProfile?.dateOfBirth
-                      ? new Date(userProfile.dateOfBirth).toLocaleDateString()
-                      : "Not provided"}
-                  </p>
-                  <p>
-                    <strong>Gender:</strong>{" "}
-                    {userProfile?.gender || "Not provided"}
-                  </p>
-                  <Button onClick={() => setIsEditing(true)}>
-                    {userProfile ? "Edit Profile" : "Create Profile"}
-                  </Button>
-                </div>
-              ) : (
-                <form onSubmit={handleProfileSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      name="firstName"
-                      defaultValue={userProfile?.firstName}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      name="lastName"
-                      defaultValue={userProfile?.lastName}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phoneNumber">Phone Number</Label>
-                    <Input
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      defaultValue={userProfile?.phoneNumber}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                    <Input
-                      id="dateOfBirth"
-                      name="dateOfBirth"
-                      type="date"
-                      defaultValue={
-                        userProfile?.dateOfBirth?.toString().split("T")[0]
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="gender">Gender</Label>
-                    <select
-                      id="gender"
-                      name="gender"
-                      defaultValue={userProfile?.gender}
-                      className="w-full p-2 border rounded"
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                      <option value="prefer not to say">
-                        Prefer not to say
-                      </option>
-                    </select>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit">Save Profile</Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsEditing(false)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                </form>
-              )}
+              <PersonalInfo
+                userProfile={userProfile}
+                isEditing={isEditing}
+                onEdit={() => setIsEditing(true)}
+                onSubmit={handleProfileSubmit}
+                onCancel={() => setIsEditing(false)}
+              />
             </TabsContent>
 
             <TabsContent value="addresses">

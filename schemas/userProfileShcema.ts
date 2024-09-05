@@ -13,7 +13,7 @@ export const userProfileSchema = z.object({
       message: "Invalid date format",
     })
     .optional(),
-  gender: z.enum(["male", "female", "other", "prefer not to say"]).optional(),
+  gender: z.string().optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
   avatarUrl: z.string().url("Invalid URL for avatar").optional(),
 });
