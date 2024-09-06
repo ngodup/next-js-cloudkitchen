@@ -1,19 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Dispatch, SetStateAction } from "react";
+import { useSidebar } from "@/hooks/useSidebar";
+import { cn } from "@/lib/utils";
+import { NavItem } from "@/types";
 import { Icons } from "@/components/icons";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Prix from "./prix";
+import Category from "./category";
+import { categories, priceRanges } from "@/constants/data";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/hooks/useSidebar";
-import { cn } from "@/lib/utils";
-import { NavItem } from "@/types";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+import { Separator } from "@/components/ui/separator";
 
 interface DashboardNavProps {
   navItems: NavItem[];
@@ -28,11 +34,25 @@ const DashboardNav = ({
 }: DashboardNavProps) => {
   const { isMinimized } = useSidebar();
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedPrice, setSelectedPrice] = useState<string>("all");
+
+  // Filter nav items based on authentication status
+  const filteredNavItems = navItems.filter((item) => {
+    if (status === "authenticated") {
+      return true; // Show all items for authenticated users
+    } else {
+      // Hide Account, Settings, and Orders for non-authenticated users
+      return !["Account", "Settings", "Order"].includes(item.title);
+    }
+  });
 
   return (
     <nav className="grid items-start gap-2">
       <TooltipProvider>
-        {navItems.map((item, index) => {
+        {filteredNavItems.map((item, index) => {
           const Icon = Icons[item.icon || "arrowRight"];
           return (
             item.href && (
@@ -52,9 +72,6 @@ const DashboardNav = ({
                     }}
                   >
                     <Icon className={`ml-3 size-5 flex-none`} />
-                    {/* {!isMinimized && (
-                      <span className="mr-2 truncate">{item.title}</span>
-                    )} */}
                     {isMobileNav || (!isMinimized && !isMobileNav) ? (
                       <span className="mr-2 truncate">{item.title}</span>
                     ) : (
@@ -75,6 +92,18 @@ const DashboardNav = ({
           );
         })}
       </TooltipProvider>
+      <Separator className="my-4" />
+      <Category
+        categories={categories}
+        selectedCategories={selectedCategories}
+        onCategoryChange={setSelectedCategories}
+      />
+      <Separator className="my-4" />
+      <Prix
+        priceRanges={priceRanges}
+        selectedPrice={selectedPrice}
+        onPriceChange={setSelectedPrice}
+      />
     </nav>
   );
 };

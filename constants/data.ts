@@ -1,4 +1,10 @@
-import { MenuCuisine, NavItem, IFoodItem } from "@/types";
+import {
+  MenuCuisine,
+  NavItem,
+  IFoodItem,
+  CategoryItem,
+  PriceRange,
+} from "@/types";
 
 export const products: IFoodItem[] = [
   {
@@ -505,10 +511,22 @@ export const navItems: NavItem[] = [
     icon: "settings",
     label: "settings",
   },
-  // {
-  //   title: "Login",
-  //   href: "/",
-  //   icon: "login",
-  //   label: "login",
-  // },
+];
+
+export const categories: CategoryItem[] = [
+  { id: "all", label: "Toute" },
+  { id: "francais", label: "Français" },
+  { id: "indienne", label: "Indienne" },
+  { id: "japonaise", label: "Japonaise" },
+  { id: "italienne", label: "Italienne" },
+  { id: "tibetaine", label: "Tibétaine" },
+  { id: "vietnamienne", label: "Vietnamienne" },
+];
+
+export const priceRanges: PriceRange[] = [
+  { id: "all", label: "Tous les prix" },
+  { id: "0-5", label: "€0 - 5" },
+  { id: "6-10", label: "€6 - €10" },
+  { id: "11-15", label: "€11 - €15" },
+  { id: "15+", label: "Plus de 15€" },
 ];

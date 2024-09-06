@@ -109,6 +109,16 @@ export interface IOrder {
   orderDate: string;
 }
 
+export interface CategoryItem {
+  id: string;
+  label: string;
+}
+
+export interface PriceRange {
+  id: string;
+  label: string;
+}
+
 /* Start of Redux related type */
 
 export interface RootState {
