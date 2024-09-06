@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { User } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import {
@@ -16,15 +17,21 @@ import {
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Button } from "../ui/button";
+
 interface UserNavProps {
   className?: string;
 }
 
 export default function UserNav({ className }: UserNavProps) {
   const { data: session, update } = useSession();
+  const router = useRouter();
 
   const onSignOut = async () => {
     await signOut();
+  };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
   };
 
   return (
@@ -46,7 +53,6 @@ export default function UserNav({ className }: UserNavProps) {
                 <AvatarFallback>
                   {(session.user?.username?.[0] || "U").toUpperCase()}
                 </AvatarFallback>
-                {/* <AvatarFallback>CN</AvatarFallback> */}
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
@@ -63,18 +69,20 @@ export default function UserNav({ className }: UserNavProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                Profile
+              <DropdownMenuItem onSelect={() => handleNavigation("/account")}>
+                Account
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => handleNavigation("/orders")}>
+                Orders
               </DropdownMenuItem>
               <DropdownMenuItem>
                 Settings
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem>
-              <DropdownMenuItem>New Team</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onSignOut}>
+            <DropdownMenuItem onSelect={onSignOut}>
               Log out
               <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
             </DropdownMenuItem>
