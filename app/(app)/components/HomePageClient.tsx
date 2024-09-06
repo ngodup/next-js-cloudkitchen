@@ -13,6 +13,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface HomePageClientProps {
   initialData: {
+    success: boolean;
+    message: string;
     products: IFoodItem[];
     pagination: {
       currentPage: number;
@@ -31,11 +33,12 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
     initialData.pagination.totalPages
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isError, setIsError] = useState(!initialData.success);
+  const [errorMessage, setErrorMessage] = useState(initialData.message);
 
   const fetchProducts = async (page: number) => {
     setIsLoading(true);
-    setError(null);
+    setIsError(false);
     try {
       const response = await axios.get("/api/products", {
         params: { page, limit: 12 },
@@ -43,15 +46,19 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
       setProducts(response.data.products);
       setCurrentPage(response.data.pagination.currentPage);
       setTotalPages(response.data.pagination.totalPages);
+      setErrorMessage("");
     } catch (err) {
-      setError("Failed to fetch products. Please try again later.");
+      console.error("Failed to fetch products:", err);
+      setIsError(true);
+      setErrorMessage("Unable to load products. Please try again later.");
+      // Keep the current products and pagination state
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (products.length === 0) {
+    if (products.length === 0 && !isError) {
       fetchProducts(1);
     }
   }, []);
@@ -72,7 +79,7 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
     <div className="mt-8 flex justify-between items-center w-full">
       <Button
         onClick={handlePrevPage}
-        disabled={currentPage === 1}
+        disabled={currentPage === 1 || isLoading}
         variant="outline"
         size="sm"
         className="text-primary hover:text-primary-foreground hover:bg-primary"
@@ -84,7 +91,7 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
       </span>
       <Button
         onClick={handleNextPage}
-        disabled={currentPage === totalPages}
+        disabled={currentPage === totalPages || isLoading}
         variant="outline"
         size="sm"
         className="text-primary hover:text-primary-foreground hover:bg-primary"
@@ -93,16 +100,6 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
       </Button>
     </div>
   );
-
-  if (error) {
-    return (
-      <Card className="w-full max-w-md mx-auto bg-red-50 border-red-200">
-        <CardContent className="pt-6">
-          <p className="text-red-500 text-center">{error}</p>
-        </CardContent>
-      </Card>
-    );
-  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -125,14 +122,13 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
           <Card className="mb-6 border-primary/10 shadow-sm">
             <CardContent className="pt-6">
               <p className="text-center text-muted-foreground">
-                No products available at the moment.
+                {errorMessage || "No products available at the moment."}
               </p>
             </CardContent>
           </Card>
         )}
       </div>
 
-      {/* Pagination always at the bottom */}
       {totalPages > 1 && <CardFooter>{renderPagination()}</CardFooter>}
     </div>
   );

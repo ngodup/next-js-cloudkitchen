@@ -15,6 +15,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Preload the CSS file */}
+        <link
+          rel="preload"
+          href="/_next/static/css/app/(app)/layout.css"
+          as="style"
+        />
+      </head>
       <body>
         <Providers>{children}</Providers>
         <Toaster />

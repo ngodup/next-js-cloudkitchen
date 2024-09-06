@@ -2,43 +2,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createApiResponse, ApiResponse } from "@/types/ApiResponse";
 import { IFoodItem } from "@/types";
 
 export async function GET(req: NextRequest) {
-  await dbConnect();
-
   try {
+    await dbConnect();
+
     const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
     const limit = parseInt(req.nextUrl.searchParams.get("limit") || "12");
     const skip = (page - 1) * limit;
 
     const products = await ProductModel.find().skip(skip).limit(limit).lean();
-
     const totalProducts = await ProductModel.countDocuments();
-
-    if (!products || products.length === 0) {
-      return NextResponse.json(
-        createApiResponse<{ products: IFoodItem[]; pagination: any }>(
-          true,
-          "No products found",
-          200,
-          {
-            products: [],
-            pagination: {
-              currentPage: page,
-              totalPages: Math.ceil(totalProducts / limit),
-              totalProducts,
-            },
-          }
-        )
-      );
-    }
 
     return NextResponse.json(
       {
         success: true,
-        products: products,
+        message:
+          products.length > 0
+            ? "Products retrieved successfully"
+            : "No products found",
+        products: products ? products : [],
         pagination: {
           currentPage: page,
           totalPages: Math.ceil(totalProducts / limit),
@@ -48,13 +33,12 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    const errorMessage = (error as Error).message || "Unknown error";
-    return NextResponse.json(
-      createApiResponse<undefined>(
-        false,
-        `Error getting products from server: ${errorMessage}`,
-        500
-      )
+    console.error("Error in /api/products:", error);
+
+    return createApiResponse(
+      false,
+      "Unable to retrieve products at this time. Please check your database connection.",
+      500
     );
   }
 }

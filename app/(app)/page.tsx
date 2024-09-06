@@ -25,6 +25,8 @@ async function fetchProducts(page = 1, limit = 12) {
   } catch (error) {
     console.error("Error fetching products:", error);
     return {
+      success: true,
+      message: "Unable to retrieve products at this time",
       products: [],
       pagination: { currentPage: 1, totalPages: 1, totalProducts: 0 },
     };
