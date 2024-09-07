@@ -93,17 +93,21 @@ const DashboardNav = ({
         })}
       </TooltipProvider>
       <Separator className="my-4" />
-      <Category
-        categories={categories}
-        selectedCategories={selectedCategories}
-        onCategoryChange={setSelectedCategories}
-      />
-      <Separator className="my-4" />
-      <Prix
-        priceRanges={priceRanges}
-        selectedPrice={selectedPrice}
-        onPriceChange={setSelectedPrice}
-      />
+      {!isMinimized && (
+        <>
+          <Category
+            categories={categories}
+            selectedCategories={selectedCategories}
+            onCategoryChange={setSelectedCategories}
+          />
+          <Separator className="my-4" />
+          <Prix
+            priceRanges={priceRanges}
+            selectedPrice={selectedPrice}
+            onPriceChange={setSelectedPrice}
+          />
+        </>
+      )}
     </nav>
   );
 };
