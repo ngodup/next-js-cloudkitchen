@@ -6,19 +6,20 @@ import Image from "next/image";
 const MenuTitle = () => {
   const { isMinimized } = useSidebar();
 
-  // Define the maximum width for the image
-  const maxWidth = isMinimized ? 60 : 100;
+  // Increase the maximum width for both states
+  const maxWidth = isMinimized ? 80 : 160; // Increased from 60 and 120
 
   // Assuming the original aspect ratio is 100:40
-  const aspectRatio = 40 / 100;
+  const aspectRatio = 50 / 100;
 
   return (
     <div className="flex items-center gap-2">
       <div
         style={{
           width: `${maxWidth}px`,
-          paddingBottom: `${maxWidth * aspectRatio}px`,
+          height: `${maxWidth * aspectRatio}px`,
           position: "relative",
+          left: isMinimized ? "-24px" : "0",
         }}
       >
         <Image
@@ -31,7 +32,7 @@ const MenuTitle = () => {
         />
       </div>
       {!isMinimized && (
-        <span className="text-sm text-primary md:font-bold">Tamo Kitchen</span>
+        <span className="text-lg text-primary font-semibold">Tamo Kitchen</span>
       )}
     </div>
   );
