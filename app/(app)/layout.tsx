@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import { Poppins } from "next/font/google";
 import Header from "@/components/layout/header";
 import SideMenu from "@/components/layout/sidebar/side-menu";
@@ -17,15 +18,40 @@ export default function HomeLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedPrice, setSelectedPrice] = useState<string>("all");
+
+  const handleCategoryChange = (categories: string[]) => {
+    setSelectedCategories(categories);
+  };
+
+  const handlePriceChange = (price: string) => {
+    setSelectedPrice(price);
+  };
+
+  // Clone children and pass props
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, {
+        selectedCategories,
+        selectedPrice,
+      } as Partial<unknown>);
+    }
+    return child;
+  });
+
   return (
     <ErrorBoundary>
       <div className={cn("flex", poppins.className)}>
         <div className="hidden lg:block">
-          <SideMenu />
+          <SideMenu
+            onCategoryChange={handleCategoryChange}
+            onPriceChange={handlePriceChange}
+          />
         </div>
         <div className="flex-1 overflow-hidden">
           <Header />
-          <main className="p-4">{children}</main>
+          <main className="p-4">{childrenWithProps}</main>
         </div>
         <Cart />
       </div>

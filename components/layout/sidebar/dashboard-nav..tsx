@@ -18,19 +18,22 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
 import { Separator } from "@/components/ui/separator";
 
 interface DashboardNavProps {
   navItems: NavItem[];
   setOpen?: Dispatch<SetStateAction<boolean>>;
   isMobileNav?: boolean;
+  onCategoryChange: (categories: string[]) => void;
+  onPriceChange: (price: string) => void;
 }
 
 const DashboardNav = ({
   navItems,
   setOpen,
   isMobileNav = false,
+  onCategoryChange,
+  onPriceChange,
 }: DashboardNavProps) => {
   const { isMinimized } = useSidebar();
   const pathname = usePathname();
@@ -38,6 +41,16 @@ const DashboardNav = ({
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPrice, setSelectedPrice] = useState<string>("all");
+
+  const handleCategoryChange = (categories: string[]) => {
+    setSelectedCategories(categories);
+    onCategoryChange(categories);
+  };
+
+  const handlePriceChange = (price: string) => {
+    setSelectedPrice(price);
+    onPriceChange(price);
+  };
 
   // Filter nav items based on authentication status
   const filteredNavItems = navItems.filter((item) => {
@@ -98,13 +111,13 @@ const DashboardNav = ({
           <Category
             categories={categories}
             selectedCategories={selectedCategories}
-            onCategoryChange={setSelectedCategories}
+            onCategoryChange={handleCategoryChange}
           />
           <Separator className="my-4" />
           <Prix
             priceRanges={priceRanges}
             selectedPrice={selectedPrice}
-            onPriceChange={setSelectedPrice}
+            onPriceChange={handlePriceChange}
           />
         </>
       )}

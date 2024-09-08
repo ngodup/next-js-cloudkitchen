@@ -1,77 +1,74 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect } from "react";
 import { menuCategories } from "@/constants/data";
 import MenuCuisineItem from "./menu-cuisine";
 import ProductCard from "./product-card";
-import { IFoodItem } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useProductsContext } from "@/context/ProductsContext";
 
-interface HomePageClientProps {
-  initialData: {
-    success: boolean;
-    message: string;
-    products: IFoodItem[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalProducts: number;
-    };
-  };
-}
-
-export default function HomePageClient({ initialData }: HomePageClientProps) {
-  const [products, setProducts] = useState<IFoodItem[]>(initialData.products);
-  const [currentPage, setCurrentPage] = useState(
-    initialData.pagination.currentPage
-  );
-  const [totalPages, setTotalPages] = useState(
-    initialData.pagination.totalPages
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(!initialData.success);
-  const [errorMessage, setErrorMessage] = useState(initialData.message);
-
-  const fetchProducts = async (page: number) => {
-    setIsLoading(true);
-    setIsError(false);
-    try {
-      const response = await axios.get("/api/products", {
-        params: { page, limit: 12 },
-      });
-      setProducts(response.data.products);
-      setCurrentPage(response.data.pagination.currentPage);
-      setTotalPages(response.data.pagination.totalPages);
-      setErrorMessage("");
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-      setIsError(true);
-      setErrorMessage("Unable to load products. Please try again later.");
-      // Keep the current products and pagination state
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default function HomePageClient() {
+  const {
+    products,
+    isLoading,
+    error,
+    pagination,
+    fetchProducts,
+    setCategories,
+    setPriceRange,
+    searchTerm,
+    selectedCategories,
+    priceRange,
+  } = useProductsContext();
 
   useEffect(() => {
-    if (products.length === 0 && !isError) {
-      fetchProducts(1);
+    console.log("HomePageClient state updated:", {
+      products,
+      pagination,
+      isLoading,
+      error,
+      searchTerm,
+      selectedCategories,
+      priceRange,
+    });
+  }, [
+    products,
+    pagination,
+    isLoading,
+    error,
+    searchTerm,
+    selectedCategories,
+    priceRange,
+  ]);
+
+  useEffect(() => {
+    if (products.length === 0 && !isLoading) {
+      fetchProducts({ page: 1, limit: 12 });
     }
-  }, []);
+  }, [fetchProducts, products.length, isLoading]);
+
+  const handleCategoryChange = (categories: string[]) => {
+    setCategories(categories);
+    fetchProducts({ page: 1, limit: 12 });
+  };
+
+  const handlePriceRangeChange = (range: string) => {
+    setPriceRange(range);
+    fetchProducts({ page: 1, limit: 12 });
+  };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      fetchProducts(currentPage + 1);
+    if (pagination.currentPage < pagination.totalPages) {
+      fetchProducts({ page: pagination.currentPage + 1, limit: 12 });
     }
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      fetchProducts(currentPage - 1);
+    if (pagination.currentPage > 1) {
+      fetchProducts({ page: pagination.currentPage - 1, limit: 12 });
     }
   };
 
@@ -79,7 +76,7 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
     <div className="mt-8 flex justify-between items-center w-full">
       <Button
         onClick={handlePrevPage}
-        disabled={currentPage === 1 || isLoading}
+        disabled={pagination.currentPage === 1 || isLoading}
         variant="outline"
         size="sm"
         className="text-primary hover:text-primary-foreground hover:bg-primary"
@@ -87,11 +84,11 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
         <ChevronLeft className="mr-2 h-4 w-4" /> Previous
       </Button>
       <span className="text-sm text-muted-foreground">
-        Page {currentPage} of {totalPages}
+        Page {pagination.currentPage} of {pagination.totalPages}
       </span>
       <Button
         onClick={handleNextPage}
-        disabled={currentPage === totalPages || isLoading}
+        disabled={pagination.currentPage === pagination.totalPages || isLoading}
         variant="outline"
         size="sm"
         className="text-primary hover:text-primary-foreground hover:bg-primary"
@@ -122,14 +119,16 @@ export default function HomePageClient({ initialData }: HomePageClientProps) {
           <Card className="mb-6 border-primary/10 shadow-sm">
             <CardContent className="pt-6">
               <p className="text-center text-muted-foreground">
-                {errorMessage || "No products available at the moment."}
+                {error || "No products available at the moment."}
               </p>
             </CardContent>
           </Card>
         )}
       </div>
 
-      {totalPages > 1 && <CardFooter>{renderPagination()}</CardFooter>}
+      {pagination.totalPages > 1 && (
+        <CardFooter>{renderPagination()}</CardFooter>
+      )}
     </div>
   );
 }

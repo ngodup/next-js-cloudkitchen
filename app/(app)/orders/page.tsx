@@ -49,7 +49,6 @@ const OrdersPage = () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/orders");
-      debugger;
 
       if (response.data.success) {
         setOrders(response.data.orders || []);

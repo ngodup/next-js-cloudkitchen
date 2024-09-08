@@ -1,8 +1,6 @@
 // app/(app)/page.tsx
 import { headers } from "next/headers";
-import PageContainer from "@/components/layout/page-container";
-import HomePageClient from "./components/HomePageClient";
-
+import HomePageWrapper from "@/components/HomePageWrapper";
 async function fetchProducts(page = 1, limit = 12) {
   try {
     const headersList = headers();
@@ -32,13 +30,13 @@ async function fetchProducts(page = 1, limit = 12) {
     };
   }
 }
-
 export default async function HomePage() {
-  const initialData = await fetchProducts();
-
-  return (
-    <PageContainer scrollable={true}>
-      <HomePageClient initialData={initialData} />
-    </PageContainer>
-  );
+  try {
+    const initialData = await fetchProducts();
+    console.log("Server-side initialData:", initialData);
+    return <HomePageWrapper initialData={initialData} />;
+  } catch (error) {
+    console.error("Error in HomePage:", error);
+    return <div>Error loading page. Please try again later.</div>;
+  }
 }

@@ -9,12 +9,43 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
 
-    const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
-    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "12");
+    const { searchParams } = req.nextUrl;
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "12");
+    const search = searchParams.get("search") || "";
+    const categories = searchParams.getAll("categories[]");
+    const priceRange = searchParams.get("priceRange") || "all";
+    const repasType = searchParams.get("repasType") || "";
+
+    const query: any = {};
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (categories.length > 0) {
+      query.category = { $in: categories };
+    }
+
+    if (priceRange !== "all") {
+      const [min, max] = priceRange.split("-").map(Number);
+      query.price = { $gte: min, $lte: max };
+    }
+
+    if (repasType) {
+      query.repasType = repasType;
+    }
+
     const skip = (page - 1) * limit;
 
-    const products = await ProductModel.find().skip(skip).limit(limit).lean();
-    const totalProducts = await ProductModel.countDocuments();
+    const products = await ProductModel.find(query)
+      .skip(skip)
+      .limit(limit)
+      .lean();
+    const totalProducts = await ProductModel.countDocuments(query);
 
     return NextResponse.json(
       {
@@ -23,7 +54,7 @@ export async function GET(req: NextRequest) {
           products.length > 0
             ? "Products retrieved successfully"
             : "No products found",
-        products: products ? products : [],
+        products: products,
         pagination: {
           currentPage: page,
           totalPages: Math.ceil(totalProducts / limit),
@@ -34,7 +65,6 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     console.error("Error in /api/products:", error);
-
     return createApiResponse(
       false,
       "Unable to retrieve products at this time. Please check your database connection.",

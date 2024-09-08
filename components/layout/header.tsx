@@ -1,3 +1,4 @@
+import React from "react";
 import SearchInput from "@/app/(app)/components/search-input";
 import ThemeToggle from "./themeToggle/theme-toggle";
 import UserNav from "./user-nav";
@@ -6,9 +7,17 @@ import { MobileSidebar } from "./sidebar/mobile-sidebar";
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
+import { useProductsContext } from "@/context/ProductsContext";
 
 export default function Header() {
   const { toggleCart, itemCount } = useCart();
+  const { fetchProducts, setSearchTerm } = useProductsContext();
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+    fetchProducts({ page: 1, limit: 12 });
+  };
 
   return (
     <header className="sticky inset-x-0 top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -17,7 +26,11 @@ export default function Header() {
           <MobileSidebar />
         </div>
         <div className="flex items-center gap-2 flex-1">
-          <SearchInput placeholder="Search..." className="flex-grow" />
+          <SearchInput
+            placeholder="Search..."
+            className="flex-grow"
+            onChange={handleSearch}
+          />
         </div>
         <div className="flex items-center gap-2">
           <Button

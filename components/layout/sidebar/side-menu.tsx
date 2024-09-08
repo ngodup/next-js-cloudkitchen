@@ -9,7 +9,15 @@ import MenuTitle from "./menu-title";
 import DashboardNav from "./dashboard-nav.";
 import { useSession, signOut } from "next-auth/react";
 
-const SideMenu = () => {
+interface SideMenuProps {
+  onCategoryChange: (categories: string[]) => void;
+  onPriceChange: (price: string) => void;
+}
+
+const SideMenu: React.FC<SideMenuProps> = ({
+  onCategoryChange,
+  onPriceChange,
+}) => {
   const { isMinimized, toggle } = useSidebar();
   const { data: session } = useSession();
 
@@ -33,7 +41,11 @@ const SideMenu = () => {
       </header>
 
       <div className="flex-grow">
-        <DashboardNav navItems={navItems} />
+        <DashboardNav
+          navItems={navItems}
+          onCategoryChange={onCategoryChange}
+          onPriceChange={onPriceChange}
+        />
       </div>
 
       <footer className="md:flex md:gap-2 items-center mt-4 flex-shrink-0">
