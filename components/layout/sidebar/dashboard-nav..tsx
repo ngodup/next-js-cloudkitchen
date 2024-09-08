@@ -9,9 +9,8 @@ import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
-import Prix from "./prix";
 import Category from "./category";
-import { categories, priceRanges } from "@/constants/data";
+import { categories } from "@/constants/data";
 import {
   Tooltip,
   TooltipContent,
@@ -19,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import { PriceRangeSlider } from "./price-range-slider";
 
 interface DashboardNavProps {
   navItems: NavItem[];
@@ -40,16 +40,13 @@ const DashboardNav = ({
   const { data: session, status } = useSession();
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedPrice, setSelectedPrice] = useState<string>("all");
+  const [priceRange, setPriceRange] = React.useState([0, 100]);
+
+  const formatPrice = (value: number) => `€${value.toFixed(2)}`;
 
   const handleCategoryChange = (categories: string[]) => {
     setSelectedCategories(categories);
     onCategoryChange(categories);
-  };
-
-  const handlePriceChange = (price: string) => {
-    setSelectedPrice(price);
-    onPriceChange(price);
   };
 
   // Filter nav items based on authentication status
@@ -114,11 +111,24 @@ const DashboardNav = ({
             onCategoryChange={handleCategoryChange}
           />
           <Separator className="my-4" />
-          <Prix
-            priceRanges={priceRanges}
-            selectedPrice={selectedPrice}
-            onPriceChange={handlePriceChange}
-          />
+          <div className="space-y-4">
+            <h3 className="font-semibold text-lg">PRIX</h3>
+            <PriceRangeSlider
+              defaultValue={priceRange}
+              min={0}
+              max={100} // Adjust as needed
+              step={1}
+              formatPrice={formatPrice}
+              onValueChange={(newValue) => {
+                setPriceRange(newValue);
+                onPriceChange(`${newValue[0]}-${newValue[1]}`);
+              }}
+            />
+            <div className="flex justify-between text-sm">
+              <span>{formatPrice(priceRange[0])}</span>
+              <span>{formatPrice(priceRange[1])}</span>
+            </div>
+          </div>
         </>
       )}
     </nav>

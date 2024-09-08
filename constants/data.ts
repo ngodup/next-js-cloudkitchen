@@ -522,11 +522,3 @@ export const categories: CategoryItem[] = [
   { id: "tibetaine", label: "Tibétaine" },
   { id: "vietnamienne", label: "Vietnamienne" },
 ];
-
-export const priceRanges: PriceRange[] = [
-  { id: "all", label: "Tous les prix" },
-  { id: "0-5", label: "€0 - 5" },
-  { id: "6-10", label: "€6 - €10" },
-  { id: "11-15", label: "€11 - €15" },
-  { id: "15+", label: "Plus de 15€" },
-];
