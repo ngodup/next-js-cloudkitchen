@@ -2,7 +2,7 @@ import {
   MenuCuisine,
   NavItem,
   IFoodItem,
-  CategoryItem,
+  ICuisineItem,
   PriceRange,
 } from "@/types";
 
@@ -465,23 +465,27 @@ export type Employee = {
 
 export const menuCategories: MenuCuisine[] = [
   {
+    id: "all",
     name: "Tout",
-    icon: "dashboard",
+    icon: "foodPot",
     shortDescription: "256 menus",
   },
   {
-    name: "Petit-déjeuner",
-    icon: "breakfast",
+    id: "petit-dejeuner",
+    name: "Petit Déjeuner",
+    icon: "coffee",
     shortDescription: "50 menus",
   },
   {
+    id: "dejeuner",
     name: "Déjeuner",
-    icon: "dinner",
+    icon: "soup",
     shortDescription: "56 menu",
   },
   {
+    id: "diner",
     name: "Dîner",
-    icon: "lunch",
+    icon: "utensils",
     shortDescription: "60 menus",
   },
 ];
@@ -513,12 +517,12 @@ export const navItems: NavItem[] = [
   },
 ];
 
-export const categories: CategoryItem[] = [
+export const categories: ICuisineItem[] = [
   { id: "all", label: "Toute" },
-  { id: "francais", label: "Français" },
+  { id: "français", label: "Français" },
   { id: "indienne", label: "Indienne" },
   { id: "japonaise", label: "Japonaise" },
   { id: "italienne", label: "Italienne" },
-  { id: "tibetaine", label: "Tibétaine" },
+  { id: "tibétaine", label: "Tibétaine" },
   { id: "vietnamienne", label: "Vietnamienne" },
 ];

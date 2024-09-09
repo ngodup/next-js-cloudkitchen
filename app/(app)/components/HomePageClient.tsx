@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { menuCategories } from "@/constants/data";
 import MenuCuisineItem from "./menu-cuisine";
 import ProductCard from "./product-card";
@@ -17,60 +17,34 @@ export default function HomePageClient() {
     error,
     pagination,
     fetchProducts,
-    setCategories,
-    setPriceRange,
-    searchTerm,
-    selectedCategories,
-    priceRange,
+    setRepasType,
+    repasType,
   } = useProductsContext();
 
-  useEffect(() => {
-    console.log("HomePageClient state updated:", {
-      products,
-      pagination,
-      isLoading,
-      error,
-      searchTerm,
-      selectedCategories,
-      priceRange,
-    });
-  }, [
-    products,
-    pagination,
-    isLoading,
-    error,
-    searchTerm,
-    selectedCategories,
-    priceRange,
-  ]);
+  const handleRepasTypeChange = useCallback(
+    (type: string) => {
+      setRepasType(type);
+    },
+    [setRepasType]
+  );
+
+  const handleNextPage = useCallback(() => {
+    if (pagination.currentPage < pagination.totalPages) {
+      fetchProducts({ page: pagination.currentPage + 1, limit: 12 });
+    }
+  }, [fetchProducts, pagination]);
+
+  const handlePrevPage = useCallback(() => {
+    if (pagination.currentPage > 1) {
+      fetchProducts({ page: pagination.currentPage - 1, limit: 12 });
+    }
+  }, [fetchProducts, pagination]);
 
   useEffect(() => {
     if (products.length === 0 && !isLoading) {
       fetchProducts({ page: 1, limit: 12 });
     }
-  }, [fetchProducts, products.length, isLoading]);
-
-  const handleCategoryChange = (categories: string[]) => {
-    setCategories(categories);
-    fetchProducts({ page: 1, limit: 12 });
-  };
-
-  const handlePriceRangeChange = (range: string) => {
-    setPriceRange(range);
-    fetchProducts({ page: 1, limit: 12 });
-  };
-
-  const handleNextPage = () => {
-    if (pagination.currentPage < pagination.totalPages) {
-      fetchProducts({ page: pagination.currentPage + 1, limit: 12 });
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (pagination.currentPage > 1) {
-      fetchProducts({ page: pagination.currentPage - 1, limit: 12 });
-    }
-  };
+  }, []);
 
   const renderPagination = () => (
     <div className="mt-8 flex justify-between items-center w-full">
@@ -103,7 +77,12 @@ export default function HomePageClient() {
       <div className="flex-grow">
         <div className="flex flex-wrap gap-2 mb-6">
           {menuCategories.map((menu, index) => (
-            <MenuCuisineItem key={index} menu={menu} />
+            <MenuCuisineItem
+              key={index}
+              menu={menu}
+              isActive={repasType === menu?.id}
+              onClick={() => handleRepasTypeChange(menu.name)}
+            />
           ))}
         </div>
 

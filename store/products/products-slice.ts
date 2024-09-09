@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IFoodItem } from "@/types";
 import axios from "axios";
+import { RootState } from "../index"; // Import RootState from the store index
 
 interface FilterParams {
   search?: string;
@@ -28,7 +29,8 @@ export const fetchProducts = createAsyncThunk(
   "products/fetchProducts",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const { filterParams } = getState().products as ProductState;
+      const state = getState() as RootState;
+      const { filterParams } = state.products;
       const response = await axios.get("/api/products", {
         params: filterParams,
       });

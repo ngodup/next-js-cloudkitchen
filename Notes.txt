@@ -63,3 +63,25 @@ interface ProductQuantitiesProps {
   className?: string;
 }
 
+  const [priceRange, setPriceRange] = React.useState([0, 100]);
+
+  const formatPrice = (value: number) => `€${value.toFixed(2)}`;
+
+      <div className="space-y-4">
+                <h3 className="font-semibold text-lg">PRIX</h3>
+                <PriceRangeSlider
+                  defaultValue={priceRange}
+                  min={0}
+                  max={100} // Adjust as needed
+                  step={1}
+                  formatPrice={formatPrice}
+                  onValueChange={(newValue) => {
+                    setPriceRange(newValue);
+                    onPriceChange(`${newValue[0]}-${newValue[1]}`);
+                  }}
+                />
+                <div className="flex justify-between text-sm">
+                  <span>{formatPrice(priceRange[0])}</span>
+                  <span>{formatPrice(priceRange[1])}</span>
+                </div>
+              </div>

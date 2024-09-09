@@ -2,8 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
-import { createApiResponse, ApiResponse } from "@/types/ApiResponse";
-import { IFoodItem } from "@/types";
+import { createApiResponse } from "@/types/ApiResponse";
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
     const categories = searchParams.getAll("categories[]");
     const priceRange = searchParams.get("priceRange") || "all";
-    const repasType = searchParams.get("repasType") || "";
+    const repasType = searchParams.get("repasType") || "all";
 
     const query: any = {};
 
@@ -27,7 +26,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (categories.length > 0) {
-      query.category = { $in: categories };
+      query.cuisine = { $in: categories };
     }
 
     if (priceRange !== "all") {
@@ -35,7 +34,7 @@ export async function GET(req: NextRequest) {
       query.price = { $gte: min, $lte: max };
     }
 
-    if (repasType) {
+    if (repasType !== "all") {
       query.repasType = repasType;
     }
 

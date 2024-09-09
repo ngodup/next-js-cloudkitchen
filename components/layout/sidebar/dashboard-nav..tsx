@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import { Dispatch, SetStateAction } from "react";
+import React from "react";
 import { useSidebar } from "@/hooks/useSidebar";
 import { cn } from "@/lib/utils";
 import { NavItem } from "@/types";
@@ -19,35 +18,37 @@ import {
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
 import { PriceRangeSlider } from "./price-range-slider";
+import { useProductsContext } from "@/context/ProductsContext"; // Make sure this import is correct
 
 interface DashboardNavProps {
   navItems: NavItem[];
-  setOpen?: Dispatch<SetStateAction<boolean>>;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   isMobileNav?: boolean;
-  onCategoryChange: (categories: string[]) => void;
-  onPriceChange: (price: string) => void;
 }
-
 const DashboardNav = ({
   navItems,
   setOpen,
   isMobileNav = false,
-  onCategoryChange,
-  onPriceChange,
 }: DashboardNavProps) => {
   const { isMinimized } = useSidebar();
   const pathname = usePathname();
   const { data: session, status } = useSession();
-
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = React.useState([0, 100]);
-
-  const formatPrice = (value: number) => `€${value.toFixed(2)}`;
+  const {
+    setCategories,
+    setPriceRange,
+    selectedCategories,
+    priceRange: contextPriceRange,
+  } = useProductsContext();
 
   const handleCategoryChange = (categories: string[]) => {
-    setSelectedCategories(categories);
-    onCategoryChange(categories);
+    setCategories(categories);
   };
+
+  const handlePriceRangeChange = (newRange: number[]) => {
+    setPriceRange(newRange);
+  };
+
+  const formatPrice = (value: number) => `€${value.toFixed(2)}`;
 
   // Filter nav items based on authentication status
   const filteredNavItems = navItems.filter((item) => {
@@ -114,19 +115,16 @@ const DashboardNav = ({
           <div className="space-y-4">
             <h3 className="font-semibold text-lg">PRIX</h3>
             <PriceRangeSlider
-              defaultValue={priceRange}
+              defaultValue={contextPriceRange}
               min={0}
               max={100} // Adjust as needed
               step={1}
               formatPrice={formatPrice}
-              onValueChange={(newValue) => {
-                setPriceRange(newValue);
-                onPriceChange(`${newValue[0]}-${newValue[1]}`);
-              }}
+              onValueCommit={handlePriceRangeChange}
             />
             <div className="flex justify-between text-sm">
-              <span>{formatPrice(priceRange[0])}</span>
-              <span>{formatPrice(priceRange[1])}</span>
+              <span>{formatPrice(contextPriceRange[0])}</span>
+              <span>{formatPrice(contextPriceRange[1])}</span>
             </div>
           </div>
         </>

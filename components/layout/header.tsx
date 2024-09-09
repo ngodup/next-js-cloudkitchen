@@ -10,13 +10,13 @@ import { useCart } from "@/hooks/useCart";
 import { useProductsContext } from "@/context/ProductsContext";
 
 export default function Header() {
+  const { setSearchTerm } = useProductsContext();
+
   const { toggleCart, itemCount } = useCart();
-  const { fetchProducts, setSearchTerm } = useProductsContext();
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
-    fetchProducts({ page: 1, limit: 12 });
   };
 
   return (

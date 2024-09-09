@@ -6,12 +6,11 @@ import { useState } from "react";
 import DashboardNav from "./dashboard-nav.";
 import { navItems } from "@/constants/data";
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  // playlists: Playlist[];
-}
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function MobileSidebar({ className }: SidebarProps) {
   const [open, setOpen] = useState(false);
+
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>

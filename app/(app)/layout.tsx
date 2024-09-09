@@ -44,10 +44,7 @@ export default function HomeLayout({
     <ErrorBoundary>
       <div className={cn("flex", poppins.className)}>
         <div className="hidden lg:block">
-          <SideMenu
-            onCategoryChange={handleCategoryChange}
-            onPriceChange={handlePriceChange}
-          />
+          <SideMenu />
         </div>
         <div className="flex-1 overflow-hidden">
           <Header />

@@ -14,6 +14,7 @@ export interface NavItem {
 }
 
 export type MenuCuisine = {
+  id: string;
   name: string;
   icon: keyof typeof Icons;
   shortDescription: string;
@@ -109,7 +110,7 @@ export interface IOrder {
   orderDate: string;
 }
 
-export interface CategoryItem {
+export interface ICuisineItem {
   id: string;
   label: string;
 }
@@ -120,7 +121,6 @@ export interface PriceRange {
 }
 
 /* Start of Redux related type */
-
 export interface RootState {
   products: ProductState;
   carts: IOrderProduct;
