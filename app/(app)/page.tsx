@@ -33,7 +33,6 @@ async function fetchProducts(page = 1, limit = 12) {
 export default async function HomePage() {
   try {
     const initialData = await fetchProducts();
-    console.log("Server-side initialData:", initialData);
     return <HomePageWrapper initialData={initialData} />;
   } catch (error) {
     console.error("Error in HomePage:", error);

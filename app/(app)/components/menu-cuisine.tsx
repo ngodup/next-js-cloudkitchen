@@ -3,13 +3,13 @@ import { Icons } from "@/components/icons";
 import { MenuCuisine } from "@/types";
 import { cn } from "@/lib/utils";
 
-interface MenuCategoryProps {
+interface MenuCuisineProps {
   menu: MenuCuisine;
   isActive: boolean;
   onClick: () => void;
 }
 
-const MenuCuisineItem = ({ menu, isActive, onClick }: MenuCategoryProps) => {
+const MenuCuisineItem = ({ menu, isActive, onClick }: MenuCuisineProps) => {
   const { name, icon, shortDescription } = menu;
   const Icon = Icons[icon || "foodPot"];
 
@@ -29,7 +29,7 @@ const MenuCuisineItem = ({ menu, isActive, onClick }: MenuCategoryProps) => {
           )}
         />
         <div className="text-xs">
-          <p className="font-semibold">{name}</p>
+          <p className="font-semibold">{name === "all" ? "Toute" : name}</p>
           <p>{shortDescription}</p>
         </div>
       </CardContent>

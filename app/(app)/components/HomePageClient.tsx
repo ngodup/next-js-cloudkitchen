@@ -80,7 +80,7 @@ export default function HomePageClient() {
             <MenuCuisineItem
               key={index}
               menu={menu}
-              isActive={repasType === menu?.id}
+              isActive={repasType === menu?.name}
               onClick={() => handleRepasTypeChange(menu.name)}
             />
           ))}

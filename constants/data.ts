@@ -466,7 +466,7 @@ export type Employee = {
 export const menuCategories: MenuCuisine[] = [
   {
     id: "all",
-    name: "Tout",
+    name: "all",
     icon: "foodPot",
     shortDescription: "256 menus",
   },
