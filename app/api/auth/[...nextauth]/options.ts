@@ -3,21 +3,21 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import UserModel from "@/model/User";
+import UserProfileModel from "@/model/UserProfile";
 import { signInSchema } from "@/schemas/signInSchema";
 import dbConnect from "@/lib/dbConnect";
 
-interface AuthCredentials {
-  email: string;
-  password: string;
-}
+// interface AuthCredentials {
+//   email: string;
+//   password: string;
+// }
 
-interface AuthResponse {
-  success: boolean;
-  message: string;
-  user?: any; // You can replace 'any' with a more specific type if needed
-}
-
-async function authorize(credentials: AuthCredentials): Promise<AuthResponse> {
+// interface AuthResponse {
+//   success: boolean;
+//   message: string;
+//   user?: any; // You can replace 'any' with a more specific type if needed
+// }
+async function authorize(credentials: any): Promise<any> {
   await dbConnect();
 
   const parsedCredentials = signInSchema.safeParse(credentials);
@@ -63,10 +63,7 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
-        password: {
-          label: "Password",
-          type: "password",
-        },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
         return authorize(credentials);
@@ -74,6 +71,66 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log("Google user:", user);
+      console.log("Google account:", account);
+      console.log("Google profile:", profile);
+
+      if (account?.provider === "google") {
+        await dbConnect();
+        let existingUser = await UserModel.findOne({ email: user.email });
+        console.log("Existing user google:", existingUser);
+
+        if (!existingUser) {
+          // Create new user
+          existingUser = new UserModel({
+            email: user.email,
+            username: user.email?.split("@")[0] || `user_${Date.now()}`,
+            isVerified: true,
+            role: "user",
+            // Set a random password for Google users
+            password: await bcrypt.hash(
+              Math.random().toString(36).slice(-8),
+              10
+            ),
+            verifyCode: "GOOGLE_AUTH",
+            verifyCodeExpiry: new Date(),
+          });
+          await existingUser.save();
+
+          // Create corresponding user profile
+          const newUserProfile = new UserProfileModel({
+            userId: existingUser._id,
+            firstName: user.name?.split(" ")[0] || "",
+            lastName: user.name?.split(" ").slice(1).join(" ") || "",
+            avatarUrl: user.image,
+          });
+          await newUserProfile.save();
+        } else {
+          // Update existing user
+          existingUser.isVerified = true;
+          await existingUser.save();
+
+          // Update or create user profile
+          await UserProfileModel.findOneAndUpdate(
+            { userId: existingUser._id },
+            {
+              $set: {
+                firstName: user.name?.split(" ")[0] || "",
+                lastName: user.name?.split(" ").slice(1).join(" ") || "",
+                avatarUrl: user.image,
+              },
+            },
+            { upsert: true, new: true }
+          );
+        }
+      }
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      // Always redirect to the home page after sign-in
+      return baseUrl;
+    },
     async jwt({ token, user }) {
       if (user) {
         token._id = user._id?.toString();
@@ -86,27 +143,22 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user._id = token._id as string;
-        session.user.role = token.role;
+        session.user.role = token.role as string;
         session.user.username = token.username as string;
       }
       return session;
     },
-    async redirect({ url, baseUrl }) {
-      // Redirect to the home page after sign-in
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      // Redirect to the home page by default
-      return baseUrl;
-    },
   },
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60, // Session duration in seconds (1 hour)
+    maxAge: 60 * 60, // 1 hour
   },
   jwt: {
-    maxAge: 60 * 60, // JWT token lifespan in seconds (1 hour)
+    maxAge: 60 * 60, // 1 hour
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/sign-in",
+    error: "/auth/error", // Add this line
   },
 };

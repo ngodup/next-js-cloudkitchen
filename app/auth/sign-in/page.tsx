@@ -34,13 +34,7 @@ export default function SignInForm() {
   });
 
   async function onGoogleAuth() {
-    const result = await signIn("google", { redirect: false });
-    if (result?.error) {
-      setSignInError(result.error);
-    } else if (result?.url) {
-      // router.replace(result.url); // Redirect to the specified URL after successful sign-in
-      router.push("/");
-    }
+    await signIn("google", { callbackUrl: "/" });
   }
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
@@ -58,9 +52,7 @@ export default function SignInForm() {
             : `Error: ${result.error}`;
 
         setSignInError(errorMessage);
-        return { message: errorMessage };
-      }
-      if (result?.url) {
+      } else if (result?.url) {
         router.push("/");
       }
     } catch (error: any) {

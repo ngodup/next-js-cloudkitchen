@@ -3,7 +3,14 @@ import { getToken } from "next-auth/jwt";
 export { default } from "next-auth/middleware";
 
 export const config = {
-  matcher: ["/sign-in", "/sign-up", "/", "/verify/:path*"],
+  matcher: [
+    "/",
+    "/sign-in",
+    "/sign-up",
+    "/verify/:path*",
+    "/profile",
+    "/dashboard",
+  ],
 };
 
 export async function middleware(request: NextRequest) {
@@ -19,6 +26,14 @@ export async function middleware(request: NextRequest) {
       url.pathname.startsWith("/verify"))
   ) {
     return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  if (
+    !token &&
+    (url.pathname.startsWith("/profile") ||
+      url.pathname.startsWith("/dashboard"))
+  ) {
+    return NextResponse.redirect(new URL("/sign-in", request.url));
   }
 
   // Allow access to the home page regardless of authentication status
