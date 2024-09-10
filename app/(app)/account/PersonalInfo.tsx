@@ -81,9 +81,11 @@ export function PersonalInfo({
         <p>
           <strong>Bio:</strong> {userProfile?.bio || "Not provided"}
         </p>
-        <Button onClick={onEdit}>
-          {userProfile ? "Edit Profile" : "Create Profile"}
-        </Button>
+        <div className="text-right">
+          <Button onClick={onEdit}>
+            {userProfile ? "Edit Profile" : "Create Profile"}
+          </Button>
+        </div>
       </div>
     );
   }

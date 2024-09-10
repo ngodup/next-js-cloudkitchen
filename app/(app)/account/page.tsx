@@ -25,7 +25,7 @@ const AccountPage = () => {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/sign-in?redirect=/profile");
+      router.push("/auth/sign-in?redirect=/account");
     } else if (status === "authenticated") {
       fetchUserProfile();
       fetchAddresses();
@@ -95,25 +95,29 @@ const AccountPage = () => {
   };
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <div className="container mx-auto p-4">Loading...</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Card>
+    <div className="container mx-auto p-4 max-w-8xl">
+      <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+          <CardTitle className="text-3xl font-bold">User Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <ProfileHeader userProfile={userProfile} />
+        </CardContent>
+      </Card>
 
-          <Tabs defaultValue="personal">
-            <TabsList>
-              <TabsTrigger value="personal">Personal Info</TabsTrigger>
-              <TabsTrigger value="addresses">Addresses</TabsTrigger>
-            </TabsList>
+      <Tabs defaultValue="personal" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="personal">Personal Info</TabsTrigger>
+          <TabsTrigger value="addresses">Addresses</TabsTrigger>
+        </TabsList>
 
-            <TabsContent value="personal">
+        <TabsContent value="personal">
+          <Card>
+            <CardContent className="pt-6">
               <PersonalInfo
                 userProfile={userProfile}
                 isEditing={isEditing}
@@ -121,21 +125,27 @@ const AccountPage = () => {
                 onSubmit={handleProfileSubmit}
                 onCancel={() => setIsEditing(false)}
               />
-            </TabsContent>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-            <TabsContent value="addresses">
+        <TabsContent value="addresses">
+          <Card>
+            <CardContent className="pt-6">
               <AddressList addresses={addresses} />
-              <Button>Add New Address</Button>
-            </TabsContent>
-          </Tabs>
+              <div className="text-right">
+                <Button className="mt-4 text-right">Add New Address</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
-          <div className="mt-6">
-            <Button onClick={() => router.push("/orders")}>
-              View My Orders
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="mt-8 text-right">
+        <Button onClick={() => router.push("/orders")} size="lg">
+          View My Orders
+        </Button>
+      </div>
     </div>
   );
 };
