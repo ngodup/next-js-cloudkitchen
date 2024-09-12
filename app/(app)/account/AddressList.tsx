@@ -8,7 +8,7 @@ interface AddressListProps {
 
 export function AddressList({ addresses }: AddressListProps) {
   if (!addresses || addresses.length === 0) {
-    return <Card>No addresses found.</Card>;
+    return <Card className="p-4">No addresses found.</Card>;
   }
 
   return (

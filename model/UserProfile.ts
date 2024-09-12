@@ -1,9 +1,8 @@
-// model/UserProfile.ts
-
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface UserProfile extends Document {
   userId: mongoose.Types.ObjectId;
+  email: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
@@ -18,7 +17,12 @@ const UserProfileSchema: Schema<UserProfile> = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: [true, "User reference is required"],
+    required: true,
+    unique: true,
+  },
+  email: {
+    type: String,
+    required: true,
     unique: true,
   },
   firstName: { type: String, trim: true },
@@ -27,7 +31,7 @@ const UserProfileSchema: Schema<UserProfile> = new mongoose.Schema({
     type: String,
     validate: {
       validator: function (v: string) {
-        return /^\d{10}$/.test(v);
+        return !v || /^\d{10}$/.test(v);
       },
       message: (props) => `${props.value} is not a valid phone number!`,
     },

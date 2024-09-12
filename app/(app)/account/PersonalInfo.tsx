@@ -27,7 +27,7 @@ import { userProfileSchema } from "@/schemas/userProfileShcema";
 type UserProfileFormData = z.infer<typeof userProfileSchema>;
 
 interface PersonalInfoProps {
-  userProfile: IUserProfile | null;
+  userProfile: IUserProfile;
   onSubmit: (data: UserProfileFormData) => void | Promise<void>;
   isEditing: boolean;
   onEdit: () => void;
@@ -44,15 +44,15 @@ export function PersonalInfo({
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(userProfileSchema),
     defaultValues: {
-      firstName: userProfile?.firstName || "",
-      lastName: userProfile?.lastName || "",
-      phoneNumber: userProfile?.phoneNumber || "",
-      dateOfBirth: userProfile?.dateOfBirth
+      firstName: userProfile.firstName || "",
+      lastName: userProfile.lastName || "",
+      phoneNumber: userProfile.phoneNumber || "",
+      dateOfBirth: userProfile.dateOfBirth
         ? new Date(userProfile.dateOfBirth).toISOString().split("T")[0]
         : "",
-      gender: userProfile?.gender || "",
-      bio: userProfile?.bio || "",
-      avatarUrl: userProfile?.avatarUrl || "",
+      gender: userProfile.gender || "",
+      bio: userProfile.bio || "",
+      avatarUrl: userProfile.avatarUrl || "",
     },
   });
 
@@ -60,31 +60,28 @@ export function PersonalInfo({
     return (
       <div className="space-y-2">
         <p>
-          <strong>First Name:</strong>{" "}
-          {userProfile?.firstName || "Not provided"}
+          <strong>First Name:</strong> {userProfile.firstName || "Not provided"}
         </p>
         <p>
-          <strong>Last Name:</strong> {userProfile?.lastName || "Not provided"}
+          <strong>Last Name:</strong> {userProfile.lastName || "Not provided"}
         </p>
         <p>
-          <strong>Phone:</strong> {userProfile?.phoneNumber || "Not provided"}
+          <strong>Phone:</strong> {userProfile.phoneNumber || "Not provided"}
         </p>
         <p>
           <strong>Date of Birth:</strong>{" "}
-          {userProfile?.dateOfBirth
+          {userProfile.dateOfBirth
             ? new Date(userProfile.dateOfBirth).toLocaleDateString()
             : "Not provided"}
         </p>
         <p>
-          <strong>Gender:</strong> {userProfile?.gender || "Not provided"}
+          <strong>Gender:</strong> {userProfile.gender || "Not provided"}
         </p>
         <p>
-          <strong>Bio:</strong> {userProfile?.bio || "Not provided"}
+          <strong>Bio:</strong> {userProfile.bio || "Not provided"}
         </p>
         <div className="text-right">
-          <Button onClick={onEdit}>
-            {userProfile ? "Edit Profile" : "Create Profile"}
-          </Button>
+          <Button onClick={onEdit}>Edit Profile</Button>
         </div>
       </div>
     );

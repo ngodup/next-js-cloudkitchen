@@ -72,14 +72,9 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log("Google user:", user);
-      console.log("Google account:", account);
-      console.log("Google profile:", profile);
-
       if (account?.provider === "google") {
         await dbConnect();
         let existingUser = await UserModel.findOne({ email: user.email });
-        console.log("Existing user google:", existingUser);
 
         if (!existingUser) {
           // Create new user
@@ -119,6 +114,7 @@ export const authOptions: NextAuthOptions = {
                 firstName: user.name?.split(" ")[0] || "",
                 lastName: user.name?.split(" ").slice(1).join(" ") || "",
                 avatarUrl: user.image,
+                email: user.email, // Add this line
               },
             },
             { upsert: true, new: true }

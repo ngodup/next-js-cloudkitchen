@@ -1,5 +1,3 @@
-// app/api/user-profile/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
@@ -13,15 +11,24 @@ export async function GET(req: NextRequest) {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    if (!session?.user?._id) {
+    if (!session?.user?._id && !session?.user?.email) {
       return NextResponse.json(
         createApiResponse<undefined>(false, "Not authenticated", 401)
       );
     }
 
-    const userProfile = await UserProfileModel.findOne({
-      userId: session.user._id,
-    }).lean();
+    let userProfile;
+    if (session.user._id) {
+      userProfile = await UserProfileModel.findOne({
+        userId: session.user._id,
+      }).lean();
+    }
+
+    if (!userProfile && session.user.email) {
+      userProfile = await UserProfileModel.findOne({
+        email: session.user.email,
+      }).lean();
+    }
 
     if (!userProfile) {
       return NextResponse.json(
@@ -37,7 +44,6 @@ export async function GET(req: NextRequest) {
       {
         success: true,
         message: "User profile retrieved successfully",
-
         userProfile,
       },
       { status: 200 }
@@ -49,20 +55,19 @@ export async function GET(req: NextRequest) {
     );
   }
 }
-
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    if (!session?.user?._id) {
+    if (!session?.user?._id || !session?.user?.email) {
       return NextResponse.json(
         createApiResponse<undefined>(false, "Not authenticated", 401)
       );
     }
 
     const body = await req.json();
-    console.log("Pareser userprofile : ", body);
+    console.log("Parsed userprofile: ", body);
     const validationResult = userProfileSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -90,10 +95,11 @@ export async function POST(req: NextRequest) {
 
     const newUserProfile = new UserProfileModel({
       userId: session.user._id,
+      email: session.user.email,
       ...validationResult.data,
     });
 
-    console.log("New user: ", newUserProfile);
+    console.log("New user profile to be saved:", newUserProfile);
     await newUserProfile.save();
 
     return NextResponse.json(
