@@ -1,6 +1,6 @@
 import React from "react";
 import SearchInput from "@/app/(app)/components/search-input";
-import ThemeToggle from "./themeToggle/theme-toggle";
+import ThemeToggle from "../../app/providers/themeToggle/theme-toggle";
 import UserNav from "./user-nav";
 import { cn } from "@/lib/utils";
 import { MobileSidebar } from "./sidebar/mobile-sidebar";

@@ -2,13 +2,16 @@
 "use client";
 
 import React from "react";
+import store from "@/store";
 import { Provider as ReduxProvider } from "react-redux";
-import ThemeProvider from "./themeToggle/theme-provider";
 import AuthProvider from "@/context/AuthProvider";
 import { ProductsProvider } from "@/context/ProductsContext";
-import store from "@/store";
+import ThemeProvider from "./themeToggle/theme-provider";
 
-export default function Providers({ children }: { children: React.ReactNode }) {
+interface AppProvidersProps {
+  children: React.ReactNode;
+}
+export default function AppProviders({ children }: AppProvidersProps) {
   return (
     <ReduxProvider store={store}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
