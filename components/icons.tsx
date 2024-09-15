@@ -33,6 +33,7 @@ import {
   Soup,
   X,
   Utensils,
+  ShoppingBasket,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -68,6 +69,7 @@ export const Icons = {
   coffee: Coffee,
   soup: Soup,
   utensils: Utensils,
+  products: ShoppingBasket,
 
   gitHub: ({ ...props }: LucideProps) => (
     <svg

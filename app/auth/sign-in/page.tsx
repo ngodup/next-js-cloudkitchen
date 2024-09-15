@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import Image from "next/image";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -46,14 +46,18 @@ export default function SignInForm() {
       });
 
       if (result?.error) {
-        const errorMessage =
+        setSignInError(
           result.error === "CredentialsSignin"
             ? "Invalid credentials"
-            : `Error: ${result.error}`;
-
-        setSignInError(errorMessage);
-      } else if (result?.url) {
-        router.push("/");
+            : `Error: ${result.error}`
+        );
+      } else {
+        const session = await getSession();
+        if (session?.user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else {
+          router.push("/");
+        }
       }
     } catch (error: any) {
       setSignInError(error.message);

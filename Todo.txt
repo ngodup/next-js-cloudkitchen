@@ -5,3 +5,13 @@ Pending Task:
 3. Card for each Food Item
 4. Main home page
 
+
+"Create a comprehensive guide on rechart issues we faced just now in Next.js and TypeScript. Cover:
+
+Root causes of issues
+Best practices to added recharts in server or client component
+Proper use of recharts
+Optimizing use practices of recharts in nextjs
+TypeScript considerations
+Code examples for rechart we just had or any other if possible
+Provide actionable steps and explain the rationale behind each recommendation. Include common pitfalls to avoid and how to identify potential issues early in development."

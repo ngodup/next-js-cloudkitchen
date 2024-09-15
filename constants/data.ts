@@ -517,6 +517,32 @@ export const navItems: NavItem[] = [
   },
 ];
 
+export const adminNavItems: NavItem[] = [
+  {
+    title: "Home",
+    href: "/admin/dashboard",
+    icon: "dashboard",
+    label: "Home",
+  },
+  {
+    title: "Order",
+    href: "/admin/dashboard/orders",
+    icon: "billing",
+    label: "Orders",
+  },
+  {
+    title: "Products",
+    href: "/admin/dashboard/products",
+    icon: "products",
+    label: "Products",
+  },
+  {
+    title: "Settings",
+    href: "/admin/dashboard/settings",
+    icon: "settings",
+    label: "settings",
+  },
+];
 export const categories: ICuisineItem[] = [
   { id: "all", label: "Toute" },
   { id: "français", label: "Français" },

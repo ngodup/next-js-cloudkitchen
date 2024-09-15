@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Providers from "@/components/layout/providers";
-import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import AppProviders from "./providers/AppProviders";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Cloud kitchen using Nextjs shadcn",
@@ -24,7 +24,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <Providers>{children}</Providers>
+        <AppProviders>{children}</AppProviders>
         <Toaster />
       </body>
     </html>
