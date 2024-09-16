@@ -4,8 +4,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Search, Filter } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableHeader,
@@ -15,10 +15,10 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { IOrder, IUserOrder } from "@/types";
 import { capitalizeFirstLetter, getStatusColors } from "@/lib/stringUtils";
-import { useToast } from "@/components/ui/use-toast";
-import { IUserOrder } from "@/types";
+import { cn } from "@/lib/utils";
 
 const Orders = () => {
   const [orders, setOrders] = useState<IUserOrder[]>([]);
@@ -26,36 +26,23 @@ const Orders = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [activeTab, setActiveTab] = useState("All Orders");
-  const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
-
-  const tabs = ["All Orders", "Completed", "Pending", "Shipped", "Cancelled"];
 
   useEffect(() => {
     fetchOrders();
-  }, [page, activeTab]);
+  }, [page]);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const status = activeTab === "All Orders" ? "" : activeTab.toLowerCase();
       const response = await axios.get(
-        `/api/admin/orders?page=${page}&limit=12&status=${status}&search=${searchTerm}`
+        `/api/admin/orders?page=${page}&limit=12`
       );
 
-      const { orders, pagination, success } = response.data;
-      if (success && orders !== null) {
-        setOrders(orders || []);
-        if (pagination) {
-          setTotalPages(pagination.totalPages);
-        } else {
-          toast({
-            title: "Error",
-            description: response.data.message || "Failed to fetch orders",
-            variant: "destructive",
-          });
-        }
+      if (response.data.success) {
+        setOrders(response.data.orders || []);
+        setTotalPages(response.data.pagination.totalPages);
+      } else {
+        setError(response.data.message || "Failed to fetch orders");
       }
     } catch (err) {
       console.error("Error fetching orders:", err);
@@ -63,11 +50,6 @@ const Orders = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleSearch = () => {
-    setPage(1);
-    fetchOrders();
   };
 
   if (loading) {
@@ -92,42 +74,11 @@ const Orders = () => {
   }
 
   return (
-    <section className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Order Details</h1>
-
-      <div className="flex space-x-2 mb-6">
-        {tabs.map((tab) => (
-          <Button
-            key={tab}
-            variant={activeTab === tab ? "default" : "outline"}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </Button>
-        ))}
-      </div>
-
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
-          <Input
-            type="text"
-            placeholder="Search for order ID, username, or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-96"
-          />
-          <Button onClick={handleSearch}>
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-        </div>
-        <Button variant="outline">
-          <Filter className="h-4 w-4 mr-2" />
-          Filters
-        </Button>
-      </div>
-
-      <Card>
+    <section>
+      <Card className="border-none">
+        <CardHeader>
+          <CardTitle>Latest Orders</CardTitle>
+        </CardHeader>
         <CardContent>
           <Table>
             <TableHeader className="bg-primary">
@@ -175,7 +126,6 @@ const Orders = () => {
                         {capitalizeFirstLetter(order.status)}
                       </span>
                     </TableCell>
-                    <TableCell>Credit Card</TableCell>
                   </TableRow>
                 );
               })}

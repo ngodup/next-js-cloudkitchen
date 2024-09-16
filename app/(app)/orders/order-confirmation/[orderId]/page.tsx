@@ -124,7 +124,7 @@ export default function OrderConfirmationPage() {
             </div>
             <div>
               <p className="font-semibold">Order Date:</p>
-              <p>{new Date(order.orderDate).toLocaleString()}</p>
+              <p>{new Date(order.createdAt).toLocaleString()}</p>
             </div>
             <div>
               <p className="font-semibold">Order Status:</p>

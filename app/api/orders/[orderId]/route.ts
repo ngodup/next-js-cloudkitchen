@@ -65,7 +65,7 @@ export async function GET(
           },
           totalItems: { $first: "$totalItems" },
           totalPrice: { $first: "$totalPrice" },
-          orderDate: { $first: "$orderDate" },
+          createdAt: { $first: "$createdAt" },
           status: { $first: "$status" },
         },
       },

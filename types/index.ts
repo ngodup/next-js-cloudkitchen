@@ -107,7 +107,15 @@ export interface IOrder {
   totalItems: number;
   totalPrice: number;
   status: string;
-  orderDate: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface IUserOrder extends IOrder {
+  user?: {
+    username: string;
+    email: string;
+  };
 }
 
 export interface ICuisineItem {

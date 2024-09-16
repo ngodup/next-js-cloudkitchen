@@ -99,7 +99,7 @@ const OrdersPage = () => {
             <CardHeader>
               <CardTitle>Order #{order._id}</CardTitle>
               <CardDescription>
-                Placed on {new Date(order.orderDate).toLocaleDateString()}
+                Placed on {new Date(order.createdAt).toLocaleDateString()}
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -15,7 +15,6 @@ const InfoCard = ({ title, content, isCurrency = false }: InfoCardProps) => {
       <CardContent>
         <div className="text-2xl font-bold">
           {isCurrency && "€"} {content}
-          {content}
         </div>
       </CardContent>
     </Card>

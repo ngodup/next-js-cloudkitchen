@@ -1,16 +1,6 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { AnalyticsData, fetchAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import InfoCard from "../components/InfoCard";
+import Orders from "../components/Order";
 
 const ChartComponent = dynamic(
   () => import("../components/Charts/ChartComponent"),
@@ -31,44 +22,13 @@ const ChartComponent = dynamic(
 );
 
 const data = [
-  { name: "Mon", visits: 4000, orders: 2400 },
-  { name: "Tue", visits: 3000, orders: 1398 },
-  { name: "Wed", visits: 2000, orders: 9800 },
-  { name: "Thu", visits: 2780, orders: 3908 },
-  { name: "Fri", visits: 1890, orders: 4800 },
-  { name: "Sat", visits: 2390, orders: 3800 },
-  { name: "Sun", visits: 3490, orders: 4300 },
-];
-
-const orders = [
-  {
-    id: 1,
-    customer: "John Doe",
-    status: "Pending",
-    date: "2024-09-14",
-    amount: "€12",
-  },
-  {
-    id: 2,
-    customer: "Jane Smith",
-    status: "Completed",
-    date: "2024-09-14",
-    amount: "€12",
-  },
-  {
-    id: 3,
-    customer: "Bob Johnson",
-    status: "Cancelled",
-    date: "2024-09-14",
-    amount: "€12",
-  },
-  {
-    id: 4,
-    customer: "Alice Brown",
-    status: "Pending",
-    date: "2024-09-14",
-    amount: "€12",
-  },
+  { name: "Mon", visits: 40, orders: 24 },
+  { name: "Tue", visits: 30, orders: 11 },
+  { name: "Wed", visits: 20, orders: 9 },
+  { name: "Thu", visits: 27, orders: 3 },
+  { name: "Fri", visits: 18, orders: 4 },
+  { name: "Sat", visits: 23, orders: 3 },
+  { name: "Sun", visits: 34, orders: 4 },
 ];
 
 export default async function AdminDashboard() {
@@ -108,39 +68,8 @@ export default async function AdminDashboard() {
           isCurrency
         />
       </div>
+      <Orders />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Latest Orders</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell>{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.status}</TableCell>
-                  <TableCell>{order.date}</TableCell>
-                  <TableCell>{order.amount}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div className="mt-4 flex justify-end">
-            <Button>View All Orders</Button>
-          </div>
-        </CardContent>
-      </Card>
       <Card>
         <CardHeader>
           <CardTitle>Weekly Recap</CardTitle>
