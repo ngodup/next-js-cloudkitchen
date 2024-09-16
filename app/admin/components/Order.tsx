@@ -126,6 +126,7 @@ const Orders = () => {
                         {capitalizeFirstLetter(order.status)}
                       </span>
                     </TableCell>
+                    <TableCell>Credit Card</TableCell>
                   </TableRow>
                 );
               })}

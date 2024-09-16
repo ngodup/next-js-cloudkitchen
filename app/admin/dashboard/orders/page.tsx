@@ -16,9 +16,36 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { capitalizeFirstLetter, getStatusColors } from "@/lib/stringUtils";
 import { useToast } from "@/components/ui/use-toast";
-import { IUserOrder } from "@/types";
+
+interface IOrderProduct {
+  productId: string;
+  quantity: number;
+  price: number;
+  name: string;
+}
+
+interface IUserOrder {
+  _id: string;
+  userId: string;
+  products: IOrderProduct[];
+  totalItems: number;
+  totalPrice: number;
+  status: string;
+  createdAt: string;
+  user?: {
+    username: string;
+    email: string;
+  };
+}
 
 const Orders = () => {
   const [orders, setOrders] = useState<IUserOrder[]>([]);
@@ -31,6 +58,14 @@ const Orders = () => {
   const { toast } = useToast();
 
   const tabs = ["All Orders", "Completed", "Pending", "Shipped", "Cancelled"];
+  const statusOptions = [
+    "pending",
+    "processing",
+    "shipped",
+    "completed",
+    "delivered",
+    "cancelled",
+  ];
 
   useEffect(() => {
     fetchOrders();
@@ -68,6 +103,39 @@ const Orders = () => {
   const handleSearch = () => {
     setPage(1);
     fetchOrders();
+  };
+
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    try {
+      const response = await axios.patch(`/api/admin/orders/${orderId}`, {
+        status: newStatus,
+      });
+      if (response.data.success) {
+        setOrders(
+          orders.map((order) =>
+            order._id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
+        toast({
+          title: "Status Updated",
+          description: `Order status updated to ${capitalizeFirstLetter(
+            newStatus
+          )}`,
+          className: "bg-primary text-white",
+        });
+      } else {
+        throw new Error(
+          response.data.message || "Failed to update order status"
+        );
+      }
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update order status",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
@@ -140,6 +208,7 @@ const Orders = () => {
                 <TableHead className="text-white">Payment</TableHead>
               </TableRow>
             </TableHeader>
+
             <TableBody>
               {orders.map((order) => {
                 const { bg, text } = getStatusColors(order.status);
@@ -169,11 +238,27 @@ const Orders = () => {
                     </TableCell>
                     <TableCell>€{order.totalPrice.toFixed(2)}</TableCell>
                     <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium bg-[rgb(${bg})] text-[rgb(${text})]`}
+                      <Select
+                        value={order.status}
+                        onValueChange={(value) =>
+                          handleStatusChange(order._id, value)
+                        }
                       >
-                        {capitalizeFirstLetter(order.status)}
-                      </span>
+                        <SelectTrigger
+                          className={`w-[130px] bg-[rgb(${bg})] text-[rgb(${text})]`}
+                        >
+                          <SelectValue>
+                            {capitalizeFirstLetter(order.status)}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {statusOptions.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {capitalizeFirstLetter(status)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell>Credit Card</TableCell>
                   </TableRow>
