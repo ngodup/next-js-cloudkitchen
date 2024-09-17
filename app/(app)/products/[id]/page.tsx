@@ -11,7 +11,7 @@ import { useEffect, useState, useCallback } from "react";
 import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { IFoodItem } from "@/types";
-import { ApiResponse } from "@/types/ApiResponse";
+import { ApiResponse } from "@/lib/ApiResponse";
 import { useToast } from "@/components/ui/use-toast";
 import CommentsList from "../../components/CommentsList";
 import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";

@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -20,7 +20,6 @@ export async function PATCH(
 
     const orderId = params.orderId;
     const { status } = await req.json();
-    console.log(` Order ID: ${orderId} | Status: ${status}`);
 
     if (!status) {
       return createNextResponse(false, "Status is required", 400);

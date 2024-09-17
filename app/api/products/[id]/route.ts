@@ -1,6 +1,6 @@
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 
 // Dynamic route to fetch a single product by ID

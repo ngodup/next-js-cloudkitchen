@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
 import UserProfileModel from "@/model/UserProfile";
 import { userProfileSchema } from "@/schemas/userProfileShcema";

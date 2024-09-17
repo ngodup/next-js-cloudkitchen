@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/loading-button";
 import ErrorMessage from "@/components/error-message";
 import { signUpSchema } from "@/schemas/signUpSchema";
-import { ApiResponse } from "@/types/ApiResponse";
+import { ApiResponse } from "@/lib/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 

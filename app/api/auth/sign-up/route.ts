@@ -3,7 +3,7 @@ import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificaitonEmail";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 
 async function findUserByEmail(email: string) {
   return await UserModel.findOne({ email });

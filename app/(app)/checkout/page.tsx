@@ -18,7 +18,6 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
-import { ApiResponse } from "@/types/ApiResponse";
 import { IAddress } from "@/types";
 
 enum CheckoutStep {

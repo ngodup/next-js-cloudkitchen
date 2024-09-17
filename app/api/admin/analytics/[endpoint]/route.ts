@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import UserModel from "@/model/User";
 import ProductModel from "@/model/Product";
 import OrderModel from "@/model/Order";

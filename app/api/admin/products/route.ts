@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { PipelineStage } from "mongoose";
 import { productItemSchema } from "@/schemas/productItemSchema";

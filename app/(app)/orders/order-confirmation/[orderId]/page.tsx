@@ -4,7 +4,6 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { ApiResponse } from "@/types/ApiResponse";
 import { IOrder } from "@/types";
 
 import {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createNextResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/lib/ApiResponse";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
 import UserModel from "@/model/User";
