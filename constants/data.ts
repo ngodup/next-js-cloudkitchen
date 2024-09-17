@@ -1,10 +1,4 @@
-import {
-  MenuCuisine,
-  NavItem,
-  IFoodItem,
-  ICuisineItem,
-  PriceRange,
-} from "@/types";
+import { MenuCuisine, NavItem, IFoodItem, ICuisineItem } from "@/types";
 
 export const products: IFoodItem[] = [
   {
@@ -520,25 +514,25 @@ export const navItems: NavItem[] = [
 export const adminNavItems: NavItem[] = [
   {
     title: "Home",
-    href: "/admin/dashboard",
+    href: "/admin",
     icon: "dashboard",
     label: "Home",
   },
   {
     title: "Order",
-    href: "/admin/dashboard/orders",
+    href: "/admin/orders",
     icon: "billing",
     label: "Orders",
   },
   {
     title: "Products",
-    href: "/admin/dashboard/products",
+    href: "/admin/products",
     icon: "products",
     label: "Products",
   },
   {
     title: "Settings",
-    href: "/admin/dashboard/settings",
+    href: "/admin/settings",
     icon: "settings",
     label: "settings",
   },

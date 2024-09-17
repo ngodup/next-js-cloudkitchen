@@ -27,7 +27,7 @@ interface EditFoodItemModalProps {
 
 const cuisines = [
   "Indienne",
-  "Française",
+  "Français",
   "Japonaise",
   "Italienne",
   "Tibétaine",

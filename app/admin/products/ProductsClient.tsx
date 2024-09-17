@@ -9,14 +9,16 @@ import {
   updateFoodItem,
   deleteFoodItem,
 } from "./productsApi";
-import AddFoodItemModal from "../../components/products/AddFoodItemModal";
-import CuisineFilter from "../../components/products/CuisineFilter";
-import EditFoodItemModal from "../../components/products/EditFoodItemModal";
-import Pagination from "../../components/products/Pagination";
-import ProductTable from "../../components/products/productTable";
-import SearchBar from "../../components/products/SearchBar";
+
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import AddFoodItemModal from "../components/products/AddFoodItemModal";
+import EditFoodItemModal from "../components/products/EditFoodItemModal";
+import CuisineFilter from "../components/products/CuisineFilter";
+import Pagination from "../components/products/Pagination";
+
+import SearchBar from "../components/products/SearchBar";
+import ProductTable from "../components/products/ProductTable";
 
 interface ProductsClientProps {
   initialData: {

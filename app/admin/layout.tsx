@@ -1,7 +1,7 @@
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AdminSessionProvider from "./components/AdminSessionProvider";
-import AdminSidebar from "./components/AdminSidebar";
+import AdminSidebar from "./components/layout/AdminSidebar";
 
 const poppins = Poppins({
   subsets: ["latin"],

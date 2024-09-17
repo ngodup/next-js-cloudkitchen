@@ -4,12 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AnalyticsData, fetchAdminAnalytics } from "@/hooks/useAdminAnalytics";
-import InfoCard from "../components/InfoCard";
-import Orders from "../components/Order";
+import InfoCard from "./components/InfoCard";
+import Orders from "./components/Order";
 import { weeklyVisiterOrders } from "@/constants/data";
 
 const ChartComponent = dynamic(
-  () => import("../components/Charts/ChartComponent"),
+  () => import("./components/Charts/ChartComponent"),
   {
     ssr: false,
   }

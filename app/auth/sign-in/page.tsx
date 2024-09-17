@@ -54,7 +54,7 @@ export default function SignInForm() {
       } else {
         const session = await getSession();
         if (session?.user.role === "admin") {
-          router.push("/admin/dashboard");
+          router.push("/admin");
         } else {
           router.push("/");
         }
