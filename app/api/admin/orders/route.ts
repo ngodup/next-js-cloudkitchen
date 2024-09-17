@@ -1,11 +1,22 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
 import { createApiResponse } from "@/types/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
+import { PipelineStage } from "mongoose";
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json(
+        createApiResponse(false, "Unauthorized access", 403)
+      );
+    }
+
     await dbConnect();
 
     const { searchParams } = req.nextUrl;
@@ -30,7 +41,7 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const pipeline = [
+    const pipeline: PipelineStage[] = [
       {
         $lookup: {
           from: "users",

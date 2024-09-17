@@ -16,11 +16,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { IOrder, IUserOrder } from "@/types";
+import { IUserOrder } from "@/types";
 import { capitalizeFirstLetter, getStatusColors } from "@/lib/stringUtils";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
 
 const Orders = () => {
+  const { data: session, status } = useSession();
   const [orders, setOrders] = useState<IUserOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,12 @@ const Orders = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetchOrders();
+    if (status === "authenticated" && session.user.role === "admin") {
+      fetchOrders();
+    } else if (status === "authenticated" && session.user.role !== "admin") {
+      setError("You do not have permission to view this page.");
+      setLoading(false);
+    }
   }, [page]);
 
   const fetchOrders = async () => {
@@ -45,8 +52,11 @@ const Orders = () => {
         setError(response.data.message || "Failed to fetch orders");
       }
     } catch (err) {
-      console.error("Error fetching orders:", err);
-      setError("An error occurred while fetching your orders");
+      if (axios.isAxiosError(err) && err.response?.status === 403) {
+        setError("You do not have permission to access this resource.");
+      } else {
+        setError("An error occurred while fetching your orders");
+      }
     } finally {
       setLoading(false);
     }

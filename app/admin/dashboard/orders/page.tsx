@@ -25,29 +25,10 @@ import {
 } from "@/components/ui/select";
 import { capitalizeFirstLetter, getStatusColors } from "@/lib/stringUtils";
 import { useToast } from "@/components/ui/use-toast";
-
-interface IOrderProduct {
-  productId: string;
-  quantity: number;
-  price: number;
-  name: string;
-}
-
-interface IUserOrder {
-  _id: string;
-  userId: string;
-  products: IOrderProduct[];
-  totalItems: number;
-  totalPrice: number;
-  status: string;
-  createdAt: string;
-  user?: {
-    username: string;
-    email: string;
-  };
-}
-
+import { useSession } from "next-auth/react";
+import { IUserOrder } from "@/types";
 const Orders = () => {
+  const { data: session, status } = useSession();
   const [orders, setOrders] = useState<IUserOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,9 +48,15 @@ const Orders = () => {
     "cancelled",
   ];
 
+  // Fetch orders dont add fetchOrders to useEffect if will cause infinite loop
   useEffect(() => {
-    fetchOrders();
-  }, [page, activeTab]);
+    if (status === "authenticated" && session.user.role === "admin") {
+      fetchOrders();
+    } else if (status === "authenticated" && session.user.role !== "admin") {
+      setError("You do not have permission to view this page.");
+      setLoading(false);
+    }
+  }, [status, session, page, activeTab]);
 
   const fetchOrders = async () => {
     try {
@@ -94,7 +81,11 @@ const Orders = () => {
       }
     } catch (err) {
       console.error("Error fetching orders:", err);
-      setError("An error occurred while fetching your orders");
+      if (axios.isAxiosError(err) && err.response?.status === 403) {
+        setError("You do not have permission to access this resource.");
+      } else {
+        setError("An error occurred while fetching your orders");
+      }
     } finally {
       setLoading(false);
     }

@@ -9,8 +9,8 @@ export interface NavItem {
   href?: string;
   disabled?: boolean;
   icon?: keyof typeof Icons;
-  label?: string; // Optional label for additional context
-  description?: string; // Optional description for the item
+  label?: string;
+  description?: string;
 }
 
 export type MenuCuisine = {
@@ -54,13 +54,14 @@ export interface IFoodItem {
   _id?: string;
   imageName: string;
   name: string;
-  rating: number;
-  reviews: number;
+  rating?: number;
+  reviews?: number;
   price: number;
   repas: string;
   repasType: string;
   cuisine: string;
   active: boolean;
+  description?: string;
 }
 
 export interface IComment {

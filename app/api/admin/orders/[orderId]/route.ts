@@ -1,6 +1,8 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
 import { createApiResponse } from "@/types/ApiResponse";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
@@ -8,6 +10,14 @@ export async function PATCH(
   { params }: { params: { orderId: string } }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json(
+        createApiResponse(false, "Unauthorized access", 403)
+      );
+    }
+
     await dbConnect();
 
     const orderId = params.orderId;
