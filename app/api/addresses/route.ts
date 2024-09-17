@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
-import AddressModel, { Address } from "@/model/Address";
+import AddressModel from "@/model/Address";
 
 export async function GET(req: NextRequest) {
   try {
@@ -11,9 +11,7 @@ export async function GET(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -31,7 +29,7 @@ export async function GET(req: NextRequest) {
     console.error("Error retrieving addresses:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }
 
@@ -41,9 +39,7 @@ export async function POST(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -75,7 +71,7 @@ export async function POST(req: NextRequest) {
     console.error("Error saving address:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }
 
@@ -85,9 +81,7 @@ export async function PUT(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -100,9 +94,7 @@ export async function PUT(req: NextRequest) {
     );
 
     if (!updatedAddress) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Address not found", 404)
-      );
+      return createNextResponse(false, "Address not found", 404);
     }
     return NextResponse.json(
       {
@@ -118,7 +110,7 @@ export async function PUT(req: NextRequest) {
     console.error("Error updating address:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }
 
@@ -128,9 +120,7 @@ export async function DELETE(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -142,9 +132,7 @@ export async function DELETE(req: NextRequest) {
     });
 
     if (!deletedAddress) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Address not found", 404)
-      );
+      return createNextResponse(false, "Address not found", 404);
     }
 
     // If the deleted address was the default, set a new default
@@ -156,13 +144,11 @@ export async function DELETE(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(
-      createApiResponse<undefined>(true, "Address deleted successfully", 200)
-    );
+    return createNextResponse(true, "Address deleted successfully", 200);
   } catch (error) {
     console.error("Error deleting address:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { authOptions } from "../../auth/[...nextauth]/options";
 import OrderModel from "@/model/Order";
 // import ProductModel from "@/model/Product";
@@ -16,9 +16,7 @@ export async function GET(
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -28,9 +26,7 @@ export async function GET(
 
     if (!Types.ObjectId.isValid(orderId)) {
       console.log(`Invalid ObjectId: ${orderId}`);
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Invalid order ID", 400)
-      );
+      return createNextResponse(false, "Invalid order ID", 400);
     }
 
     const order = await OrderModel.aggregate([
@@ -73,13 +69,7 @@ export async function GET(
 
     if (!order || order.length === 0) {
       console.log(`Order not found or unauthorized: ${orderId}`);
-      return NextResponse.json(
-        createApiResponse<undefined>(
-          false,
-          "Order not found or unauthorized",
-          404
-        )
-      );
+      return createNextResponse(false, "Order not found or unauthorized", 404);
     }
 
     console.log(`Order found: ${orderId}`);
@@ -96,6 +86,6 @@ export async function GET(
     console.error("Error retrieving order:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }

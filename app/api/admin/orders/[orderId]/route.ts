@@ -1,7 +1,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,9 +13,7 @@ export async function PATCH(
     const session = await getServerSession(authOptions);
 
     if (!session || session.user.role !== "admin") {
-      return NextResponse.json(
-        createApiResponse(false, "Unauthorized access", 403)
-      );
+      return createNextResponse(false, "Unauthorized access", 403);
     }
 
     await dbConnect();
@@ -25,9 +23,7 @@ export async function PATCH(
     console.log(` Order ID: ${orderId} | Status: ${status}`);
 
     if (!status) {
-      return NextResponse.json(
-        createApiResponse(false, "Status is required", 400)
-      );
+      return createNextResponse(false, "Status is required", 400);
     }
 
     const updatedOrder = await OrderModel.findByIdAndUpdate(
@@ -39,9 +35,7 @@ export async function PATCH(
     console.log("Updated order:", updatedOrder);
 
     if (!updatedOrder) {
-      return NextResponse.json(
-        createApiResponse(false, "Order not found", 404)
-      );
+      return createNextResponse(false, "Order not found", 404);
     }
 
     return NextResponse.json(
@@ -56,8 +50,6 @@ export async function PATCH(
     );
   } catch (error) {
     console.error("Error updating order status:", error);
-    return NextResponse.json(
-      createApiResponse(false, "Error updating order status", 500)
-    );
+    return createNextResponse(false, "Error updating order status", 500);
   }
 }

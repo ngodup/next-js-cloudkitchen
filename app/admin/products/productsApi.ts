@@ -20,9 +20,15 @@ export const fetchProducts = async (
 export const addFoodItem = async (newFoodItem: Omit<IFoodItem, "_id">) => {
   try {
     const response = await axios.post("/api/admin/products", newFoodItem);
-    return response.data;
+    if (response.data.success) {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "Failed to add food item");
+    }
   } catch (error) {
-    console.error("Error adding food item:", error);
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to add food item");
+    }
     throw error;
   }
 };

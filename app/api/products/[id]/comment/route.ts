@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
 import UserModel from "@/model/User";
@@ -49,9 +49,7 @@ export async function GET(
     const { id } = params;
 
     if (!id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Missing product id", 400)
-      );
+      return createNextResponse(false, "Missing product id", 400);
     }
 
     const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
@@ -87,7 +85,7 @@ export async function GET(
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      createApiResponse<undefined>(
+      createNextResponse(
         false,
         `Error retrieving comments: ${errorMessage}`,
         500
@@ -108,7 +106,7 @@ export async function POST(request: NextRequest) {
 
     if (!session) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Not authenticated", 401)
+        createNextResponse(false, "Not authenticated", 401)
       );
     }
 
@@ -116,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     if (!content || !userId || !productId) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Missing required fields", 400)
+        createNextResponse(false, "Missing required fields", 400)
       );
     }
 
@@ -125,12 +123,10 @@ export async function POST(request: NextRequest) {
       rating !== undefined &&
       (typeof rating !== "number" || rating < 0 || rating > 5)
     ) {
-      return NextResponse.json(
-        createApiResponse<undefined>(
-          false,
-          "Invalid rating. Must be a number between 0 and 5",
-          400
-        )
+      return createNextResponse(
+        false,
+        "Invalid rating. Must be a number between 0 and 5",
+        400
       );
     }
 
@@ -140,14 +136,12 @@ export async function POST(request: NextRequest) {
     ]);
 
     if (!user) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "User not found", 404)
-      );
+      return createNextResponse(false, "User not found", 404);
     }
 
     if (!product) {
       return NextResponse.json(
-        createApiResponse<undefined>(false, "Product not found", 404)
+        createNextResponse(false, "Product not found", 404)
       );
     }
 
@@ -174,7 +168,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      createApiResponse<IComment>(
+      createNextResponse<IComment>(
         true,
         rating !== undefined && rating !== 0
           ? "Comment and rating added successfully"
@@ -188,11 +182,7 @@ export async function POST(request: NextRequest) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      createApiResponse<undefined>(
-        false,
-        `Error adding comment: ${errorMessage}`,
-        500
-      )
+      createNextResponse(false, `Error adding comment: ${errorMessage}`, 500)
     );
   }
 }

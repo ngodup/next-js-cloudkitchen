@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
 import bcrypt from "bcryptjs";
 import { sendVerificationEmail } from "@/helpers/sendVerificaitonEmail";
-import { ApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 
 async function findUserByEmail(email: string) {
   return await UserModel.findOne({ email });
@@ -21,14 +21,6 @@ function getVerifyCodeExpiry(): Date {
   return new Date(Date.now() + 3600000); // 1 hour expiry
 }
 
-function createApiResponse(
-  success: boolean,
-  message: string,
-  status: number
-): NextResponse<ApiResponse> {
-  return NextResponse.json<ApiResponse>({ success, message }, { status });
-}
-
 export async function POST(request: NextRequest) {
   await dbConnect();
 
@@ -40,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (existingUser) {
       if (existingUser.isVerified) {
-        return createApiResponse(
+        return createNextResponse(
           false,
           "User already exists with this email",
           400
@@ -70,16 +62,20 @@ export async function POST(request: NextRequest) {
     // Send verification email
     const emailResponse = await sendVerificationEmail(email, verifyCode);
     if (!emailResponse.success) {
-      return createApiResponse(false, "Failed to send verification email", 500);
+      return createNextResponse(
+        false,
+        "Failed to send verification email",
+        500
+      );
     }
 
-    return createApiResponse(
+    return createNextResponse(
       true,
       "User registered successfully. Verification email sent.",
       201
     );
   } catch (error) {
     console.error("Error processing request:", error);
-    return createApiResponse(false, "Internal server error", 500);
+    return createNextResponse(false, "Internal server error", 500);
   }
 }

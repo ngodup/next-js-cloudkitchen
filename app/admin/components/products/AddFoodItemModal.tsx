@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
@@ -16,41 +18,48 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { IFoodItem } from "@/types";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  productItemSchema,
+  ProductItemFormData,
+} from "@/schemas/productItemSchema";
+import { cuisines, repas, repasType } from "@/constants/data";
 
 interface AddFoodItemModalProps {
   onClose: () => void;
-  onAdd: (foodItem: Omit<IFoodItem, "_id">) => void;
+  onAdd: (foodItem: ProductItemFormData) => void;
 }
 
 const AddFoodItemModal: React.FC<AddFoodItemModalProps> = ({
   onClose,
   onAdd,
 }) => {
-  const [name, setName] = useState("");
-  const [imageName, setImageName] = useState("");
-  const [price, setPrice] = useState("");
-  const [cuisine, setCuisine] = useState("");
-  const [repas, setRepas] = useState("");
-  const [repasType, setRepasType] = useState("");
-  const [description, setDescription] = useState("");
-  const [active, setActive] = useState(false);
+  const form = useForm<ProductItemFormData>({
+    resolver: zodResolver(productItemSchema),
+    defaultValues: {
+      name: "",
+      imageName: "",
+      price: 0,
+      cuisine: "",
+      repas: "",
+      repasType: "",
+      description: "",
+      isActive: false,
+      rating: 0,
+      reviews: 0,
+    },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onAdd({
-      name,
-      imageName,
-      price: parseFloat(price),
-      cuisine,
-      repas,
-      repasType,
-      description,
-      active,
-      rating: 0, // Default rating for new items
-      reviews: 0, // Default reviews count for new items
-    });
+  const onSubmit = (data: ProductItemFormData) => {
+    onAdd(data);
   };
 
   return (
@@ -59,70 +68,177 @@ const AddFoodItemModal: React.FC<AddFoodItemModalProps> = ({
         <DialogHeader>
           <DialogTitle>Add New Food Item</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            placeholder="Food Item Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Image Name"
-            value={imageName}
-            onChange={(e) => setImageName(e.target.value)}
-            required
-          />
-          <Input
-            type="number"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            min="0"
-            step="0.01"
-          />
-          <Select value={cuisine} onValueChange={setCuisine} required>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Cuisine" />
-            </SelectTrigger>
-            <SelectContent>
-              {[
-                "Indienne",
-                "Française",
-                "Japonaise",
-                "Italienne",
-                "Tibétaine",
-                "Vietnamienne",
-              ].map((c) => (
-                <SelectItem key={c} value={c.toLowerCase()}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            placeholder="Repas"
-            value={repas}
-            onChange={(e) => setRepas(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Repas Type"
-            value={repasType}
-            onChange={(e) => setRepasType(e.target.value)}
-            required
-          />
-          <Textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <div className="flex items-center space-x-2">
-            <Switch id="active" checked={active} onCheckedChange={setActive} />
-            <Label htmlFor="active">Active</Label>
-          </div>
-          <Button type="submit">Add Food Item</Button>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Food Item Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imageName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cuisine"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cuisine</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Cuisine" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cuisines.map((c) => (
+                        <SelectItem key={c} value={c.toLowerCase()}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="repas"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repas</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select repas" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {repas.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="repasType"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Cuisine" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {repasType.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Active</FormLabel>
+                    <FormDescription>
+                      Set whether this food item is active or not
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit">Add Food Item</Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

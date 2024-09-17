@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
 import UserProfileModel from "@/model/UserProfile";
 import { userProfileSchema } from "@/schemas/userProfileShcema";
@@ -12,9 +12,7 @@ export async function GET(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session?.user?._id && !session?.user?.email) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not authenticated", 401)
-      );
+      return createNextResponse(false, "Not authenticated", 401);
     }
 
     let userProfile;
@@ -31,12 +29,10 @@ export async function GET(req: NextRequest) {
     }
 
     if (!userProfile) {
-      return NextResponse.json(
-        createApiResponse(
-          true,
-          "User profile not found, but can be created",
-          404
-        )
+      return createNextResponse(
+        true,
+        "User profile not found, but can be created",
+        404
       );
     }
 
@@ -50,9 +46,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     console.error("Error retrieving user profile:", error);
-    return NextResponse.json(
-      createApiResponse<undefined>(false, "Internal server error", 500)
-    );
+    return createNextResponse(false, "Internal server error", 500);
   }
 }
 export async function POST(req: NextRequest) {
@@ -61,9 +55,7 @@ export async function POST(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session?.user?._id || !session?.user?.email) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not authenticated", 401)
-      );
+      return createNextResponse(false, "Not authenticated", 401);
     }
 
     const body = await req.json();
@@ -71,12 +63,10 @@ export async function POST(req: NextRequest) {
     const validationResult = userProfileSchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        createApiResponse(
-          false,
-          `Invalid user profile data ${validationResult.error.issues}`,
-          400
-        )
+      return createNextResponse(
+        false,
+        `Invalid user profile data ${validationResult.error.issues}`,
+        400
       );
     }
 
@@ -84,12 +74,10 @@ export async function POST(req: NextRequest) {
       userId: session.user._id,
     });
     if (existingProfile) {
-      return NextResponse.json(
-        createApiResponse(
-          false,
-          "User profile already exists. Use PUT to update.",
-          409
-        )
+      return createNextResponse(
+        false,
+        "User profile already exists. Use PUT to update.",
+        409
       );
     }
 
@@ -114,9 +102,7 @@ export async function POST(req: NextRequest) {
     );
   } catch (error) {
     console.error("Error creating user profile:", error);
-    return NextResponse.json(
-      createApiResponse<undefined>(false, "Internal server error", 500)
-    );
+    return createNextResponse(false, "Internal server error", 500);
   }
 }
 
@@ -126,21 +112,17 @@ export async function PUT(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session?.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not authenticated", 401)
-      );
+      return createNextResponse(false, "Not authenticated", 401);
     }
 
     const body = await req.json();
     const validationResult = userProfileSchema.partial().safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        createApiResponse(
-          false,
-          `Invalid user profile data ${validationResult.error.issues}`,
-          400
-        )
+      return createNextResponse(
+        false,
+        `Invalid user profile data ${validationResult.error.issues}`,
+        400
       );
     }
 
@@ -167,8 +149,6 @@ export async function PUT(req: NextRequest) {
     );
   } catch (error) {
     console.error("Error updating user profile:", error);
-    return NextResponse.json(
-      createApiResponse<undefined>(false, "Internal server error", 500)
-    );
+    return createNextResponse(false, "Internal server error", 500);
   }
 }

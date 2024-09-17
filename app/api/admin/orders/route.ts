@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import OrderModel from "@/model/Order";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
@@ -12,9 +12,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
 
     if (!session || session.user.role !== "admin") {
-      return NextResponse.json(
-        createApiResponse(false, "Unauthorized access", 403)
-      );
+      return createNextResponse(false, "Unauthorized access", 403);
     }
 
     await dbConnect();
@@ -155,6 +153,6 @@ export async function GET(req: NextRequest) {
       error instanceof Error
         ? error.message
         : "Error occurred while fetching the orders from the database";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }

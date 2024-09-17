@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
 import OrderModel, { OrderStatus, IOrder, IOrderProduct } from "@/model/Order";
 import mongoose, { Types } from "mongoose";
@@ -12,9 +12,7 @@ export async function GET(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = new Types.ObjectId(session.user._id);
@@ -69,7 +67,7 @@ export async function GET(req: NextRequest) {
     console.error("Error retrieving user orders:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }
 
@@ -79,9 +77,7 @@ export async function POST(req: NextRequest) {
 
     const session = await getServerSession(authOptions);
     if (!session || !session.user?._id) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Not Authenticated", 401)
-      );
+      return createNextResponse(false, "Not Authenticated", 401);
     }
 
     const userId = session.user._id;
@@ -90,9 +86,7 @@ export async function POST(req: NextRequest) {
     const { products, totalItems, totalPrice, addressId } = await req.json();
 
     if (!isValidOrderData(products, totalItems, totalPrice, addressId)) {
-      return NextResponse.json(
-        createApiResponse<undefined>(false, "Invalid order data", 400)
-      );
+      return createNextResponse(false, "Invalid order data", 400);
     }
 
     const newOrder = await createOrder(
@@ -117,7 +111,7 @@ export async function POST(req: NextRequest) {
     console.error("Error creating order:", error);
     const message =
       error instanceof Error ? error.message : "An unknown error occurred";
-    return NextResponse.json(createApiResponse<undefined>(false, message, 500));
+    return createNextResponse(false, message, 500);
   }
 }
 

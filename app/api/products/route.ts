@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 
 export async function GET(req: NextRequest) {
   try {
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
     );
   } catch (error) {
     console.error("Error in /api/products:", error);
-    return createApiResponse(
+    return createNextResponse(
       false,
       "Unable to retrieve products at this time. Please check your database connection.",
       500

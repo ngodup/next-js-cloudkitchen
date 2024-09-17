@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
@@ -17,12 +19,25 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  productItemSchema,
+  ProductItemFormData,
+} from "@/schemas/productItemSchema";
 import { IFoodItem } from "@/types";
 
 interface EditFoodItemModalProps {
   foodItem: IFoodItem;
   onClose: () => void;
-  onEdit: (foodItem: IFoodItem) => void;
+  onEdit: (foodItem: ProductItemFormData) => void;
 }
 
 const cuisines = [
@@ -39,52 +54,24 @@ const EditFoodItemModal: React.FC<EditFoodItemModalProps> = ({
   onClose,
   onEdit,
 }) => {
-  const [name, setName] = useState(foodItem.name);
-  const [imageName, setImageName] = useState(foodItem.imageName);
-  const [price, setPrice] = useState(foodItem.price.toString());
-  const [cuisine, setCuisine] = useState(foodItem.cuisine);
-  const [repas, setRepas] = useState(foodItem.repas);
-  const [repasType, setRepasType] = useState(foodItem.repasType);
-  const [rating, setRating] = useState(foodItem.rating?.toString() || "");
-  const [reviews, setReviews] = useState(foodItem.reviews?.toString() || "");
-  const [active, setActive] = useState(foodItem.isActive);
-  const [description, setDescription] = useState(foodItem.description || "");
+  const form = useForm<ProductItemFormData>({
+    resolver: zodResolver(productItemSchema),
+    defaultValues: {
+      name: foodItem.name,
+      imageName: foodItem.imageName,
+      price: foodItem.price,
+      cuisine: foodItem.cuisine,
+      repas: foodItem.repas,
+      repasType: foodItem.repasType,
+      description: foodItem.description || "",
+      isActive: foodItem.isActive,
+      rating: foodItem.rating || 0,
+      reviews: foodItem.reviews || 0,
+    },
+  });
 
-  useEffect(() => {
-    setName(foodItem.name);
-    setImageName(foodItem.imageName);
-    setPrice(foodItem.price.toString());
-    setCuisine(foodItem.cuisine);
-    setRepas(foodItem.repas);
-    setRepasType(foodItem.repasType);
-    setRating(foodItem.rating?.toString() || "");
-    setReviews(foodItem.reviews?.toString() || "");
-    setActive(foodItem.isActive);
-    setDescription(foodItem.description || "");
-  }, [foodItem]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onEdit({
-      ...foodItem,
-      name,
-      imageName,
-      price: parseFloat(price),
-      cuisine,
-      repas,
-      repasType,
-      rating: rating ? parseFloat(rating) : undefined,
-      reviews: reviews ? parseInt(reviews) : undefined,
-      isActive: active,
-      description: description || undefined,
-    });
-  };
-
-  // Function to find the matching cuisine (case-insensitive)
-  const findMatchingCuisine = (value: string) => {
-    return (
-      cuisines.find((c) => c.toLowerCase() === value.toLowerCase()) || value
-    );
+  const onSubmit = (data: ProductItemFormData) => {
+    onEdit({ ...foodItem, ...data });
   };
 
   return (
@@ -93,83 +80,188 @@ const EditFoodItemModal: React.FC<EditFoodItemModalProps> = ({
         <DialogHeader>
           <DialogTitle>Edit Food Item</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            placeholder="Food Item Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Image Name"
-            value={imageName}
-            onChange={(e) => setImageName(e.target.value)}
-            required
-          />
-          <Input
-            type="number"
-            placeholder="Price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-            min="0"
-            step="0.01"
-          />
-          <Select
-            value={findMatchingCuisine(cuisine)}
-            onValueChange={setCuisine}
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Cuisine" />
-            </SelectTrigger>
-            <SelectContent>
-              {cuisines.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            placeholder="Repas"
-            value={repas}
-            onChange={(e) => setRepas(e.target.value)}
-            required
-          />
-          <Input
-            placeholder="Repas Type"
-            value={repasType}
-            onChange={(e) => setRepasType(e.target.value)}
-            required
-          />
-          <Input
-            type="number"
-            placeholder="Rating"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            min="0"
-            max="5"
-            step="0.1"
-          />
-          <Input
-            type="number"
-            placeholder="Reviews"
-            value={reviews}
-            onChange={(e) => setReviews(e.target.value)}
-            min="0"
-          />
-          <Textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-          <div className="flex items-center space-x-2">
-            <Switch id="active" checked={active} onCheckedChange={setActive} />
-            <Label htmlFor="active">Active</Label>
-          </div>
-          <Button type="submit">Update Food Item</Button>
-        </form>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Food Item Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="imageName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Image Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="cuisine"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cuisine</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Cuisine" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {cuisines.map((c) => (
+                        <SelectItem key={c} value={c.toLowerCase()}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="repas"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repas</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="repasType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Repas Type</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Active</FormLabel>
+                    <FormDescription>
+                      Set whether this food item is active or not
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="rating"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Rating</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="reviews"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Reviews</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit">Update Food Item</Button>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

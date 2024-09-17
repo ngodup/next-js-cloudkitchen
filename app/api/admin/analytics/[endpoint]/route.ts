@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import { createApiResponse } from "@/types/ApiResponse";
+import { createNextResponse } from "@/types/ApiResponse";
 import UserModel from "@/model/User";
 import ProductModel from "@/model/Product";
 import OrderModel from "@/model/Order";
@@ -31,7 +31,7 @@ export async function GET(
     }
   } catch (error) {
     console.error(error);
-    return createApiResponse(false, `An error occurred: ${error}`, 500);
+    return createNextResponse(false, `An error occurred: ${error}`, 500);
   }
 }
 

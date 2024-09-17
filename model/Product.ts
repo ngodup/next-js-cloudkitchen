@@ -21,8 +21,9 @@ const ProductSchema: Schema<Product> = new mongoose.Schema({
     type: String,
     required: [true, "Product image name is required"],
   },
-  rating: Number,
-  reviews: Number,
+  price: { type: Number, required: true },
+  rating: { type: Number, default: 0 },
+  reviews: { type: Number, default: 0 },
   repas: {
     type: String,
     required: true,

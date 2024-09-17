@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
-import { ApiResponse, createApiResponse } from "@/types/ApiResponse";
 import { z } from "zod";
 import { usernameValidation } from "@/schemas/signUpSchema";
+import { createNextResponse } from "@/types/ApiResponse";
 
 const UsernameQuerySchema = z.object({
   username: usernameValidation,
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
-      return createApiResponse<undefined>(
+      return createNextResponse(
         false,
         usernameErrors.length > 0
           ? usernameErrors.join(", ")
@@ -42,16 +42,16 @@ export async function GET(request: NextRequest) {
     });
 
     if (existingVerifiedUser) {
-      return createApiResponse<undefined>(
+      return createNextResponse(
         false,
         "Username is already taken, Please select another username",
         409
       );
     }
 
-    return createApiResponse<undefined>(true, "Username is available", 200);
+    return createNextResponse(true, "Username is available", 200);
   } catch (error) {
     console.error("Error checking username:", error);
-    return createApiResponse<undefined>(false, "Error checking username", 500);
+    return createNextResponse(false, "Error checking username", 500);
   }
 }

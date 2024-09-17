@@ -86,13 +86,19 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
 
   const handleAddFoodItem = async (newFoodItem: Omit<IFoodItem, "_id">) => {
     try {
-      await addFoodItem(newFoodItem);
-      toast({ title: "Success", description: "Food item added successfully" });
+      const response = await addFoodItem(newFoodItem);
+      toast({
+        title: "Success",
+        description: "Food item added successfully",
+        className: "bg-primary text-primary-foreground",
+      });
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
+      console.error("Error adding food item:", error);
       toast({
         title: "Error",
-        description: "Failed to add food item",
+        description:
+          error instanceof Error ? error.message : "Failed to add food item",
         variant: "destructive",
       });
     } finally {
