@@ -60,7 +60,7 @@ export interface IFoodItem {
   repas: string;
   repasType: string;
   cuisine: string;
-  active: boolean;
+  isActive: boolean;
   description?: string;
 }
 

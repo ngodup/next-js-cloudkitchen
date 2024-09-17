@@ -19,22 +19,9 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-// import AddFoodItemModal from "../../components/AddFoodItemModal";
-// import EditFoodItemModal from "../../components/EditFoodItemModal";
-
-export interface IFoodItem {
-  _id?: string;
-  imageName: string;
-  name: string;
-  rating?: number;
-  reviews?: number;
-  price: number;
-  repas: string;
-  repasType: string;
-  cuisine: string;
-  active: boolean;
-  description?: string;
-}
+import AddFoodItemModal from "../../components/AddFoodItemModal";
+import EditFoodItemModal from "../../components/EditFoodItemModal";
+import { IFoodItem } from "@/types";
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -283,7 +270,7 @@ const Page = () => {
                   <TableCell>{item.repasType}</TableCell>
                   <TableCell>{item.rating?.toFixed(1) || "N/A"}</TableCell>
                   <TableCell>{item.reviews || 0}</TableCell>
-                  <TableCell>{item.active ? "Active" : "Inactive"}</TableCell>
+                  <TableCell>{item.isActive ? "Active" : "Inactive"}</TableCell>
                   <TableCell>
                     <Button
                       variant="outline"
@@ -322,7 +309,7 @@ const Page = () => {
           </div>
         </CardContent>
       </Card>
-      {/* 
+
       {isAddModalOpen && (
         <AddFoodItemModal
           onClose={() => setIsAddModalOpen(false)}
@@ -336,7 +323,7 @@ const Page = () => {
           onClose={() => setEditingFoodItem(null)}
           onEdit={handleEditFoodItem}
         />
-      )} */}
+      )}
     </section>
   );
 };
