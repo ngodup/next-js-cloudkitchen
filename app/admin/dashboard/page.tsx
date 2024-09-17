@@ -3,16 +3,10 @@ import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { AnalyticsData, fetchAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import InfoCard from "../components/InfoCard";
 import Orders from "../components/Order";
+import { weeklyVisiterOrders } from "@/constants/data";
 
 const ChartComponent = dynamic(
   () => import("../components/Charts/ChartComponent"),
@@ -20,16 +14,6 @@ const ChartComponent = dynamic(
     ssr: false,
   }
 );
-
-const data = [
-  { name: "Mon", visits: 40, orders: 24 },
-  { name: "Tue", visits: 30, orders: 11 },
-  { name: "Wed", visits: 20, orders: 9 },
-  { name: "Thu", visits: 27, orders: 3 },
-  { name: "Fri", visits: 18, orders: 4 },
-  { name: "Sat", visits: 23, orders: 3 },
-  { name: "Sun", visits: 34, orders: 4 },
-];
 
 export default async function AdminDashboard() {
   let analyticsData: AnalyticsData;
@@ -51,6 +35,7 @@ export default async function AdminDashboard() {
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Admin Dashboard</h1>
 
+      {/* Analytics data on cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <InfoCard title="Total Users" content={analyticsData.totalUsers} />
         <InfoCard
@@ -68,14 +53,18 @@ export default async function AdminDashboard() {
           isCurrency
         />
       </div>
-      <Orders />
+
+      {/* Latest order */}
+      <div className="space-y-4">
+        <Orders />
+      </div>
 
       <Card>
         <CardHeader>
           <CardTitle>Weekly Recap</CardTitle>
         </CardHeader>
         <CardContent>
-          <ChartComponent data={data} />
+          <ChartComponent data={weeklyVisiterOrders} />
         </CardContent>
       </Card>
 

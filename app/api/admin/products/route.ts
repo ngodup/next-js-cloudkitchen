@@ -24,10 +24,15 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get("search") || "";
     const cuisine = searchParams.get("cuisine") || "";
 
+    console.log("Received cuisine parameter:", cuisine);
+
     const query: any = {};
 
     if (cuisine && cuisine.toLowerCase() !== "all cuisines") {
-      query.cuisine = cuisine.toLowerCase();
+      // Decode the URL-encoded cuisine parameter like "Française"
+      const decodedCuisine = decodeURIComponent(cuisine.toLowerCase());
+      query.cuisine = new RegExp(decodedCuisine, "i"); // Case-insensitive match
+      console.log("Filtered cuisine:", decodedCuisine);
     }
 
     if (search) {
@@ -51,6 +56,8 @@ export async function GET(req: NextRequest) {
 
     const products = result[0].data;
     const metadata = result[0].metadata[0];
+
+    console.log("Query result:", products.length, "products found");
 
     return NextResponse.json(
       {

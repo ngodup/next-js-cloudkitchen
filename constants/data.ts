@@ -17,7 +17,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "2",
@@ -29,7 +29,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "japonaise",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -42,7 +42,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "petit-déjeuner",
     cuisine: "indienne",
-    active: false,
+    isActive: false,
   },
   {
     _id: "4",
@@ -54,7 +54,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "5",
@@ -66,7 +66,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "petit-déjeuner",
     cuisine: "indienne",
-    active: false,
+    isActive: false,
   },
   {
     _id: "6",
@@ -78,7 +78,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "déjeune",
     cuisine: "indienne",
-    active: false,
+    isActive: false,
   },
 
   {
@@ -91,7 +91,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeune",
     cuisine: "italienne",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -104,7 +104,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "petit-déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -117,7 +117,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "indienne",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -130,7 +130,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "petit-déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "11",
@@ -142,7 +142,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "non-végétarien",
     cuisine: "italienne",
-    active: false,
+    isActive: false,
   },
   {
     _id: "12",
@@ -154,7 +154,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "13",
@@ -166,7 +166,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -179,7 +179,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dînerr",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "15",
@@ -191,7 +191,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "italienne",
-    active: true,
+    isActive: true,
   },
   {
     _id: "16",
@@ -203,7 +203,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "17",
@@ -215,7 +215,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "dîner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "18",
@@ -227,7 +227,7 @@ export const products: IFoodItem[] = [
     repas: "déjeuner",
     repasType: "non-végétarien",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "19",
@@ -239,7 +239,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
   {
     _id: "20",
@@ -251,7 +251,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "tibétaine",
-    active: true,
+    isActive: true,
   },
   {
     _id: "21",
@@ -263,7 +263,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "tibétaine",
-    active: true,
+    isActive: true,
   },
   {
     _id: "22",
@@ -275,7 +275,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "tibétaine",
-    active: true,
+    isActive: true,
   },
   {
     _id: "23",
@@ -287,7 +287,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "déjeuner",
     cuisine: "français",
-    active: true,
+    isActive: true,
   },
 
   {
@@ -300,7 +300,7 @@ export const products: IFoodItem[] = [
     repas: "végétarien",
     repasType: "dîner",
     cuisine: "vietnamienne",
-    active: true,
+    isActive: true,
   },
   {
     _id: "25",
@@ -312,7 +312,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "vietnamienne",
-    active: true,
+    isActive: true,
   },
   {
     _id: "26",
@@ -324,7 +324,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "dîner",
     cuisine: "japonaise",
-    active: true,
+    isActive: true,
   },
   {
     _id: "27",
@@ -336,7 +336,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "non-végétarien",
     cuisine: "vietnamienne",
-    active: true,
+    isActive: true,
   },
   {
     _id: "28",
@@ -348,7 +348,7 @@ export const products: IFoodItem[] = [
     repas: "non-végétarien",
     repasType: "déjeuner",
     cuisine: "japonaise",
-    active: true,
+    isActive: true,
   },
 ];
 
@@ -551,4 +551,14 @@ export const categories: ICuisineItem[] = [
   { id: "italienne", label: "Italienne" },
   { id: "tibétaine", label: "Tibétaine" },
   { id: "vietnamienne", label: "Vietnamienne" },
+];
+
+export const weeklyVisiterOrders = [
+  { name: "Mon", visits: 40, orders: 24 },
+  { name: "Tue", visits: 30, orders: 11 },
+  { name: "Wed", visits: 20, orders: 9 },
+  { name: "Thu", visits: 27, orders: 3 },
+  { name: "Fri", visits: 18, orders: 4 },
+  { name: "Sat", visits: 23, orders: 3 },
+  { name: "Sun", visits: 34, orders: 4 },
 ];
