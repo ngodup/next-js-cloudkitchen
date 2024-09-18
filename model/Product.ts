@@ -10,6 +10,7 @@ export interface Product extends Document {
   repasType: string;
   cuisine: string;
   isActive: boolean;
+  description?: string;
 }
 
 const ProductSchema: Schema<Product> = new mongoose.Schema({
@@ -40,6 +41,7 @@ const ProductSchema: Schema<Product> = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  description: { type: String },
 });
 
 const ProductModel =

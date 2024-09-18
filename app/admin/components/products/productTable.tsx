@@ -15,7 +15,7 @@ import { Card } from "@/components/ui/card";
 interface ProductTableProps {
   foodItems: IFoodItem[];
   onEdit: (item: IFoodItem) => void;
-  onDelete: (id: string) => void;
+  onDelete: (item: IFoodItem) => void;
 }
 
 const ProductTable = ({ foodItems, onEdit, onDelete }: ProductTableProps) => {
@@ -64,10 +64,7 @@ const ProductTable = ({ foodItems, onEdit, onDelete }: ProductTableProps) => {
                 >
                   Edit
                 </Button>
-                <Button
-                  variant="destructive"
-                  onClick={() => onDelete(item._id!)}
-                >
+                <Button variant="destructive" onClick={() => onDelete(item)}>
                   Delete
                 </Button>
               </TableCell>

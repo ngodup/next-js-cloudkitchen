@@ -33,21 +33,13 @@ import {
   ProductItemFormData,
 } from "@/schemas/productItemSchema";
 import { IFoodItem } from "@/types";
+import { cuisines, repas, repasType } from "@/constants/data";
 
 interface EditFoodItemModalProps {
   foodItem: IFoodItem;
   onClose: () => void;
   onEdit: (foodItem: ProductItemFormData) => void;
 }
-
-const cuisines = [
-  "Indienne",
-  "Français",
-  "Japonaise",
-  "Italienne",
-  "Tibétaine",
-  "Vietnamienne",
-];
 
 const EditFoodItemModal: React.FC<EditFoodItemModalProps> = ({
   foodItem,
@@ -164,9 +156,23 @@ const EditFoodItemModal: React.FC<EditFoodItemModalProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Repas</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select repas" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {repas.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -177,10 +183,23 @@ const EditFoodItemModal: React.FC<EditFoodItemModalProps> = ({
               name="repasType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Repas Type</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Cuisine" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {repasType.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

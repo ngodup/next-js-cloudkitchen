@@ -19,6 +19,7 @@ import Pagination from "../components/products/Pagination";
 
 import SearchBar from "../components/products/SearchBar";
 import ProductTable from "../components/products/ProductTable";
+import { DeleteConfirmationDialog } from "@/components/customUI/DeleteConfirmationDialog";
 
 interface ProductsClientProps {
   initialData: {
@@ -37,6 +38,13 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const [totalPages, setTotalPages] = useState(
     initialData.pagination.totalPages
   );
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
   const [activeCuisine, setActiveCuisine] = useState("All Cuisines");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -86,7 +94,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
 
   const handleAddFoodItem = async (newFoodItem: Omit<IFoodItem, "_id">) => {
     try {
-      const response = await addFoodItem(newFoodItem);
+      await addFoodItem(newFoodItem);
       toast({
         title: "Success",
         description: "Food item added successfully",
@@ -112,6 +120,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
       toast({
         title: "Success",
         description: "Food item updated successfully",
+        className: "bg-primary text-primary-foreground",
       });
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
@@ -125,13 +134,19 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
     }
   };
 
-  const handleDeleteFoodItem = async (foodItemId: string) => {
-    if (window.confirm("Are you sure you want to delete this food item?")) {
+  const handleDeleteFoodItem = useCallback((foodItem: IFoodItem) => {
+    setItemToDelete({ id: foodItem._id!, name: foodItem.name });
+    setDeleteDialogOpen(true);
+  }, []);
+
+  const confirmDelete = async () => {
+    if (itemToDelete) {
       try {
-        await deleteFoodItem(foodItemId);
+        await deleteFoodItem(itemToDelete.id);
         toast({
           title: "Success",
           description: "Food item deleted successfully",
+          className: "bg-primary text-primary-foreground",
         });
         handleFetchProducts(page, activeCuisine, searchTerm);
       } catch (error) {
@@ -140,6 +155,9 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
           description: "Failed to delete food item",
           variant: "destructive",
         });
+      } finally {
+        setDeleteDialogOpen(false);
+        setItemToDelete(null);
       }
     }
   };
@@ -185,6 +203,13 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
           onEdit={handleEditFoodItem}
         />
       )}
+
+      <DeleteConfirmationDialog
+        isOpen={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={confirmDelete}
+        itemName={itemToDelete?.name || ""}
+      />
     </section>
   );
 }
