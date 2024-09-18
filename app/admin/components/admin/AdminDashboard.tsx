@@ -8,9 +8,12 @@ import InfoCard from "./InfoCard";
 import Orders from "./Order";
 import { AnalyticsData } from "@/lib/admin/adminAnalyticsApi";
 
-const ChartComponent = dynamic(() => import("./Charts/ChartComponent"), {
-  ssr: false,
-});
+const ChartComponent = dynamic(
+  () => import("../../components/Charts/ChartComponent"),
+  {
+    ssr: false,
+  }
+);
 
 interface AdminDashboardProps {
   analyticsData: AnalyticsData | null;

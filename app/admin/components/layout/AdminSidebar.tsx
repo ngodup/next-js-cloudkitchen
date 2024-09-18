@@ -1,6 +1,5 @@
 "use client";
 
-// import { navItems } from "@/constants/data";
 import { adminNavItems } from "@/constants/data";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Link from "next/link";

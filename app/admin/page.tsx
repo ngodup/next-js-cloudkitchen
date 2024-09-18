@@ -1,5 +1,5 @@
-import AdminDashboardClient from "@/components/admin/AdminDashboardClient";
 import { fetchAdminAnalytics } from "@/lib/admin/adminAnalyticsApi";
+import AdminDashboardClient from "./components/admin/AdminDashboardClient";
 
 export default async function AdminPage() {
   let initialData = null;

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { IUserOrder } from "@/types";
 
 export const fetchOrders = async (
   page: number,
