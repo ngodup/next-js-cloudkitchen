@@ -84,6 +84,7 @@ export default function CheckoutPage() {
         toast({
           title: "Address Saved",
           description: "Your address has been successfully saved.",
+          className: "bg-primary text-primary-foreground",
         });
       } else {
         throw new Error(response.data.message || "Failed to save address");
@@ -122,6 +123,7 @@ export default function CheckoutPage() {
         toast({
           title: "Address Updated",
           description: "Your address has been successfully updated.",
+          className: "bg-primary text-primary-foreground",
         });
       } else {
         throw new Error(response.data.message || "Failed to update address");
@@ -187,6 +189,7 @@ export default function CheckoutPage() {
         toast({
           title: "Order Placed",
           description: "Your order has been successfully placed!",
+          className: "bg-primary text-primary-foreground",
         });
 
         dispatch(clearCart());

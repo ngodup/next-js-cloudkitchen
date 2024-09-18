@@ -74,6 +74,7 @@ export default function SignUpForm() {
       toast({
         title: "Success",
         description: response.data.message,
+        className: "bg-primary text-primary-foreground",
       });
 
       router.replace("/auth/sign-in");

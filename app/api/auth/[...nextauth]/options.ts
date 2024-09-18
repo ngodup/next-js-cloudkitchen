@@ -120,6 +120,11 @@ export const authOptions: NextAuthOptions = {
             { upsert: true, new: true }
           );
         }
+        // Add these lines to update the user object with _id, role, and username
+        user._id = existingUser._id;
+        user.role = existingUser.role;
+        user.username = existingUser.username;
+        console.log("Google user in sign-in callback:", user);
       }
       return true;
     },
