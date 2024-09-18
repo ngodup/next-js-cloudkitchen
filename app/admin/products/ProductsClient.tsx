@@ -19,7 +19,7 @@ import Pagination from "@/app/admin/components/products/Pagination";
 
 import SearchBar from "@/app/admin/components/products/SearchBar";
 import ProductTable from "@/app/admin/components/products/ProductTable";
-import { DeleteConfirmationDialog } from "@/components/customUI/DeleteConfirmationDialog";
+import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
 
 interface ProductsClientProps {
   initialData: {

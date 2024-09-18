@@ -4,7 +4,7 @@ import React from "react";
 import { Poppins } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AdminSidebar from "@/app/admin/components/layout/AdminSidebar";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 const poppins = Poppins({
   subsets: ["latin"],

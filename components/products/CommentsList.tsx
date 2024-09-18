@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, Mail, Star } from "lucide-react";
+import { MessageSquare, Mail } from "lucide-react";
 import Rating from "./rating";
 import { IComment } from "@/types";
 

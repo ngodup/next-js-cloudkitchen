@@ -16,8 +16,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import LoadingButton from "@/components/loading-button";
-import ErrorMessage from "@/components/error-message";
+import LoadingButton from "@/components/shared/LoadingButton";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 import { signUpSchema } from "@/schemas/signUpSchema";
 import { ApiResponse } from "@/lib/ApiResponse";
 import axios, { AxiosError } from "axios";

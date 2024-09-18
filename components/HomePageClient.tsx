@@ -2,13 +2,13 @@
 
 import React, { useEffect, useCallback } from "react";
 import { menuCategories } from "@/constants/data";
-import MenuCuisineItem from "./menu-cuisine";
-import ProductCard from "./product-card";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProductsContext } from "@/context/ProductsContext";
+import MenuCuisineItem from "@/components/home/MenuCuisine";
+import ProductCard from "@/components/home/ProductCard";
 
 export default function HomePageClient() {
   const {

@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signInSchema } from "@/schemas/signInSchema";
-import LoadingButton from "@/components/loading-button";
-import ErrorMessage from "@/components/error-message";
+import LoadingButton from "@/components/shared/LoadingButton";
+import ErrorMessage from "@/components/shared/ErrorMessage";
 
 export default function SignInForm() {
   const router = useRouter();

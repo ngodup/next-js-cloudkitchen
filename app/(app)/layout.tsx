@@ -6,7 +6,7 @@ import Header from "@/components/layout/header";
 import SideMenu from "@/components/layout/sidebar/side-menu";
 import Cart from "@/components/Cart";
 import { cn } from "@/lib/utils";
-import ErrorBoundary from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 
 const poppins = Poppins({
   subsets: ["latin"],

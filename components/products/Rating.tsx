@@ -13,13 +13,13 @@ interface RatingProps {
   className?: string;
 }
 
-const Rating: React.FC<RatingProps> = ({
+const Rating = ({
   maxRating = 5,
   value,
   onRatingChange,
   readOnly = false,
   className,
-}) => {
+}: RatingProps) => {
   return (
     <div className={cn("flex items-center", className)}>
       {[...Array(maxRating)].map((_, index) => (

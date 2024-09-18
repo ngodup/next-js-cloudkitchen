@@ -1,5 +1,4 @@
 import React from "react";
-import SearchInput from "@/app/(app)/components/search-input";
 import ThemeToggle from "../../app/providers/themeToggle/theme-toggle";
 import UserNav from "./user-nav";
 import { cn } from "@/lib/utils";
@@ -8,6 +7,7 @@ import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { useProductsContext } from "@/context/ProductsContext";
+import SearchInput from "../home/SearchInput";
 
 export default function Header() {
   const { setSearchTerm } = useProductsContext();

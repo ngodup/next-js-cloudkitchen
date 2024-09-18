@@ -4,8 +4,10 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import ProductQuantities from "../../components/product-quantities";
-import CommentForm from "../../components/comment-form";
+import CommentForm from "@/components/products/CommentForm";
+import CommentsList from "@/components/products/CommentsList";
+import Rating from "@/components/products/rating";
+import ProductQuantities from "@/components/products/ProductQuantities";
 import PageContainer from "@/components/layout/page-container";
 import { useEffect, useState, useCallback } from "react";
 import axios, { AxiosError } from "axios";
@@ -13,9 +15,7 @@ import { useSession } from "next-auth/react";
 import { IFoodItem } from "@/types";
 import { ApiResponse } from "@/lib/ApiResponse";
 import { useToast } from "@/components/ui/use-toast";
-import CommentsList from "../../components/CommentsList";
 import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";
-import Rating from "../../components/rating";
 
 type Props = {
   params: { id: string };
@@ -113,7 +113,8 @@ export default function ProductDetail({ params }: Props) {
                 <h1 className="text-3xl font-bold text-primary">
                   {product.name}
                 </h1>
-                <Rating value={product.rating} readOnly />
+                {product.rating && <Rating value={product.rating} readOnly />}
+
                 <p className="text-lg font-semibold text-primary">
                   €{product.price.toFixed(2)}
                 </p>

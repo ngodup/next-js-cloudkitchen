@@ -20,3 +20,4 @@ Provide actionable steps and explain the rationale behind each recommendation. I
 
 Check code 
 1. hooks/admin/useAdminAnalytics.ts file
+2. Component icons.tsx

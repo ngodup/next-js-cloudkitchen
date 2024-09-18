@@ -9,7 +9,7 @@ import { AlertCircle } from "lucide-react";
 import { IUserOrder } from "@/types";
 import { fetchOrders, updateOrderStatus } from "./ordersApi";
 
-import ErrorBoundary from "@/components/ErrorBoundary";
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import axios from "axios";
 import OrdersTable from "@/app/admin/components/orders/OrdersTable";
 import StatusTabs from "@/app/admin/components/orders/StatusTabs";
