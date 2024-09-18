@@ -11,10 +11,10 @@ import { fetchOrders, updateOrderStatus } from "./ordersApi";
 
 import ErrorBoundary from "@/components/ErrorBoundary";
 import axios from "axios";
-import OrdersTable from "../components/orders/OrdersTable";
-import StatusTabs from "../components/orders/StatusTabs";
-import Pagination from "../components/products/Pagination";
-import SearchBar from "../components/products/SearchBar";
+import OrdersTable from "@/components/admin/orders/OrdersTable";
+import StatusTabs from "@/components/admin/orders/StatusTabs";
+import Pagination from "@/components/admin/products/Pagination";
+import SearchBar from "@/components/admin/products/SearchBar";
 
 const Orders = () => {
   const { data: session, status } = useSession();

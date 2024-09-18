@@ -15,3 +15,8 @@ Optimizing use practices of recharts in nextjs
 TypeScript considerations
 Code examples for rechart we just had or any other if possible
 Provide actionable steps and explain the rationale behind each recommendation. Include common pitfalls to avoid and how to identify potential issues early in development."
+
+
+
+Check code 
+1. hooks/admin/useAdminAnalytics.ts file

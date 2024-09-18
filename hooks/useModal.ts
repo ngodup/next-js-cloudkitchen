@@ -13,3 +13,5 @@ export const useModalStore = create<ModalStore>((set) => ({
   modalClose: () => set({ isModalOpen: false }),
   modalToggle: () => set((state) => ({ isModalOpen: !state.isModalOpen })),
 }));
+
+//Not need in this project as using shadcn dailog modal

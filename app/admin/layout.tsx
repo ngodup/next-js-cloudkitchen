@@ -1,12 +1,6 @@
-import { Poppins } from "next/font/google";
-import { cn } from "@/lib/utils";
-import AdminSessionProvider from "./components/AdminSessionProvider";
-import AdminSidebar from "./components/layout/AdminSidebar";
+import AdminSessionProvider from "../providers/admin/AdminSessionProvider";
+import AdminClientLayout from "./AdminClientLayout";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
 export default function AdminLayout({
   children,
 }: {
@@ -14,14 +8,7 @@ export default function AdminLayout({
 }) {
   return (
     <AdminSessionProvider>
-      <div className={cn("flex", poppins.className)}>
-        <div className="hidden lg:block">
-          <AdminSidebar />
-        </div>
-        <div className="flex-1 overflow-hidden">
-          <main className="p-4">{children}</main>
-        </div>
-      </div>
+      <AdminClientLayout>{children}</AdminClientLayout>
     </AdminSessionProvider>
   );
 }

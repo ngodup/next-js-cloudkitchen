@@ -12,13 +12,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import AddFoodItemModal from "../components/products/AddFoodItemModal";
-import EditFoodItemModal from "../components/products/EditFoodItemModal";
-import CuisineFilter from "../components/products/CuisineFilter";
-import Pagination from "../components/products/Pagination";
+import AddFoodItemModal from "@/components/admin/products/AddFoodItemModal";
+import EditFoodItemModal from "@/components/admin/products/EditFoodItemModal";
+import CuisineFilter from "@/components/admin/products/CuisineFilter";
+import Pagination from "@/components/admin/products/Pagination";
 
-import SearchBar from "../components/products/SearchBar";
-import ProductTable from "../components/products/ProductTable";
+import SearchBar from "@/components/admin/products/SearchBar";
+import ProductTable from "@/components/admin/products/ProductTable";
 import { DeleteConfirmationDialog } from "@/components/customUI/DeleteConfirmationDialog";
 
 interface ProductsClientProps {
