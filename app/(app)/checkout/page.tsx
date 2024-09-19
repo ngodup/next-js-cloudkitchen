@@ -11,13 +11,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { IAddress } from "@/types";
 import { loadStripe } from "@stripe/stripe-js";
 import AddressStep from "@/components/checkout/AddressStep";
 import PaymentStep from "@/components/checkout/PaymentStep";
 import ConfirmationStep from "@/components/checkout/ConfirmationStep";
 import { useToastNotification } from "@/hooks/useToastNotification";
+import { checkoutService } from "@/services/checkoutService";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -57,15 +57,14 @@ export default function CheckoutPage() {
 
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get("/api/addresses");
-      if (response.data.success && response.data.addresses) {
-        setAddresses(response.data.addresses);
-        const defaultAddress = response.data.addresses.find(
-          (addr: IAddress) => addr.isDefault
-        );
-        if (defaultAddress) {
-          setSelectedAddress(defaultAddress);
-        }
+      const fetchedAddresses = await checkoutService.fetchAddresses();
+      setAddresses(fetchedAddresses);
+      debugger;
+      const defaultAddress = fetchedAddresses.find(
+        (addr: IAddress) => addr.isDefault
+      );
+      if (defaultAddress) {
+        setSelectedAddress(defaultAddress);
       }
     } catch (error) {
       errorToast("Error", "Failed to fetch addresses. Please try again.");
@@ -74,20 +73,15 @@ export default function CheckoutPage() {
 
   const handleAddressSubmit = async (data: AddressFormData) => {
     try {
-      const response = await axios.post("/api/addresses", data);
-      if (response.data.success && response.data.addresss) {
-        // Note the 'addresss' key
-        setAddresses([...addresses, response.data.addresss]);
-        setSelectedAddress(response.data.addresss);
-        setIsEditingAddress(false);
-        setStep(CheckoutStep.Payment);
-        successToast(
-          "Address Saved",
-          "Your address has been successfully saved."
-        );
-      } else {
-        throw new Error(response.data.message || "Failed to save address");
-      }
+      const newAddress = await checkoutService.addAddress(data);
+      setAddresses([...addresses, newAddress]);
+      setSelectedAddress(newAddress);
+      setIsEditingAddress(false);
+      setStep(CheckoutStep.Payment);
+      successToast(
+        "Address Saved",
+        "Your address has been successfully saved."
+      );
     } catch (error) {
       const errMsg =
         error instanceof Error
@@ -100,28 +94,21 @@ export default function CheckoutPage() {
   const handleAddressUpdate = async (updatedAddress: AddressFormData) => {
     if (!selectedAddress) return;
     try {
-      const response = await axios.put(`/api/addresses`, {
-        addressId: selectedAddress._id,
-        ...updatedAddress,
-      });
-      if (response.data.success && response.data.addresss) {
-        // Note the 'addresss' key
-        setAddresses(
-          addresses.map((addr) =>
-            addr._id === response.data.addresss._id
-              ? response.data.addresss
-              : addr
-          )
-        );
-        setSelectedAddress(response.data.addresss);
-        setIsEditingAddress(false);
-        successToast(
-          "Address Updated",
-          "Your address has been successfully updated."
-        );
-      } else {
-        throw new Error(response.data.message || "Failed to update address");
-      }
+      const updatedAddressData = await checkoutService.updateAddress(
+        selectedAddress._id,
+        updatedAddress
+      );
+      setAddresses(
+        addresses.map((addr) =>
+          addr._id === updatedAddressData._id ? updatedAddressData : addr
+        )
+      );
+      setSelectedAddress(updatedAddressData);
+      setIsEditingAddress(false);
+      successToast(
+        "Address Updated",
+        "Your address has been successfully updated."
+      );
     } catch (error) {
       const errMsg =
         error instanceof Error
@@ -154,23 +141,23 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await axios.post("/api/orders", {
+      const orderData = {
         products: cartItems,
         totalItems: cartItems.reduce((sum, item) => sum + item.quantity, 0),
         totalPrice,
         addressId: selectedAddress._id,
         paymentMethod,
-      });
-
-      if (response.data.success) {
+      };
+      const response = await checkoutService.createOrder(orderData);
+      if (response.success) {
         if (paymentMethod === "stripe") {
-          setClientSecret(response.data.clientSecret);
+          setClientSecret(response.clientSecret);
           setStep(CheckoutStep.Payment);
         } else {
           handlePaymentSuccess();
         }
       } else {
-        throw new Error(response.data.message || "Failed to create order");
+        throw new Error(response.message || "Failed to create order");
       }
     } catch (error) {
       const errMsg =

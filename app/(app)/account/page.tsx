@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { z } from "zod";
 import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,6 +14,7 @@ import { ProfileHeader } from "./ProfileHeader";
 import { AddressList } from "./AddressList";
 import { getUserProfile } from "@/lib/userProfileManager";
 import { useToastNotification } from "@/hooks/useToastNotification";
+import { userProfileService } from "@/services/userProfileService";
 
 const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -44,14 +44,21 @@ const Account = () => {
     }
   }, [status, session, mutateProfile]);
 
+  // const {
+  //   data: addresses,
+  //   error: addressesError,
+  //   mutate: mutateAddresses,
+  //   isLoading: isAddressesLoading,
+  // } = useSWR("/api/addresses", () =>
+  //   axios.get("/api/addresses").then((res) => res.data.addresses)
+  // );
+
   const {
     data: addresses,
     error: addressesError,
     mutate: mutateAddresses,
     isLoading: isAddressesLoading,
-  } = useSWR("/api/addresses", () =>
-    axios.get("/api/addresses").then((res) => res.data.addresses)
-  );
+  } = useSWR("addresses", userProfileService.getAddresses);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -72,8 +79,8 @@ const Account = () => {
     data: z.infer<typeof userProfileSchema>
   ) => {
     try {
-      const response = await axios.put("/api/user-profile", data);
-      await mutateProfile(response.data.userProfile);
+      const updatedProfile = await userProfileService.updateUserProfile(data);
+      await mutateProfile(updatedProfile);
       setIsEditing(false);
       successToast("User Profile", "updated successfully");
     } catch (error) {
