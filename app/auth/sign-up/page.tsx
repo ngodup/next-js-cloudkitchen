@@ -7,6 +7,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDebounceCallback } from "usehooks-ts";
+import { signUpSchema } from "@/schemas/signUpSchema";
+import { authService } from "@/services/authService";
+import { Loader2 } from "lucide-react";
+import { useToastNotification } from "@/hooks/useToastNotification";
 import {
   Form,
   FormField,
@@ -17,11 +21,6 @@ import {
 import { Input } from "@/components/ui/input";
 import LoadingButton from "@/components/shared/LoadingButton";
 import ErrorMessage from "@/components/shared/ErrorMessage";
-import { signUpSchema } from "@/schemas/signUpSchema";
-import { ApiResponse } from "@/lib/ApiResponse";
-import axios, { AxiosError } from "axios";
-import { Loader2 } from "lucide-react";
-import { useToastNotification } from "@/hooks/useToastNotification";
 
 export default function SignUpForm() {
   const [signUpError, setSignUpError] = useState<string>("");
@@ -48,14 +47,11 @@ export default function SignUpForm() {
       setIsCheckingUsername(true);
       setUsernameMessage(""); // Reset message
       try {
-        const response = await axios.get<ApiResponse>(
-          `/api/auth/check-username-unique?username=${username}`
-        );
-        setUsernameMessage(response.data.message);
+        const message = await authService.checkUsernameUnique(username);
+        setUsernameMessage(message);
       } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
         setUsernameMessage(
-          axiosError.response?.data.message ?? "Error checking username"
+          error instanceof Error ? error.message : "Error checking username"
         );
       } finally {
         setIsCheckingUsername(false);
@@ -69,15 +65,12 @@ export default function SignUpForm() {
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     try {
-      const response = await axios.post<ApiResponse>("/api/auth/sign-up", data);
-      successToast("Success", response.data.message);
+      const response = await authService.signUp(data);
+      successToast("Success", response.message);
       router.replace("/auth/sign-in");
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-
-      let errorMessage =
-        axiosError.response?.data.message ||
-        "There was a problem with your sign-up. Please try again.";
+      const errorMessage =
+        error instanceof Error ? error.message : "An unexpected error occurred";
       errorToast("Error", errorMessage);
       setSignUpError(errorMessage);
     }

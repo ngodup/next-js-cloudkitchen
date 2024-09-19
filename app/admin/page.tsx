@@ -1,4 +1,4 @@
-import { fetchAdminAnalytics } from "@/lib/admin/adminAnalyticsApi";
+import { fetchAdminAnalytics } from "@/services/admin/analyticService";
 import AdminDashboardClient from "./components/admin/AdminDashboardClient";
 
 export default async function AdminPage() {

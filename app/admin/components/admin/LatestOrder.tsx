@@ -25,7 +25,6 @@ const LatestOrders = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    debugger;
     if (status === "authenticated" && session.user.role === "admin") {
       fetchOrders();
     } else if (status === "authenticated" && session.user.role !== "admin") {

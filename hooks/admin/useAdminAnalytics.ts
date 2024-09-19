@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
   fetchAdminAnalytics,
   AnalyticsData,
-} from "@/lib/admin/adminAnalyticsApi";
+} from "@/services/admin/analyticService";
 
 export function useAdminAnalytics(initialData: AnalyticsData | null) {
   const [data, setData] = useState<AnalyticsData | null>(initialData);

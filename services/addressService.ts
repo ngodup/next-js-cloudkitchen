@@ -2,7 +2,7 @@ import axios from "axios";
 import { IAddress } from "@/types";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 
-export const checkoutService = {
+export const addressService = {
   fetchAddresses: async (): Promise<IAddress[]> => {
     try {
       const response = await axios.get("/api/addresses");
@@ -19,8 +19,8 @@ export const checkoutService = {
   addAddress: async (data: AddressFormData): Promise<IAddress> => {
     try {
       const response = await axios.post("/api/addresses", data);
-      if (response.data.success && response.data.addresss) {
-        return response.data.addresss;
+      if (response.data.success && response.data.address) {
+        return response.data.address;
       }
       throw new Error(response.data.message || "Failed to save address");
     } catch (error) {
@@ -28,7 +28,6 @@ export const checkoutService = {
       throw error;
     }
   },
-
   updateAddress: async (
     addressId: string,
     data: AddressFormData

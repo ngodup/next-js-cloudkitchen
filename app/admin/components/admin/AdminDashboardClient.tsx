@@ -5,8 +5,7 @@ import { useAdminAnalytics } from "@/hooks/admin/useAdminAnalytics";
 import AdminDashboard from "./AdminDashboard";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AnalyticsData } from "@/lib/admin/adminAnalyticsApi";
-
+import { AnalyticsData } from "@/services/admin/analyticService";
 export default function AdminDashboardClient({
   initialData,
 }: {

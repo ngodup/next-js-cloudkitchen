@@ -8,7 +8,7 @@ import {
 } from "@/store/cart/cart-slice";
 import { useSession } from "next-auth/react";
 import { orderService } from "@/services/orderService";
-import { checkoutService } from "@/services/checkoutService";
+import { addressService } from "@/services/addressService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
@@ -58,9 +58,8 @@ export default function CheckoutPage() {
 
   const fetchAddresses = async () => {
     try {
-      const fetchedAddresses = await checkoutService.fetchAddresses();
+      const fetchedAddresses = await addressService.fetchAddresses();
       setAddresses(fetchedAddresses);
-      debugger;
       const defaultAddress = fetchedAddresses.find(
         (addr: IAddress) => addr.isDefault
       );
@@ -74,7 +73,7 @@ export default function CheckoutPage() {
 
   const handleAddressSubmit = async (data: AddressFormData) => {
     try {
-      const newAddress = await checkoutService.addAddress(data);
+      const newAddress = await addressService.addAddress(data);
       setAddresses([...addresses, newAddress]);
       setSelectedAddress(newAddress);
       setIsEditingAddress(false);
@@ -95,7 +94,7 @@ export default function CheckoutPage() {
   const handleAddressUpdate = async (updatedAddress: AddressFormData) => {
     if (!selectedAddress) return;
     try {
-      const updatedAddressData = await checkoutService.updateAddress(
+      const updatedAddressData = await addressService.updateAddress(
         selectedAddress._id,
         updatedAddress
       );

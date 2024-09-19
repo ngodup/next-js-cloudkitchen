@@ -1,4 +1,3 @@
-// app/(app)/page.tsx
 import { headers } from "next/headers";
 import HomePageWrapper from "@/components/HomePageWrapper";
 async function fetchProducts(page = 1, limit = 12) {

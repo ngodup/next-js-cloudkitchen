@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { IExtendComment } from "@/types";
+import Rating from "./Rating";
+import { commentService } from "@/services/commentService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MessageSquare, Mail } from "lucide-react";
-import Rating from "./rating";
-import { IComment } from "@/types";
-
-interface IExtendComment extends IComment {
-  username: string;
-  email: string;
-}
 
 interface CommentsListProps {
   productId: string;
@@ -32,14 +27,12 @@ export default function CommentsList({
     setIsLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`/api/products/${productId}/comment`, {
-        params: { page: pageNum, limit: 5 },
-      });
-      const newComments = response.data.comments;
+      const { comments: newComments, hasMore: moreComments } =
+        await commentService.fetchComments(productId, pageNum, 5);
       setComments((prev) =>
         pageNum === 1 ? newComments : [...prev, ...newComments]
       );
-      setHasMore(newComments.length === 5);
+      setHasMore(moreComments);
       setPage(pageNum);
     } catch (err) {
       setError("Failed to fetch comments. Please try again later.");

@@ -1,4 +1,3 @@
-// utils/adminAnalyticsApi.ts
 import axios from "axios";
 
 export interface AnalyticsData {

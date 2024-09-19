@@ -73,6 +73,11 @@ export interface IComment {
   rating?: number;
 }
 
+export interface IExtendComment extends IComment {
+  username: string;
+  email: string;
+}
+
 export interface IOrderProduct {
   productId: string;
   quantity: number;

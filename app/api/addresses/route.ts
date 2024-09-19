@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        addresss: savedAddress,
+        address: savedAddress,
         message: "Address saved successfully",
       },
       {
@@ -99,7 +99,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        addresss: updatedAddress,
+        address: updatedAddress,
         message: "Address updated successfully",
       },
       {
