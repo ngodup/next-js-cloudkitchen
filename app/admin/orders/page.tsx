@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
-import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
@@ -15,6 +14,7 @@ import OrdersTable from "@/app/admin/components/orders/OrdersTable";
 import StatusTabs from "@/app/admin/components/orders/StatusTabs";
 import Pagination from "@/app/admin/components/products/Pagination";
 import SearchBar from "@/app/admin/components/products/SearchBar";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -25,7 +25,7 @@ const Orders = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [activeTab, setActiveTab] = useState("All Orders");
   const [searchTerm, setSearchTerm] = useState("");
-  const { toast } = useToast();
+  const { successToast, errorToast } = useToastNotification();
 
   const fetchOrdersData = useCallback(async () => {
     try {
@@ -76,24 +76,15 @@ const Orders = () => {
               order._id === orderId ? { ...order, status: newStatus } : order
             )
           );
-          toast({
-            title: "Status Updated",
-            description: `Order status updated to ${newStatus}`,
-            className: "bg-primary text-white",
-          });
+          successToast("Order status updated to", newStatus);
         } else {
           throw new Error(data.message || "Failed to update order status");
         }
       } catch (error) {
-        console.error("Error updating order status:", error);
-        toast({
-          title: "Error",
-          description: "Failed to update order status",
-          variant: "destructive",
-        });
+        errorToast("Error", "Failed to update order status");
       }
     },
-    [toast]
+    [] // Empty dependency array
   );
 
   if (loading) {

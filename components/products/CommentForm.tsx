@@ -12,8 +12,8 @@ import {
 import { useForm } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 interface CommentFormProps {
   existingComment?: string;
@@ -32,7 +32,7 @@ export default function CommentForm({
   isUserLoggedIn,
   className,
 }: CommentFormProps) {
-  const { toast } = useToast();
+  const { errorToast } = useToastNotification();
   const form = useForm({
     defaultValues: { comment: existingComment },
   });
@@ -40,10 +40,7 @@ export default function CommentForm({
   // Form submission handler
   const handleFormSubmit = (data: { comment: string }) => {
     if (!isUserLoggedIn) {
-      toast({
-        variant: "destructive",
-        description: "Please login to add a comment",
-      });
+      errorToast("Error", "Please login to add a comment");
       return;
     }
     onSubmit(data);

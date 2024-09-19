@@ -14,8 +14,8 @@ import axios, { AxiosError } from "axios";
 import { useSession } from "next-auth/react";
 import { IFoodItem } from "@/types";
 import { ApiResponse } from "@/lib/ApiResponse";
-import { useToast } from "@/components/ui/use-toast";
 import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 type Props = {
   params: { id: string };
@@ -28,7 +28,7 @@ export default function ProductDetail({ params }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [refreshComments, setRefreshComments] = useState(0);
   const { data: session } = useSession();
-  const { toast } = useToast();
+  const { successToast, errorToast } = useToastNotification();
 
   const fetchProductDetails = useCallback(async () => {
     setLoading(true);
@@ -68,10 +68,7 @@ export default function ProductDetail({ params }: Props) {
           productId: params.id,
         });
 
-        toast({
-          description: `Review added successfully to ${product?.name}`,
-          className: "bg-primary text-primary-foreground",
-        });
+        successToast("Review added successfully to", product?.name!);
 
         setUserRating(0);
         setRefreshComments((prev) => prev + 1);
@@ -81,11 +78,7 @@ export default function ProductDetail({ params }: Props) {
           axiosError.response?.data.message ||
           "Review submission failed. Please try again.";
 
-        toast({
-          title: "Error",
-          description: errorMessage,
-          variant: "destructive",
-        });
+        errorToast("Error", errorMessage);
       }
     }
   };

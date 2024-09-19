@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from "react";
 import { IFoodItem } from "@/types";
-import { useToast } from "@/components/ui/use-toast";
 import {
   fetchProducts,
   addFoodItem,
@@ -20,6 +19,7 @@ import Pagination from "@/app/admin/components/products/Pagination";
 import SearchBar from "@/app/admin/components/products/SearchBar";
 import ProductTable from "@/app/admin/components/products/ProductTable";
 import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 interface ProductsClientProps {
   initialData: {
@@ -51,7 +51,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const [editingFoodItem, setEditingFoodItem] = useState<IFoodItem | null>(
     null
   );
-  const { toast } = useToast();
+  const { successToast, errorToast } = useToastNotification();
 
   const handleFetchProducts = useCallback(
     async (newPage: number, newCuisine: string, newSearch: string) => {
@@ -60,14 +60,10 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
         setProducts(data.products);
         setTotalPages(data.pagination.totalPages);
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch products",
-          variant: "destructive",
-        });
+        errorToast("Error", "Failed to fetch products");
       }
     },
-    [toast]
+    []
   );
 
   const handlePageChange = useCallback(
@@ -95,20 +91,12 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const handleAddFoodItem = async (newFoodItem: Omit<IFoodItem, "_id">) => {
     try {
       await addFoodItem(newFoodItem);
-      toast({
-        title: "Success",
-        description: "Food item added successfully",
-        className: "bg-primary text-primary-foreground",
-      });
+      successToast("Success", "Food item added successfully");
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
-      console.error("Error adding food item:", error);
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to add food item",
-        variant: "destructive",
-      });
+      const errMsg =
+        error instanceof Error ? error.message : "Failed to add food item";
+      errorToast("Error", errMsg);
     } finally {
       setIsAddModalOpen(false);
     }
@@ -117,18 +105,10 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const handleEditFoodItem = async (updatedFoodItem: IFoodItem) => {
     try {
       await updateFoodItem(updatedFoodItem);
-      toast({
-        title: "Success",
-        description: "Food item updated successfully",
-        className: "bg-primary text-primary-foreground",
-      });
+      successToast("Success", "Food item updated successfully");
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update food item",
-        variant: "destructive",
-      });
+      errorToast("Error", "Failed to update food item");
     } finally {
       setEditingFoodItem(null);
     }
@@ -143,18 +123,10 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
     if (itemToDelete) {
       try {
         await deleteFoodItem(itemToDelete.id);
-        toast({
-          title: "Success",
-          description: "Food item deleted successfully",
-          className: "bg-primary text-primary-foreground",
-        });
+        successToast("Success", "Food item deleted successfully");
         handleFetchProducts(page, activeCuisine, searchTerm);
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to delete food item",
-          variant: "destructive",
-        });
+        errorToast("Error", "Failed to delete food item");
       } finally {
         setDeleteDialogOpen(false);
         setItemToDelete(null);

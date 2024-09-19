@@ -9,18 +9,18 @@ import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
 import { PersonalInfo } from "./PersonalInfo";
 import { userProfileSchema } from "@/schemas/userProfileShcema";
 import { ProfileHeader } from "./ProfileHeader";
 import { AddressList } from "./AddressList";
 import { getUserProfile } from "@/lib/userProfileManager";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 const Account = () => {
   const [isEditing, setIsEditing] = useState(false);
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { toast } = useToast();
+  const { successToast, errorToast } = useToastNotification();
 
   const {
     data: userProfile,
@@ -34,11 +34,7 @@ const Account = () => {
 
     onError: (error) => {
       console.error("SWR Error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch user profile. Please try again.",
-        variant: "destructive",
-      });
+      errorToast("Error", "Failed to fetch user profile. Please try again.");
     },
   });
 
@@ -65,20 +61,12 @@ const Account = () => {
 
   useEffect(() => {
     if (profileError) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch user profile",
-        variant: "destructive",
-      });
+      errorToast("Error", "Failed to fetch user profile");
     }
     if (addressesError) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch addresses",
-        variant: "destructive",
-      });
+      errorToast("Error", "Failed to fetch addresses");
     }
-  }, [profileError, addressesError, toast]);
+  }, [profileError, addressesError, errorToast]);
 
   const handleProfileSubmit = async (
     data: z.infer<typeof userProfileSchema>
@@ -87,18 +75,10 @@ const Account = () => {
       const response = await axios.put("/api/user-profile", data);
       await mutateProfile(response.data.userProfile);
       setIsEditing(false);
-      toast({
-        title: "Success",
-        description: "Profile updated successfully",
-        className: "bg-primary text-primary-foreground",
-      });
+      successToast("User Profile", "updated successfully");
     } catch (error) {
       console.error("Error saving profile:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save profile",
-        variant: "destructive",
-      });
+      errorToast("Error", "Failed to save profile");
     }
   };
 

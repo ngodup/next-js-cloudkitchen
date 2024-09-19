@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useDebounceCallback } from "usehooks-ts";
-import { useToast } from "@/components/ui/use-toast";
 import {
   Form,
   FormField,
@@ -22,15 +21,16 @@ import { signUpSchema } from "@/schemas/signUpSchema";
 import { ApiResponse } from "@/lib/ApiResponse";
 import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 export default function SignUpForm() {
   const [signUpError, setSignUpError] = useState<string>("");
   const [username, setUsername] = useState("");
   const [usernameMessage, setUsernameMessage] = useState("");
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const { successToast, errorToast } = useToastNotification();
 
   const router = useRouter();
-  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -70,13 +70,7 @@ export default function SignUpForm() {
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     try {
       const response = await axios.post<ApiResponse>("/api/auth/sign-up", data);
-
-      toast({
-        title: "Success",
-        description: response.data.message,
-        className: "bg-primary text-primary-foreground",
-      });
-
+      successToast("Success", response.data.message);
       router.replace("/auth/sign-in");
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -84,7 +78,7 @@ export default function SignUpForm() {
       let errorMessage =
         axiosError.response?.data.message ||
         "There was a problem with your sign-up. Please try again.";
-
+      errorToast("Error", errorMessage);
       setSignUpError(errorMessage);
     }
   };

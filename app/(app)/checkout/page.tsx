@@ -11,13 +11,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { IAddress } from "@/types";
 import { loadStripe } from "@stripe/stripe-js";
 import AddressStep from "@/components/checkout/AddressStep";
 import PaymentStep from "@/components/checkout/PaymentStep";
 import ConfirmationStep from "@/components/checkout/ConfirmationStep";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -37,11 +37,12 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState("default");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
+  const { successToast, errorToast } = useToastNotification();
+
   const cartItems = useAppSelector(selectCartProducts);
   const totalPrice = useAppSelector(selectCartTotalPrice);
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { toast } = useToast();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -67,12 +68,7 @@ export default function CheckoutPage() {
         }
       }
     } catch (error) {
-      console.error("Error fetching addresses:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to fetch addresses. Please try again.",
-      });
+      errorToast("Error", "Failed to fetch addresses. Please try again.");
     }
   };
 
@@ -85,24 +81,19 @@ export default function CheckoutPage() {
         setSelectedAddress(response.data.addresss);
         setIsEditingAddress(false);
         setStep(CheckoutStep.Payment);
-        toast({
-          title: "Address Saved",
-          description: "Your address has been successfully saved.",
-          className: "bg-primary text-primary-foreground",
-        });
+        successToast(
+          "Address Saved",
+          "Your address has been successfully saved."
+        );
       } else {
         throw new Error(response.data.message || "Failed to save address");
       }
     } catch (error) {
-      console.error("Error saving address:", error);
-      toast({
-        variant: "destructive",
-        title: "Address Save Failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "There was an error saving your address. Please try again.",
-      });
+      const errMsg =
+        error instanceof Error
+          ? error.message
+          : "There was an error saving your address. Please try again.";
+      errorToast("Address Save Failed", errMsg);
     }
   };
 
@@ -124,24 +115,19 @@ export default function CheckoutPage() {
         );
         setSelectedAddress(response.data.addresss);
         setIsEditingAddress(false);
-        toast({
-          title: "Address Updated",
-          description: "Your address has been successfully updated.",
-          className: "bg-primary text-primary-foreground",
-        });
+        successToast(
+          "Address Updated",
+          "Your address has been successfully updated."
+        );
       } else {
         throw new Error(response.data.message || "Failed to update address");
       }
     } catch (error) {
-      console.error("Error updating address:", error);
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to update address. Please try again.",
-      });
+      const errMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update address. Please try again.";
+      errorToast("Update Failed", errMsg);
     }
   };
 
@@ -151,22 +137,19 @@ export default function CheckoutPage() {
 
   const handlePlaceOrder = async () => {
     if (!session) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Required",
-        description: "Please log in to complete the checkout.",
-      });
+      errorToast(
+        "Authentication Required",
+        "Please log in to complete the checkout."
+      );
       router.push("/auth/sign-in?redirect=/checkout");
       return;
     }
 
     if (!selectedAddress) {
-      toast({
-        variant: "destructive",
-        title: "Address Required",
-        description:
-          "Please provide a delivery address before placing the order.",
-      });
+      errorToast(
+        "Address Required",
+        "Please provide a delivery address before placing the order."
+      );
       return;
     }
 
@@ -190,26 +173,21 @@ export default function CheckoutPage() {
         throw new Error(response.data.message || "Failed to create order");
       }
     } catch (error) {
-      console.error("Error creating order:", error);
-      toast({
-        variant: "destructive",
-        title: "Order Failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "There was an error creating your order. Please try again.",
-      });
+      const errMsg =
+        error instanceof Error
+          ? error.message
+          : "There was an error creating your order. Please try again.";
+      errorToast("Order Failed", errMsg);
     }
   };
 
   const handlePaymentSuccess = () => {
     dispatch(clearCart());
     router.push(`/order-confirmation`);
-    toast({
-      title: "Order Placed Successfully",
-      description: "Your order has been placed successfully!",
-      className: "bg-primary text-primary-foreground",
-    });
+    successToast(
+      "Order Placed Successfully",
+      "Your order has been placed successfully!"
+    );
   };
 
   if (status === "loading") {
