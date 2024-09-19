@@ -90,6 +90,7 @@ const Account = () => {
       toast({
         title: "Success",
         description: "Profile updated successfully",
+        className: "bg-primary text-primary-foreground",
       });
     } catch (error) {
       console.error("Error saving profile:", error);

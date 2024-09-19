@@ -15,5 +15,7 @@ export const userProfileSchema = z.object({
     .optional(),
   gender: z.string().optional(),
   bio: z.string().max(500, "Bio must be 500 characters or less").optional(),
-  avatarUrl: z.string().url("Invalid URL for avatar").optional(),
+  avatarUrl: z
+    .union([z.literal(""), z.string().url("Invalid URL for avatar")])
+    .optional(),
 });
