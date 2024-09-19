@@ -9,6 +9,13 @@ export enum OrderStatus {
   Cancelled = "cancelled",
 }
 
+export enum PaymentStatus {
+  Pending = "pending",
+  Paid = "paid",
+  Failed = "failed",
+  Refunded = "refunded",
+}
+
 export interface IOrderProduct {
   productId: mongoose.Types.ObjectId;
   quantity: number;
@@ -21,6 +28,9 @@ export interface IOrder extends Document {
   totalItems: number;
   totalPrice: number;
   status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: string;
+  paymentIntentId?: string;
   addressId: string;
   createdAt: Date;
   updatedAt: Date;
@@ -42,6 +52,13 @@ const OrderSchema: Schema = new Schema({
     enum: Object.values(OrderStatus),
     default: OrderStatus.Pending,
   },
+  paymentStatus: {
+    type: String,
+    enum: Object.values(PaymentStatus),
+    default: PaymentStatus.Pending,
+  },
+  paymentMethod: { type: String, required: true },
+  paymentIntentId: { type: String },
   addressId: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

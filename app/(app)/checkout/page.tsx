@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store";
 import {
@@ -9,16 +8,20 @@ import {
 } from "@/store/cart/cart-slice";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import AddressForm, {
-  AddressFormData,
-} from "@/components/checkout/AddressForm";
-import PaymentForm from "@/components/checkout/PaymentForm";
+import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { IAddress } from "@/types";
+import { loadStripe } from "@stripe/stripe-js";
+import AddressStep from "@/components/checkout/AddressStep";
+import PaymentStep from "@/components/checkout/PaymentStep";
+import ConfirmationStep from "@/components/checkout/ConfirmationStep";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 enum CheckoutStep {
   Address = 1,
@@ -31,7 +34,8 @@ export default function CheckoutPage() {
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<IAddress | null>(null);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
-  const [paymentData, setPaymentData] = useState<any>(null);
+  const [paymentMethod, setPaymentMethod] = useState("default");
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   const cartItems = useAppSelector(selectCartProducts);
   const totalPrice = useAppSelector(selectCartTotalPrice);
@@ -145,11 +149,6 @@ export default function CheckoutPage() {
     setSelectedAddress(address);
   };
 
-  const handlePaymentSubmit = (data: any) => {
-    setPaymentData(data);
-    setStep(CheckoutStep.Confirmation);
-  };
-
   const handlePlaceOrder = async () => {
     if (!session) {
       toast({
@@ -177,38 +176,40 @@ export default function CheckoutPage() {
         totalItems: cartItems.reduce((sum, item) => sum + item.quantity, 0),
         totalPrice,
         addressId: selectedAddress._id,
-        paymentData,
+        paymentMethod,
       });
 
-      if (
-        response.data.success &&
-        response.data.order &&
-        response.data.order._id
-      ) {
-        toast({
-          title: "Order Placed",
-          description: "Your order has been successfully placed!",
-          className: "bg-primary text-primary-foreground",
-        });
-
-        dispatch(clearCart());
-        router.push(`/order-confirmation/${response.data.order._id}`);
+      if (response.data.success) {
+        if (paymentMethod === "stripe") {
+          setClientSecret(response.data.clientSecret);
+          setStep(CheckoutStep.Payment);
+        } else {
+          handlePaymentSuccess();
+        }
       } else {
-        throw new Error(
-          response.data.message || "Failed to place order: No order ID received"
-        );
+        throw new Error(response.data.message || "Failed to create order");
       }
     } catch (error) {
-      console.error("Error placing order:", error);
+      console.error("Error creating order:", error);
       toast({
         variant: "destructive",
         title: "Order Failed",
         description:
           error instanceof Error
             ? error.message
-            : "There was an error placing your order. Please try again.",
+            : "There was an error creating your order. Please try again.",
       });
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    dispatch(clearCart());
+    router.push(`/order-confirmation`);
+    toast({
+      title: "Order Placed Successfully",
+      description: "Your order has been placed successfully!",
+      className: "bg-primary text-primary-foreground",
+    });
   };
 
   if (status === "loading") {
@@ -225,121 +226,33 @@ export default function CheckoutPage() {
             </CardHeader>
             <CardContent>
               {step === CheckoutStep.Address && (
-                <>
-                  <h2 className="text-xl font-semibold mb-4">
-                    Select or Add Address
-                  </h2>
-                  {addresses.map((address) => (
-                    <div
-                      key={address._id}
-                      className={`p-4 border rounded mb-2 ${
-                        selectedAddress?._id === address._id
-                          ? "bg-blue-100 border-blue-300"
-                          : "border-gray-200"
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-medium">{address.street}</p>
-                          <p className="text-sm text-gray-600">{`${address.city}, ${address.state} ${address.zip}`}</p>
-                          <p className="text-sm text-gray-600">
-                            {address.country}
-                          </p>
-                        </div>
-                        <div className="space-x-2">
-                          <Button
-                            variant={
-                              selectedAddress?._id === address._id
-                                ? "default"
-                                : "outline"
-                            }
-                            size="sm"
-                            onClick={() => handleAddressSelect(address)}
-                          >
-                            {selectedAddress?._id === address._id
-                              ? "Selected"
-                              : "Select"}
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedAddress(address);
-                              setIsEditingAddress(true);
-                            }}
-                          >
-                            Edit
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {isEditingAddress ? (
-                    <AddressForm
-                      initialData={selectedAddress || undefined}
-                      onSubmit={
-                        selectedAddress
-                          ? handleAddressUpdate
-                          : handleAddressSubmit
-                      }
-                      onCancel={() => setIsEditingAddress(false)}
-                    />
-                  ) : (
-                    <div className="mt-4 space-x-4">
-                      <Button onClick={() => setIsEditingAddress(true)}>
-                        {addresses.length > 0
-                          ? "Add New Address"
-                          : "Add Address"}
-                      </Button>
-                      {selectedAddress && (
-                        <Button onClick={() => setStep(CheckoutStep.Payment)}>
-                          Continue to Payment
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </>
+                <AddressStep
+                  addresses={addresses}
+                  selectedAddress={selectedAddress}
+                  isEditingAddress={isEditingAddress}
+                  onAddressSelect={setSelectedAddress}
+                  onEditAddress={() => setIsEditingAddress(true)}
+                  onAddressSubmit={handleAddressSubmit}
+                  onAddressUpdate={handleAddressUpdate}
+                  onCancelEdit={() => setIsEditingAddress(false)}
+                  onContinue={() => setStep(CheckoutStep.Payment)}
+                />
               )}
               {step === CheckoutStep.Payment && (
-                <PaymentForm
-                  onNext={handlePaymentSubmit}
-                  onPrev={() => setStep(CheckoutStep.Address)}
+                <PaymentStep
+                  paymentMethod={paymentMethod}
+                  setPaymentMethod={setPaymentMethod}
+                  clientSecret={clientSecret}
+                  onPlaceOrder={handlePlaceOrder}
+                  onPaymentSuccess={handlePaymentSuccess}
                 />
               )}
               {step === CheckoutStep.Confirmation && (
-                <>
-                  <h2 className="text-2xl font-bold mb-4">
-                    Order Confirmation
-                  </h2>
-                  <p className="mb-4">
-                    Please review your order details before placing the order.
-                  </p>
-                  <div className="mb-6">
-                    <h3 className="text-xl font-semibold mb-2">
-                      Delivery Address
-                    </h3>
-                    {selectedAddress && (
-                      <div className="p-4 border rounded border-gray-200">
-                        <p className="font-medium">{selectedAddress.street}</p>
-                        <p className="text-sm text-gray-600">{`${selectedAddress.city}, ${selectedAddress.state} ${selectedAddress.zip}`}</p>
-                        <p className="text-sm text-gray-600">
-                          {selectedAddress.country}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex space-x-4">
-                    <Button onClick={handlePlaceOrder} className="flex-grow">
-                      Place Order
-                    </Button>
-                    <Button
-                      onClick={() => setStep(CheckoutStep.Payment)}
-                      variant="outline"
-                    >
-                      Back to Payment
-                    </Button>
-                  </div>
-                </>
+                <ConfirmationStep
+                  selectedAddress={selectedAddress}
+                  onPlaceOrder={handlePlaceOrder}
+                  onBack={() => setStep(CheckoutStep.Payment)}
+                />
               )}
             </CardContent>
           </Card>

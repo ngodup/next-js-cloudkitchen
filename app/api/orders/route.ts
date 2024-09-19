@@ -3,9 +3,14 @@ import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
 import { createNextResponse } from "@/lib/ApiResponse";
 import { authOptions } from "../auth/[...nextauth]/options";
-import OrderModel, { OrderStatus, IOrder, IOrderProduct } from "@/model/Order";
+import OrderModel, {
+  OrderStatus,
+  IOrder,
+  IOrderProduct,
+  PaymentStatus,
+} from "@/model/Order";
 import mongoose, { Types } from "mongoose";
-
+import { createPaymentIntent } from "@/lib/stripe";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
@@ -82,10 +87,34 @@ export async function POST(req: NextRequest) {
 
     const userId = session.user._id;
 
-    const { products, totalItems, totalPrice, addressId } = await req.json();
+    const { products, totalItems, totalPrice, addressId, paymentMethod } =
+      await req.json();
 
-    if (!isValidOrderData(products, totalItems, totalPrice, addressId)) {
+    if (
+      !isValidOrderData(
+        products,
+        totalItems,
+        totalPrice,
+        addressId,
+        paymentMethod
+      )
+    ) {
       return createNextResponse(false, "Invalid order data", 400);
+    }
+
+    let paymentIntentId: string | undefined;
+    let clientSecret: string | undefined;
+
+    if (paymentMethod === "stripe") {
+      const paymentIntent = await createPaymentIntent(
+        Math.round(totalPrice * 100),
+        {
+          userId: userId.toString(),
+          addressId,
+        }
+      );
+      paymentIntentId = paymentIntent.id;
+      clientSecret = paymentIntent.client_secret || undefined;
     }
 
     const newOrder = await createOrder(
@@ -93,7 +122,9 @@ export async function POST(req: NextRequest) {
       products,
       totalItems,
       totalPrice,
-      addressId
+      addressId,
+      paymentMethod,
+      paymentIntentId
     );
 
     return NextResponse.json(
@@ -116,18 +147,21 @@ function isValidOrderData(
   products: IOrderProduct[],
   totalItems: number,
   totalPrice: number,
-  addressId: string
+  addressId: string,
+  paymentMethod: string
 ): boolean {
   return (
     Array.isArray(products) &&
-    products.length > 0 &&
-    products.every(isValidProduct) &&
-    typeof totalItems === "number" &&
-    typeof totalPrice === "number" &&
-    totalItems > 0 &&
-    totalPrice > 0 &&
-    typeof addressId === "string" &&
-    addressId.length > 0
+      products.length > 0 &&
+      products.every(isValidProduct) &&
+      typeof totalItems === "number" &&
+      typeof totalPrice === "number" &&
+      totalItems > 0 &&
+      totalPrice > 0 &&
+      typeof addressId === "string" &&
+      addressId.length > 0,
+    typeof paymentMethod === "string" &&
+      ["stripe", "default"].includes(paymentMethod)
   );
 }
 
@@ -146,7 +180,9 @@ async function createOrder(
   products: IOrderProduct[],
   totalItems: number,
   totalPrice: number,
-  addressId: string
+  addressId: string,
+  paymentMethod: string,
+  paymentIntentId?: string
 ): Promise<IOrder> {
   const newOrder = new OrderModel({
     userId,
@@ -158,7 +194,11 @@ async function createOrder(
     totalItems,
     totalPrice,
     status: OrderStatus.Pending,
+    paymentStatus:
+      paymentMethod === "stripe" ? PaymentStatus.Pending : PaymentStatus.Paid,
     addressId,
+    paymentMethod,
+    ...(paymentIntentId && { paymentIntentId }),
   });
 
   return await newOrder.save();
