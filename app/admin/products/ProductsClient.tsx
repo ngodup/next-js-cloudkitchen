@@ -2,12 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { IFoodItem } from "@/types";
-import {
-  fetchProducts,
-  addFoodItem,
-  updateFoodItem,
-  deleteFoodItem,
-} from "./productsApi";
+import { adminProductService } from "@/services/admin/productService";
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -15,7 +10,6 @@ import AddFoodItemModal from "@/app/admin/components/products/AddFoodItemModal";
 import EditFoodItemModal from "@/app/admin/components/products/EditFoodItemModal";
 import CuisineFilter from "@/app/admin/components/products/CuisineFilter";
 import Pagination from "@/app/admin/components/products/Pagination";
-
 import SearchBar from "@/app/admin/components/products/SearchBar";
 import ProductTable from "@/app/admin/components/products/ProductTable";
 import { DeleteConfirmationDialog } from "@/components/shared/DeleteConfirmationDialog";
@@ -56,7 +50,11 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const handleFetchProducts = useCallback(
     async (newPage: number, newCuisine: string, newSearch: string) => {
       try {
-        const data = await fetchProducts(newPage, newCuisine, newSearch);
+        const data = await adminProductService.fetchProducts(
+          newPage,
+          newCuisine,
+          newSearch
+        );
         setProducts(data.products);
         setTotalPages(data.pagination.totalPages);
       } catch (error) {
@@ -90,7 +88,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
 
   const handleAddFoodItem = async (newFoodItem: Omit<IFoodItem, "_id">) => {
     try {
-      await addFoodItem(newFoodItem);
+      await adminProductService.addFoodItem(newFoodItem);
       successToast("Success", "Food item added successfully");
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
@@ -104,7 +102,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
 
   const handleEditFoodItem = async (updatedFoodItem: IFoodItem) => {
     try {
-      await updateFoodItem(updatedFoodItem);
+      await adminProductService.updateFoodItem(updatedFoodItem);
       successToast("Success", "Food item updated successfully");
       handleFetchProducts(page, activeCuisine, searchTerm);
     } catch (error) {
@@ -122,7 +120,7 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   const confirmDelete = async () => {
     if (itemToDelete) {
       try {
-        await deleteFoodItem(itemToDelete.id);
+        await adminProductService.deleteFoodItem(itemToDelete.id);
         successToast("Success", "Food item deleted successfully");
         handleFetchProducts(page, activeCuisine, searchTerm);
       } catch (error) {

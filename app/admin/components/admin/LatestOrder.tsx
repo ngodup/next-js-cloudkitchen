@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { adminOrderService } from "@/services/admin/orderService";
+import { IUserOrder } from "@/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -14,49 +13,38 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { IUserOrder } from "@/types";
 import { capitalizeFirstLetter, getStatusColors } from "@/lib/stringUtils";
-import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
-const Orders = () => {
+const LatestOrders = () => {
   const { data: session, status } = useSession();
   const [orders, setOrders] = useState<IUserOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
+    debugger;
     if (status === "authenticated" && session.user.role === "admin") {
       fetchOrders();
     } else if (status === "authenticated" && session.user.role !== "admin") {
       setError("You do not have permission to view this page.");
       setLoading(false);
     }
-  }, [page]);
+  }, []);
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `/api/admin/orders?page=${page}&limit=12`
-      );
-
-      if (response.data.success) {
-        setOrders(response.data.orders || []);
-        setTotalPages(response.data.pagination.totalPages);
+      const data = await adminOrderService.fetchLatestOrders(5); // Fetch 5 latest orders
+      if (data.success && data.orders) {
+        setOrders(data.orders);
       } else {
-        setError(response.data.message || "Failed to fetch orders");
+        throw new Error(data.message || "Failed to fetch latest orders");
       }
     } catch (err) {
-      if (axios.isAxiosError(err) && err.response?.status === 403) {
-        setError("You do not have permission to access this resource.");
-      } else {
-        setError("An error occurred while fetching your orders");
-      }
+      setError("An error occurred while fetching the latest orders");
     } finally {
       setLoading(false);
     }
@@ -142,27 +130,10 @@ const Orders = () => {
               })}
             </TableBody>
           </Table>
-          <div className="mt-4 flex justify-between items-center">
-            <Button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <span>
-              Page {page} of {totalPages}
-            </span>
-            <Button
-              onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={page === totalPages}
-            >
-              Next
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </section>
   );
 };
 
-export default Orders;
+export default LatestOrders;

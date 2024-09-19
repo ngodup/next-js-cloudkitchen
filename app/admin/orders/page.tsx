@@ -6,7 +6,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { IUserOrder } from "@/types";
-import { fetchOrders, updateOrderStatus } from "./ordersApi";
+import { adminOrderService } from "@/services/admin/orderService";
 
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import axios from "axios";
@@ -31,7 +31,11 @@ const Orders = () => {
     try {
       setLoading(true);
       const status = activeTab === "All Orders" ? "" : activeTab.toLowerCase();
-      const data = await fetchOrders(page, status, searchTerm);
+      const data = await adminOrderService.fetchOrders(
+        page,
+        status,
+        searchTerm
+      );
       if (data.success && data.orders !== null) {
         setOrders(data.orders || []);
         if (data.pagination) {
@@ -41,7 +45,6 @@ const Orders = () => {
         throw new Error(data.message || "Failed to fetch orders");
       }
     } catch (err) {
-      console.error("Error fetching orders:", err);
       if (axios.isAxiosError(err) && err.response?.status === 403) {
         setError("You do not have permission to access this resource.");
       } else {
@@ -69,7 +72,10 @@ const Orders = () => {
   const handleStatusChange = useCallback(
     async (orderId: string, newStatus: string) => {
       try {
-        const data = await updateOrderStatus(orderId, newStatus);
+        const data = await adminOrderService.updateOrderStatus(
+          orderId,
+          newStatus
+        );
         if (data.success) {
           setOrders((orders) =>
             orders.map((order) =>
@@ -84,8 +90,13 @@ const Orders = () => {
         errorToast("Error", "Failed to update order status");
       }
     },
-    [] // Empty dependency array
-  );
+    []
+  ); // Empty dependency array
+
+  //   Removing dependencies from the useCallback:
+  // The main purpose of useCallback is to memoize the function and prevent unnecessary
+  // re-renders of child components that receive this function as a prop. However,
+  // including frequently changing dependencies can negate this benefit.
 
   if (loading) {
     return (

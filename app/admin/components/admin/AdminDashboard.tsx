@@ -1,12 +1,11 @@
 import React from "react";
 import dynamic from "next/dynamic";
+import { weeklyVisiterOrders } from "@/constants/data";
+import { AnalyticsData } from "@/lib/admin/adminAnalyticsApi";
+import LatestOrders from "./LatestOrder";
+import InfoCard from "./InfoCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-import { weeklyVisiterOrders } from "@/constants/data";
-import InfoCard from "./InfoCard";
-import Orders from "./Order";
-import { AnalyticsData } from "@/lib/admin/adminAnalyticsApi";
 
 const ChartComponent = dynamic(
   () => import("../../components/Charts/ChartComponent"),
@@ -57,7 +56,7 @@ export default function AdminDashboard({
 
       {/* Latest order */}
       <div className="space-y-4">
-        <Orders />
+        <LatestOrders />
       </div>
 
       {/* Weekly recap records */}
