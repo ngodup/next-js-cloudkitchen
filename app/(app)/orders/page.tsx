@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { IOrder } from "@/types";
+import { orderService } from "@/services/orderService";
 
 import {
   Card,
@@ -29,6 +30,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<IOrder[]>([]);
@@ -36,6 +38,7 @@ const OrdersPage = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { errorToast } = useToastNotification();
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -48,16 +51,20 @@ const OrdersPage = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("/api/orders");
+      const data = await orderService.fetchOrders();
 
-      if (response.data.success) {
-        setOrders(response.data.orders || []);
+      if (data.success) {
+        setOrders(data.orders || []);
       } else {
-        setError(response.data.message || "Failed to fetch orders");
+        setError(data.message || "Failed to fetch orders");
       }
     } catch (err) {
-      console.error("Error fetching orders:", err);
-      setError("An error occurred while fetching your orders");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "An error occurred while fetching your orders";
+      setError(errorMessage);
+      errorToast("Error", errorMessage);
     } finally {
       setLoading(false);
     }

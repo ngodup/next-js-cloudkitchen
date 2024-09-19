@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { productService } from "@/services/productService";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import CommentForm from "@/components/products/CommentForm";
@@ -33,9 +34,9 @@ export default function ProductDetail({ params }: Props) {
   const fetchProductDetails = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/api/products/${params.id}`);
-      if (response.data.success) {
-        setProduct(response.data.product);
+      const data = await productService.getProductDetails(params.id);
+      if (data.success) {
+        setProduct(data.product!);
       } else {
         setError("Product not found");
       }
@@ -61,24 +62,26 @@ export default function ProductDetail({ params }: Props) {
   const handleCommentSubmit = async ({ comment }: { comment: string }) => {
     if (session && session.user) {
       try {
-        await axios.post<ApiResponse>(`/api/products/${params.id}/comment`, {
-          content: comment,
-          rating: userRating,
-          userId: session.user._id,
-          productId: params.id,
-        });
+        const response = await productService.submitComment(
+          params.id,
+          comment,
+          userRating,
+          session.user._id! //userId
+        );
 
-        successToast("Review added successfully to", product?.name!);
-
-        setUserRating(0);
-        setRefreshComments((prev) => prev + 1);
+        if (response.success) {
+          successToast("Review added successfully to", product?.name!);
+          setUserRating(0);
+          setRefreshComments((prev) => prev + 1);
+        } else {
+          throw new Error(response.message || "Failed to submit review");
+        }
       } catch (error) {
-        const axiosError = error as AxiosError<ApiResponse>;
-        let errorMessage =
-          axiosError.response?.data.message ||
-          "Review submission failed. Please try again.";
-
-        errorToast("Error", errorMessage);
+        errorToast(
+          "Error",
+          (error as Error).message ||
+            "Review submission failed. Please try again."
+        );
       }
     }
   };

@@ -21,3 +21,5 @@ Provide actionable steps and explain the rationale behind each recommendation. I
 Check code 
 1. hooks/admin/useAdminAnalytics.ts file
 2. Component icons.tsx
+
+//notFound import { notFound } from "next/navigation"; in productDetails

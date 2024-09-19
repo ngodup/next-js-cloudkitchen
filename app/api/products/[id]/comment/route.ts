@@ -84,12 +84,10 @@ export async function GET(
     console.error("Error getting comments for the product:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json(
-      createNextResponse(
-        false,
-        `Error retrieving comments: ${errorMessage}`,
-        500
-      )
+    return createNextResponse(
+      false,
+      `Error retrieving comments: ${errorMessage}`,
+      500
     );
   }
 }
@@ -164,23 +162,27 @@ export async function POST(request: NextRequest) {
     if (rating !== undefined && rating !== 0) {
       await updateProductRating(productId);
     }
+    const message =
+      rating !== undefined && rating !== 0
+        ? "Comment and rating added successfully"
+        : "Comment added successfully";
 
     return NextResponse.json(
-      createNextResponse<IComment>(
-        true,
-        rating !== undefined && rating !== 0
-          ? "Comment and rating added successfully"
-          : "Comment added successfully",
-        201,
-        transformedComment
-      )
+      {
+        success: true,
+        message,
+        comment: transformedComment,
+      },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error adding comment:", error);
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error";
-    return NextResponse.json(
-      createNextResponse(false, `Error adding comment: ${errorMessage}`, 500)
+    return createNextResponse(
+      false,
+      `Error adding comment: ${errorMessage}`,
+      500
     );
   }
 }
