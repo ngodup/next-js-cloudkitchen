@@ -2,12 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+// import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { IOrder } from "@/types";
 import { orderService } from "@/services/orderService";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 import {
   Card,
@@ -30,7 +31,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { useToastNotification } from "@/hooks/useToastNotification";
 
 const OrdersPage = () => {
   const [orders, setOrders] = useState<IOrder[]>([]);

@@ -7,6 +7,8 @@ import {
   selectCartTotalPrice,
 } from "@/store/cart/cart-slice";
 import { useSession } from "next-auth/react";
+import { orderService } from "@/services/orderService";
+import { checkoutService } from "@/services/checkoutService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
@@ -17,7 +19,6 @@ import AddressStep from "@/components/checkout/AddressStep";
 import PaymentStep from "@/components/checkout/PaymentStep";
 import ConfirmationStep from "@/components/checkout/ConfirmationStep";
 import { useToastNotification } from "@/hooks/useToastNotification";
-import { checkoutService } from "@/services/checkoutService";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -148,7 +149,7 @@ export default function CheckoutPage() {
         addressId: selectedAddress._id,
         paymentMethod,
       };
-      const response = await checkoutService.createOrder(orderData);
+      const response = await orderService.createOrder(orderData);
       if (response.success) {
         if (paymentMethod === "stripe") {
           setClientSecret(response.clientSecret);

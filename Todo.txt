@@ -1,11 +1,12 @@
-Pending Task:
+Pending Tasks:
 -----------
-1. Sidemenu - desktop 
-2. Mobile Menu - Pending
-3. Card for each Food Item
-4. Main home page
+1. Order update at client
+2. Stripe payment
+3. Setting user preference not implemented
 
 
+Issues faced:
+-------------
 "Create a comprehensive guide on rechart issues we faced just now in Next.js and TypeScript. Cover:
 
 Root causes of issues
@@ -18,7 +19,8 @@ Provide actionable steps and explain the rationale behind each recommendation. I
 
 
 
-Check code 
+Code check or further improvement :
+________
 1. hooks/admin/useAdminAnalytics.ts file
 2. Component icons.tsx
 

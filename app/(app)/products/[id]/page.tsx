@@ -3,6 +3,11 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { productService } from "@/services/productService";
+import { useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { IFoodItem } from "@/types";
+import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";
+import { useToastNotification } from "@/hooks/useToastNotification";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import CommentForm from "@/components/products/CommentForm";
@@ -10,13 +15,6 @@ import CommentsList from "@/components/products/CommentsList";
 import Rating from "@/components/products/rating";
 import ProductQuantities from "@/components/products/ProductQuantities";
 import PageContainer from "@/components/layout/page-container";
-import { useEffect, useState, useCallback } from "react";
-import axios, { AxiosError } from "axios";
-import { useSession } from "next-auth/react";
-import { IFoodItem } from "@/types";
-import { ApiResponse } from "@/lib/ApiResponse";
-import { Utensils, Clock, Tag, MessageSquare } from "lucide-react";
-import { useToastNotification } from "@/hooks/useToastNotification";
 
 type Props = {
   params: { id: string };

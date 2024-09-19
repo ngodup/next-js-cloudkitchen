@@ -1,11 +1,27 @@
 // services/orderService.ts
 
 import axios from "axios";
-import { IOrder } from "@/types";
+import { IOrder, IOrderProduct } from "@/types";
 
 const API_URL = "/api/orders";
 
 export const orderService = {
+  createOrder: async (orderData: {
+    products: IOrderProduct[];
+    totalItems: number;
+    totalPrice: number;
+    addressId: string;
+    paymentMethod: string;
+  }) => {
+    try {
+      const response = await axios.post("/api/orders", orderData);
+      return response.data;
+    } catch (error) {
+      console.error("Error creating order:", error);
+      throw error;
+    }
+  },
+
   fetchOrders: async (): Promise<{
     success: boolean;
     orders?: IOrder[];
@@ -31,6 +47,22 @@ export const orderService = {
         `Error fetching order details for order ${orderId}:`,
         error
       );
+      throw error;
+    }
+  },
+
+  // Todo update order status
+  updateOrderStatus: async (
+    orderId: string,
+    newStatus: string
+  ): Promise<{ success: boolean; order?: IOrder; message?: string }> => {
+    try {
+      const response = await axios.patch(`${API_URL}/${orderId}`, {
+        status: newStatus,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating order status for order ${orderId}:`, error);
       throw error;
     }
   },

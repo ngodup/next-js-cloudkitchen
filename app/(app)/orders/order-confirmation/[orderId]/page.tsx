@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { IOrder } from "@/types";
+import { orderService } from "@/services/orderService";
+import { useToastNotification } from "@/hooks/useToastNotification";
 
 import {
   Card,
@@ -35,46 +36,35 @@ export default function OrderConfirmationPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { data: session, status } = useSession();
+  const { errorToast } = useToastNotification();
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/sign-in?redirect=/order-confirmation/" + orderId);
     } else if (status === "authenticated") {
-      const fetchOrder = async () => {
-        try {
-          const response = await axios.get(`/api/orders/${orderId}`);
-          if (response.data.success && response.data.order) {
-            setOrder(response.data.order);
-          } else {
-            setError(response.data.message || "Failed to fetch order details");
-          }
-        } catch (err) {
-          console.error("Error fetching order:", err);
-          if (axios.isAxiosError(err)) {
-            if (err.response?.status === 404) {
-              setError("Order not found");
-            } else if (err.response?.status === 403) {
-              setError("You are not authorized to view this order");
-            } else if (err.response?.status === 401) {
-              setError("Please log in to view this order");
-            } else {
-              setError(
-                err.response?.data?.message ||
-                  "An error occurred while fetching the order"
-              );
-            }
-          } else {
-            setError("An unexpected error occurred");
-          }
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchOrder();
+      fetchOrderConfirmation();
     }
   }, [orderId, router, status]);
 
+  const fetchOrderConfirmation = async () => {
+    try {
+      setLoading(true);
+      const data = await orderService.getOrderDetails(orderId as string);
+      if (data.success && data.order) {
+        setOrder(data.order);
+      } else {
+        setError(data.message || "Failed to fetch order details");
+      }
+    } catch (err) {
+      console.error("Error fetching order:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(errorMessage);
+      errorToast("Error", errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
   if (loading) {
     return (
       <div className="container mx-auto p-4 space-y-4">

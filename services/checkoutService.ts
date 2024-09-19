@@ -1,5 +1,5 @@
 import axios from "axios";
-import { IAddress, IOrderProduct } from "@/types";
+import { IAddress } from "@/types";
 import { AddressFormData } from "@/components/checkout/AddressForm";
 
 export const checkoutService = {
@@ -44,22 +44,6 @@ export const checkoutService = {
       throw new Error(response.data.message || "Failed to update address");
     } catch (error) {
       console.error("Error updating address:", error);
-      throw error;
-    }
-  },
-
-  createOrder: async (orderData: {
-    products: IOrderProduct[];
-    totalItems: number;
-    totalPrice: number;
-    addressId: string;
-    paymentMethod: string;
-  }) => {
-    try {
-      const response = await axios.post("/api/orders", orderData);
-      return response.data;
-    } catch (error) {
-      console.error("Error creating order:", error);
       throw error;
     }
   },
