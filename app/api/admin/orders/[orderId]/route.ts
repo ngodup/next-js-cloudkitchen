@@ -31,8 +31,6 @@ export async function PATCH(
       { new: true }
     );
 
-    console.log("Updated order:", updatedOrder);
-
     if (!updatedOrder) {
       return createNextResponse(false, "Order not found", 404);
     }

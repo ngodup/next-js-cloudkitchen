@@ -36,7 +36,6 @@ export async function GET(
 }
 
 async function getTotalUsers() {
-  console.log("inside api route of analytice");
   const totalUsers = await UserModel.countDocuments();
   return NextResponse.json({
     success: true,

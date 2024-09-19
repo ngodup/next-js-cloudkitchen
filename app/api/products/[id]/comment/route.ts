@@ -160,8 +160,6 @@ export async function POST(request: NextRequest) {
     const newComment = await CommentModel.create(commentData);
     const transformedComment = transformComment(newComment);
 
-    console.log("Added comments at backend : ", transformedComment);
-
     // Update product rating only if a valid rating was provided
     if (rating !== undefined && rating !== 0) {
       await updateProductRating(productId);

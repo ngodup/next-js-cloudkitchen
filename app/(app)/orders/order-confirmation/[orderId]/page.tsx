@@ -42,9 +42,7 @@ export default function OrderConfirmationPage() {
     } else if (status === "authenticated") {
       const fetchOrder = async () => {
         try {
-          console.log(`Fetching order: ${orderId}`);
           const response = await axios.get(`/api/orders/${orderId}`);
-          console.log("API Response:", response.data);
           if (response.data.success && response.data.order) {
             setOrder(response.data.order);
           } else {

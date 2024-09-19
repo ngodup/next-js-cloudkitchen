@@ -10,7 +10,6 @@ export async function GET(req: NextRequest) {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    console.log("Session data in Addres api :", session);
     if (!session || !session.user?._id) {
       return createNextResponse(false, "Not Authenticated", 401);
     }
@@ -39,7 +38,6 @@ export async function POST(req: NextRequest) {
     await dbConnect();
 
     const session = await getServerSession(authOptions);
-    console.log("Session data in Addres api :", session);
     if (!session || !session.user?._id) {
       return createNextResponse(false, "Not Authenticated", 401);
     }

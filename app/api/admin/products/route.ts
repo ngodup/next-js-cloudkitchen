@@ -93,11 +93,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     const validationResult = productItemSchema.safeParse(body);
-    console.log("Validation result:", validationResult);
 
     if (!validationResult.success) {
-      console.log("Validation failed:", validationResult.error.issues);
-
       return createNextResponse(
         false,
         `Invalid product data ${validationResult.error.issues}`,
@@ -106,15 +103,12 @@ export async function POST(req: NextRequest) {
     }
 
     const validatedData = validationResult.data;
-    console.log("Validated data:", validatedData);
 
     const existingProduct = await ProductModel.findOne({
       name: validatedData.name,
     });
-    console.log("Existing product check result:", existingProduct);
 
     if (existingProduct) {
-      console.log("Product already exists");
       return createNextResponse(
         false,
         "Product with this name already exists",
@@ -122,15 +116,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("Creating new product");
     const newProduct = new ProductModel(validatedData);
-    console.log("New product instance:", newProduct);
 
-    console.log("Saving product to database");
     const savedProduct = await newProduct.save();
-    console.log("Saved product:", savedProduct);
 
-    console.log("Sending success response");
     return NextResponse.json(
       {
         success: true,

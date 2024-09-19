@@ -22,10 +22,7 @@ export async function GET(
     const userId = session.user._id;
     const { orderId } = params;
 
-    console.log(`Fetching order: ${orderId} for user: ${userId}`);
-
     if (!Types.ObjectId.isValid(orderId)) {
-      console.log(`Invalid ObjectId: ${orderId}`);
       return createNextResponse(false, "Invalid order ID", 400);
     }
 
@@ -68,11 +65,9 @@ export async function GET(
     ]);
 
     if (!order || order.length === 0) {
-      console.log(`Order not found or unauthorized: ${orderId}`);
       return createNextResponse(false, "Order not found or unauthorized", 404);
     }
 
-    console.log(`Order found: ${orderId}`);
     return NextResponse.json(
       {
         success: true,

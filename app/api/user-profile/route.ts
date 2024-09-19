@@ -59,7 +59,6 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    console.log("Parsed userprofile: ", body);
     const validationResult = userProfileSchema.safeParse(body);
 
     if (!validationResult.success) {
@@ -87,7 +86,6 @@ export async function POST(req: NextRequest) {
       ...validationResult.data,
     });
 
-    console.log("New user profile to be saved:", newUserProfile);
     await newUserProfile.save();
 
     return NextResponse.json(

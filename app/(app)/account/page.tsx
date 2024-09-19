@@ -31,6 +31,7 @@ const Account = () => {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
     onSuccess: (data) => console.log("SWR success, userProfile:", data),
+
     onError: (error) => {
       console.error("SWR Error:", error);
       toast({
@@ -43,7 +44,6 @@ const Account = () => {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      console.log("Session authenticated, triggering profile mutate");
       mutateProfile();
     }
   }, [status, session, mutateProfile]);
@@ -111,7 +111,6 @@ const Account = () => {
   }
 
   if (profileError) {
-    console.error("Profile error:", profileError);
     return (
       <div className="container mx-auto p-4">
         <h2>Error loading profile</h2>
@@ -122,7 +121,6 @@ const Account = () => {
   }
 
   if (!userProfile) {
-    console.log("User profile is null");
     return (
       <div className="container mx-auto p-4">
         <h2>No profile found</h2>
@@ -131,8 +129,6 @@ const Account = () => {
       </div>
     );
   }
-
-  console.log("Rendering account page with userProfile:", userProfile);
 
   return (
     <div className="container mx-auto p-4 max-w-8xl">

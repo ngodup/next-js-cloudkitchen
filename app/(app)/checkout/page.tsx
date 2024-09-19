@@ -185,7 +185,6 @@ export default function CheckoutPage() {
         response.data.order &&
         response.data.order._id
       ) {
-        console.log("Order placed:", response.data);
         toast({
           title: "Order Placed",
           description: "Your order has been successfully placed!",

@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
     }
 
     const userId = session.user._id;
-    console.log(`Creating order for user: ${userId}`);
 
     const { products, totalItems, totalPrice, addressId } = await req.json();
 
@@ -96,8 +95,6 @@ export async function POST(req: NextRequest) {
       totalPrice,
       addressId
     );
-
-    console.log(`Order created: ${newOrder._id} for user: ${userId}`);
 
     return NextResponse.json(
       {
