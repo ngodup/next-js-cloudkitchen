@@ -6,13 +6,7 @@ import {
 import { useState } from "react";
 import { Button } from "../ui/button";
 
-const StripeCheckoutForm = ({
-  clientSecret,
-  onSuccess,
-}: {
-  clientSecret: string;
-  onSuccess: () => void;
-}) => {
+const StripeCheckoutForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +17,7 @@ const StripeCheckoutForm = ({
     setProcessing(true);
 
     if (!stripe || !elements) {
+      setProcessing(false);
       return;
     }
 
@@ -31,15 +26,18 @@ const StripeCheckoutForm = ({
       confirmParams: {
         return_url: `${window.location.origin}/order-confirmation`,
       },
+      redirect: "if_required",
     });
 
     if (result.error) {
       setError(result.error.message || "An error occurred during payment.");
-    } else {
+      setProcessing(false);
+    } else if (result.paymentIntent.status === "succeeded") {
       onSuccess();
+    } else {
+      setError("Unexpected payment status. Please try again.");
+      setProcessing(false);
     }
-
-    setProcessing(false);
   };
 
   return (

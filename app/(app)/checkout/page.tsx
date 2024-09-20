@@ -14,11 +14,12 @@ import { AddressFormData } from "@/components/checkout/AddressForm";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import { useRouter } from "next/navigation";
 import { IAddress } from "@/types";
-import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
 import AddressStep from "@/components/checkout/AddressStep";
 import PaymentStep from "@/components/checkout/PaymentStep";
 import ConfirmationStep from "@/components/checkout/ConfirmationStep";
 import { useToastNotification } from "@/hooks/useToastNotification";
+import { Elements } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("default");
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { successToast, errorToast } = useToastNotification();
 
@@ -57,6 +59,7 @@ export default function CheckoutPage() {
   }, [cartItems, status, router]);
 
   const fetchAddresses = async () => {
+    setIsLoading(true);
     try {
       const fetchedAddresses = await addressService.fetchAddresses();
       setAddresses(fetchedAddresses);
@@ -68,10 +71,13 @@ export default function CheckoutPage() {
       }
     } catch (error) {
       errorToast("Error", "Failed to fetch addresses. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleAddressSubmit = async (data: AddressFormData) => {
+    setIsLoading(true);
     try {
       const newAddress = await addressService.addAddress(data);
       setAddresses([...addresses, newAddress]);
@@ -88,11 +94,14 @@ export default function CheckoutPage() {
           ? error.message
           : "There was an error saving your address. Please try again.";
       errorToast("Address Save Failed", errMsg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleAddressUpdate = async (updatedAddress: AddressFormData) => {
     if (!selectedAddress) return;
+    setIsLoading(true);
     try {
       const updatedAddressData = await addressService.updateAddress(
         selectedAddress._id,
@@ -115,23 +124,12 @@ export default function CheckoutPage() {
           ? error.message
           : "Failed to update address. Please try again.";
       errorToast("Update Failed", errMsg);
+    } finally {
+      setIsLoading(false);
     }
-  };
-
-  const handleAddressSelect = (address: IAddress) => {
-    setSelectedAddress(address);
   };
 
   const handlePlaceOrder = async () => {
-    if (!session) {
-      errorToast(
-        "Authentication Required",
-        "Please log in to complete the checkout."
-      );
-      router.push("/auth/sign-in?redirect=/checkout");
-      return;
-    }
-
     if (!selectedAddress) {
       errorToast(
         "Address Required",
@@ -140,6 +138,7 @@ export default function CheckoutPage() {
       return;
     }
 
+    setIsLoading(true);
     try {
       const orderData = {
         products: cartItems,
@@ -149,9 +148,18 @@ export default function CheckoutPage() {
         paymentMethod,
       };
       const response = await orderService.createOrder(orderData);
+
       if (response.success) {
         if (paymentMethod === "stripe") {
-          setClientSecret(response.clientSecret);
+          if (!response.clientSecret && response.order?.paymentIntentId) {
+            const paymentIntentData = await orderService.fetchPaymentIntent(
+              response.order.paymentIntentId
+            );
+            setClientSecret(paymentIntentData.clientSecret);
+            setClientSecret(paymentIntentData.clientSecret);
+          } else {
+            setClientSecret(response.clientSecret || null);
+          }
           setStep(CheckoutStep.Payment);
         } else {
           handlePaymentSuccess();
@@ -160,11 +168,13 @@ export default function CheckoutPage() {
         throw new Error(response.message || "Failed to create order");
       }
     } catch (error) {
-      const errMsg =
-        error instanceof Error
-          ? error.message
-          : "There was an error creating your order. Please try again.";
-      errorToast("Order Failed", errMsg);
+      console.error("Order creation error:", error);
+      errorToast(
+        "Order Failed",
+        error instanceof Error ? error.message : "An error occurred"
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -177,8 +187,8 @@ export default function CheckoutPage() {
     );
   };
 
-  if (status === "loading") {
-    return <div>Loading...</div>;
+  if (status === "loading" || isLoading) {
+    return <Card className="p-4">Loading...</Card>;
   }
 
   return (
@@ -210,6 +220,7 @@ export default function CheckoutPage() {
                   clientSecret={clientSecret}
                   onPlaceOrder={handlePlaceOrder}
                   onPaymentSuccess={handlePaymentSuccess}
+                  stripePromise={stripePromise}
                 />
               )}
               {step === CheckoutStep.Confirmation && (

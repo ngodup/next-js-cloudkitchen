@@ -1,9 +1,26 @@
-// services/orderService.ts
-
 import axios from "axios";
 import { IOrder, IOrderProduct } from "@/types";
 
 const API_URL = "/api/orders";
+
+interface OrderResponse {
+  success: boolean;
+  message: string;
+  order?: IOrder;
+  clientSecret?: string;
+}
+
+interface OrdersResponse {
+  success: boolean;
+  message: string;
+  orders?: IOrder[];
+  totalOrders?: number;
+  currentPage?: number;
+  totalPages?: number;
+}
+export interface PaymentIntentResponse {
+  clientSecret: string;
+}
 
 export const orderService = {
   createOrder: async (orderData: {
@@ -12,9 +29,9 @@ export const orderService = {
     totalPrice: number;
     addressId: string;
     paymentMethod: string;
-  }) => {
+  }): Promise<OrderResponse> => {
     try {
-      const response = await axios.post("/api/orders", orderData);
+      const response = await axios.post<OrderResponse>(API_URL, orderData);
       return response.data;
     } catch (error) {
       console.error("Error creating order:", error);
@@ -22,13 +39,14 @@ export const orderService = {
     }
   },
 
-  fetchOrders: async (): Promise<{
-    success: boolean;
-    orders?: IOrder[];
-    message?: string;
-  }> => {
+  fetchOrders: async (
+    page: number = 1,
+    limit: number = 10
+  ): Promise<OrdersResponse> => {
     try {
-      const response = await axios.get(API_URL);
+      const response = await axios.get<OrdersResponse>(
+        `${API_URL}?page=${page}&limit=${limit}`
+      );
       return response.data;
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -36,11 +54,9 @@ export const orderService = {
     }
   },
 
-  getOrderDetails: async (
-    orderId: string
-  ): Promise<{ success: boolean; order?: IOrder; message?: string }> => {
+  getOrderDetails: async (orderId: string): Promise<OrderResponse> => {
     try {
-      const response = await axios.get(`${API_URL}/${orderId}`);
+      const response = await axios.get<OrderResponse>(`${API_URL}/${orderId}`);
       return response.data;
     } catch (error) {
       console.error(
@@ -51,18 +67,34 @@ export const orderService = {
     }
   },
 
-  // Todo update order status
   updateOrderStatus: async (
     orderId: string,
     newStatus: string
-  ): Promise<{ success: boolean; order?: IOrder; message?: string }> => {
+  ): Promise<OrderResponse> => {
     try {
-      const response = await axios.patch(`${API_URL}/${orderId}`, {
-        status: newStatus,
-      });
+      const response = await axios.patch<OrderResponse>(
+        `${API_URL}/${orderId}`,
+        {
+          status: newStatus,
+        }
+      );
       return response.data;
     } catch (error) {
       console.error(`Error updating order status for order ${orderId}:`, error);
+      throw error;
+    }
+  },
+
+  fetchPaymentIntent: async (
+    paymentIntentId: string
+  ): Promise<PaymentIntentResponse> => {
+    try {
+      const response = await axios.get<PaymentIntentResponse>(
+        `/api/payment-intents/${paymentIntentId}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payment intent:", error);
       throw error;
     }
   },

@@ -4,6 +4,7 @@ import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
 import StripeCheckoutForm from "./StripeCheckoutForm";
 import { Button } from "../ui/button";
+import { Stripe, StripeElementsOptions } from "@stripe/stripe-js";
 
 interface PaymentStepProps {
   paymentMethod: string;
@@ -11,14 +12,21 @@ interface PaymentStepProps {
   clientSecret: string | null;
   onPlaceOrder: () => void;
   onPaymentSuccess: () => void;
+  stripePromise: Promise<Stripe | null>;
 }
+
 const PaymentStep = ({
   paymentMethod,
   setPaymentMethod,
   clientSecret,
   onPlaceOrder,
   onPaymentSuccess,
+  stripePromise,
 }: PaymentStepProps) => {
+  const options: StripeElementsOptions = {
+    clientSecret: clientSecret || undefined,
+  };
+
   return (
     <>
       <h2 className="text-xl font-semibold mb-4">Select Payment Method</h2>
@@ -37,11 +45,8 @@ const PaymentStep = ({
         </div>
       </RadioGroup>
       {paymentMethod === "stripe" && clientSecret ? (
-        <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <StripeCheckoutForm
-            clientSecret={clientSecret}
-            onSuccess={onPaymentSuccess}
-          />
+        <Elements stripe={stripePromise} options={options}>
+          <StripeCheckoutForm onSuccess={onPaymentSuccess} />
         </Elements>
       ) : (
         <Button onClick={onPlaceOrder}>Place Order</Button>

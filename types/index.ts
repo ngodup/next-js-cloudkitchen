@@ -115,6 +115,7 @@ export interface IOrder {
   status: string;
   createdAt: Date;
   updatedAt?: Date;
+  paymentIntentId?: string;
 }
 
 export interface IUserOrder extends IOrder {

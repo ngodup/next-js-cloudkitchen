@@ -23,5 +23,6 @@ Code check or further improvement :
 ________
 1. hooks/admin/useAdminAnalytics.ts file
 2. Component icons.tsx
+3. Account page import useSWR from "swr"; and mutate
 
 //notFound import { notFound } from "next/navigation"; in productDetails

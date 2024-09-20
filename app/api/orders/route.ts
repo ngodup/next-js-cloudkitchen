@@ -21,11 +21,15 @@ export async function GET(req: NextRequest) {
     }
 
     const userId = new Types.ObjectId(session.user._id);
+    const page = parseInt(req.nextUrl.searchParams.get("page") || "1");
+    const limit = parseInt(req.nextUrl.searchParams.get("limit") || "10");
+
+    const skip = (page - 1) * limit;
 
     const userOrders = await OrderModel.aggregate([
-      {
-        $match: { userId: userId },
-      },
+      { $match: { userId: userId } },
+      { $skip: skip },
+      { $limit: limit },
       { $unwind: "$products" },
       {
         $lookup: {
@@ -60,11 +64,16 @@ export async function GET(req: NextRequest) {
       { $sort: { createdAt: -1 } },
     ]);
 
+    const totalOrders = await OrderModel.countDocuments({ userId: userId });
+
     return NextResponse.json(
       {
         success: true,
         message: "User orders retrieved successfully",
         orders: userOrders,
+        totalOrders,
+        currentPage: page,
+        totalPages: Math.ceil(totalOrders / limit),
       },
       { status: 200 }
     );
@@ -75,7 +84,6 @@ export async function GET(req: NextRequest) {
     return createNextResponse(false, message, 500);
   }
 }
-
 export async function POST(req: NextRequest) {
   try {
     await dbConnect();
@@ -89,6 +97,14 @@ export async function POST(req: NextRequest) {
 
     const { products, totalItems, totalPrice, addressId, paymentMethod } =
       await req.json();
+
+    console.log("Received order data:", {
+      products,
+      totalItems,
+      totalPrice,
+      addressId,
+      paymentMethod,
+    });
 
     if (
       !isValidOrderData(
@@ -106,15 +122,25 @@ export async function POST(req: NextRequest) {
     let clientSecret: string | undefined;
 
     if (paymentMethod === "stripe") {
-      const paymentIntent = await createPaymentIntent(
-        Math.round(totalPrice * 100),
-        {
-          userId: userId.toString(),
-          addressId,
-        }
-      );
-      paymentIntentId = paymentIntent.id;
-      clientSecret = paymentIntent.client_secret || undefined;
+      try {
+        const paymentIntent = await createPaymentIntent(
+          Math.round(totalPrice * 100),
+          {
+            userId: userId.toString(),
+            addressId,
+          }
+        );
+        paymentIntentId = paymentIntent.id;
+        clientSecret = paymentIntent.client_secret || undefined;
+        console.log("Created Stripe PaymentIntent:", paymentIntentId);
+      } catch (stripeError) {
+        console.error("Error creating Stripe PaymentIntent:", stripeError);
+        return createNextResponse(
+          false,
+          "Failed to create payment intent",
+          500
+        );
+      }
     }
 
     const newOrder = await createOrder(
@@ -127,11 +153,14 @@ export async function POST(req: NextRequest) {
       paymentIntentId
     );
 
+    console.log("Created new order:", newOrder._id);
+
     return NextResponse.json(
       {
         success: true,
         message: "Order created successfully",
         order: newOrder,
+        clientSecret: clientSecret,
       },
       { status: 201 }
     );
