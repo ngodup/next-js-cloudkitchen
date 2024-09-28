@@ -34,6 +34,7 @@ import {
   X,
   Utensils,
   ShoppingBasket,
+  MessageCircleMore,
 } from "lucide-react";
 
 export type Icon = LucideIcon;
@@ -70,6 +71,7 @@ export const Icons = {
   soup: Soup,
   utensils: Utensils,
   products: ShoppingBasket,
+  comment: MessageCircleMore,
 
   gitHub: ({ ...props }: LucideProps) => (
     <svg

@@ -12,9 +12,9 @@ import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import axios from "axios";
 import OrdersTable from "@/app/admin/components/orders/OrdersTable";
 import StatusTabs from "@/app/admin/components/orders/StatusTabs";
-import Pagination from "@/app/admin/components/products/Pagination";
-import SearchBar from "@/app/admin/components/products/SearchBar";
 import { useToastNotification } from "@/hooks/useToastNotification";
+import SearchBar from "../components/shared/SearchBar";
+import Pagination from "../components/shared/Pagination";
 
 const Orders = () => {
   const { data: session, status } = useSession();

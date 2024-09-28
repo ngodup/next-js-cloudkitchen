@@ -408,17 +408,24 @@ export const adminNavItems: NavItem[] = [
     label: "Home",
   },
   {
+    title: "Products",
+    href: "/admin/products",
+    icon: "products",
+    label: "Products",
+  },
+  {
     title: "Order",
     href: "/admin/orders",
     icon: "billing",
     label: "Orders",
   },
   {
-    title: "Products",
-    href: "/admin/products",
-    icon: "products",
-    label: "Products",
+    title: "Comments",
+    href: "/admin/comments",
+    icon: "comment",
+    label: "Comments",
   },
+
   {
     title: "Settings",
     href: "/admin/settings",

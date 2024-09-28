@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     await dbConnect();
 
     const { searchParams } = req.nextUrl;
-    const page = parseInt(searchParams.get("page") || "1");
+    let page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "12");
     const search = searchParams.get("search") || "";
     const status = searchParams.get("status") || "";
@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (search) {
+      page = 1;
       const isValidObjectId = ObjectId.isValid(search);
 
       matchStage.$or = [
@@ -156,3 +157,5 @@ export async function GET(req: NextRequest) {
     return createNextResponse(false, message, 500);
   }
 }
+
+/******  9f70ed20-8dd9-441a-a7c8-0f85e09cb36c  *******/
