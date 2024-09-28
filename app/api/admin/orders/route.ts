@@ -1,19 +1,16 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import dbConnect from "@/lib/dbConnect";
-import OrderModel from "@/model/Order";
-import { createNextResponse } from "@/lib/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { PipelineStage } from "mongoose";
+import dbConnect from "@/lib/dbConnect";
+import { checkAdminAuthorization } from "../adminAuth";
+import OrderModel from "@/model/Order";
+
+import { createNextResponse } from "@/lib/ApiResponse";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin") {
-      return createNextResponse(false, "Unauthorized access", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     await dbConnect();
 

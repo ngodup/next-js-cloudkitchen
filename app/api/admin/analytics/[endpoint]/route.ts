@@ -6,12 +6,16 @@ import { createNextResponse } from "@/lib/ApiResponse";
 import UserModel from "@/model/User";
 import ProductModel from "@/model/Product";
 import OrderModel from "@/model/Order";
+import { checkAdminAuthorization } from "../../adminAuth";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { endpoint: string } }
 ) {
   await dbConnect();
+
+  const authResponse = await checkAdminAuthorization();
+  if (authResponse) return authResponse;
 
   try {
     switch (params.endpoint) {

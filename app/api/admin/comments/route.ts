@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
+import { checkAdminAuthorization } from "../adminAuth";
 import dbConnect from "@/lib/dbConnect";
 import { createNextResponse } from "@/lib/ApiResponse";
-import { authOptions } from "../../auth/[...nextauth]/options";
 import CommentModel from "@/model/Comment";
 
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
 
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user?._id || session.user.role !== "admin") {
-      return createNextResponse(false, "Not Authorized", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     const { searchParams } = req.nextUrl;
-    const page = parseInt(searchParams.get("page") || "1");
+    let page = parseInt(searchParams.get("page") || "1");
     const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search") || "";
 
     const query: any = {};
     if (search) {
+      page = 1;
       query.$or = [
         { content: { $regex: search, $options: "i" } },
         { "user.username": { $regex: search, $options: "i" } },

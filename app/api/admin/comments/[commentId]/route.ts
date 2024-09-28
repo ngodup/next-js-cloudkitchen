@@ -1,18 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import dbConnect from "@/lib/dbConnect";
-import { createNextResponse } from "@/lib/ApiResponse";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import CommentModel from "@/model/Comment";
 import { Types } from "mongoose";
-
-async function checkAdminAuthorization() {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user?._id || session.user.role !== "admin") {
-    return createNextResponse(false, "Not Authorized", 403);
-  }
-  return null;
-}
+import { checkAdminAuthorization } from "../../adminAuth";
+import { createNextResponse } from "@/lib/ApiResponse";
+import CommentModel from "@/model/Comment";
 
 export async function PATCH(
   req: NextRequest,

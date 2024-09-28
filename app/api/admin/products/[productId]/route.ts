@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { createNextResponse } from "@/lib/ApiResponse";
+import { checkAdminAuthorization } from "../../adminAuth";
 import dbConnect from "@/lib/dbConnect";
 import { productItemSchema } from "@/schemas/productItemSchema";
 import ProductModel from "@/model/Product";
-import { createNextResponse } from "@/lib/ApiResponse";
 
 export async function DELETE(
   req: NextRequest,
@@ -15,10 +14,8 @@ export async function DELETE(
 
   try {
     // Step 1: Check if user is authenticated and has admin role
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
-      return createNextResponse(false, "Unauthorized access", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     // Step 2: Connect to database
     await dbConnect();
@@ -69,10 +66,8 @@ export async function PUT(
 ) {
   try {
     // Step 1: Check if user is authenticated and has admin role
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
-      return createNextResponse(false, "Unauthorized access", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     // Step 2: Connect to database
     await dbConnect();

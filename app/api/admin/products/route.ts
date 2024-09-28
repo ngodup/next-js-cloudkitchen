@@ -1,7 +1,6 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
 import ProductModel from "@/model/Product";
+import { checkAdminAuthorization } from "../adminAuth";
 import { createNextResponse } from "@/lib/ApiResponse";
 import { NextRequest, NextResponse } from "next/server";
 import { PipelineStage } from "mongoose";
@@ -9,11 +8,8 @@ import { productItemSchema } from "@/schemas/productItemSchema";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin") {
-      return createNextResponse(false, "Unauthorized access", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     await dbConnect();
 
@@ -83,10 +79,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "admin") {
-      return createNextResponse(false, "Unauthorized access", 403);
-    }
+    const authResponse = await checkAdminAuthorization();
+    if (authResponse) return authResponse;
 
     await dbConnect();
 
