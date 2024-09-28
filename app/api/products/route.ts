@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    if (categories.length > 0) {
+    // Modified category handling
+    if (categories.length > 0 && !categories.includes("all")) {
       query.cuisine = { $in: categories };
     }
 

@@ -24,21 +24,21 @@ const AdminSidebar: React.FC = () => {
   return (
     <aside
       className={cn(
-        `relative p-4 flex flex-col h-screen border-r`,
+        "flex flex-col h-screen border-r",
         !isMinimized ? "w-72" : "w-[72px]"
       )}
     >
-      <header className="border-b pb-2 dark:border-b-black border-b-green-600 mb-4 flex items-center justify-between">
+      <header className="p-4 border-b dark:border-b-black border-b-green-600">
         <MenuTitle />
       </header>
 
-      <div className="flex-grow">
+      <div className="flex-grow p-4">
         <AdminNav navItems={adminNavItems} />
       </div>
 
-      <footer className="md:flex md:gap-2 items-center mt-4 flex-shrink-0">
+      <footer className="p-4 border-t mt-auto">
         {session && (
-          <>
+          <div className="flex items-center gap-2">
             <Avatar>
               <AvatarFallback className="bg-primary text-primary-foreground dark:bg-primary">
                 {(session.user?.username?.[0] || "U").toUpperCase()}
@@ -47,11 +47,11 @@ const AdminSidebar: React.FC = () => {
             <Link
               href="/"
               onClick={onSignOut}
-              className={cn(isMinimized && "hidden")}
+              className={cn("text-sm", isMinimized && "hidden")}
             >
               Logout
             </Link>
-          </>
+          </div>
         )}
       </footer>
 

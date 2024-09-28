@@ -12,7 +12,7 @@
     --popover-foreground: 222.2 84% 4.9%;
     --primary: 138 100% 29%;
      /*Step 1 Light green color custom color Step 2 define color in tailwind.config */
-    --light-green: 143 38.8% 85.9%;
+    --light-green: 143 38.8% 85.9%; 	
     --primary-foreground: 0 0% 100%; 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;

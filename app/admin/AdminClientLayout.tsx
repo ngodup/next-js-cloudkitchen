@@ -18,12 +18,12 @@ export default function AdminClientLayout({
 }) {
   return (
     <ErrorBoundary>
-      <div className={cn("flex", poppins.className)}>
-        <div className="hidden lg:block">
+      <div className={cn("flex h-screen", poppins.className)}>
+        <div className="hidden lg:block flex-shrink-0">
           <AdminSidebar />
         </div>
-        <div className="flex-1 overflow-hidden">
-          <main className="p-4">{children}</main>
+        <div className="flex-grow overflow-hidden">
+          <main className="h-full overflow-y-auto p-4">{children}</main>
         </div>
       </div>
     </ErrorBoundary>

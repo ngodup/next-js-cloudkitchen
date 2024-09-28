@@ -26,3 +26,9 @@ ________
 3. Account page import useSWR from "swr"; and mutate
 
 //notFound import { notFound } from "next/navigation"; in productDetails
+
+Checkout page enum CheckoutStep {
+  Address = 1,
+  Payment = 2,
+  Confirmation = 3,
+}
