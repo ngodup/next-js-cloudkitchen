@@ -8,10 +8,10 @@ import { productItemSchema } from "@/schemas/productItemSchema";
 
 export async function GET(req: NextRequest) {
   try {
+    await dbConnect();
+
     const authResponse = await checkAdminAuthorization();
     if (authResponse) return authResponse;
-
-    await dbConnect();
 
     const { searchParams } = req.nextUrl;
     const page = parseInt(searchParams.get("page") || "1");
@@ -79,10 +79,10 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    await dbConnect();
+
     const authResponse = await checkAdminAuthorization();
     if (authResponse) return authResponse;
-
-    await dbConnect();
 
     const body = await req.json();
 

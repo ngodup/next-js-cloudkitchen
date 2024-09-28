@@ -13,12 +13,12 @@ export async function DELETE(
   let connection: typeof mongoose | undefined;
 
   try {
-    // Step 1: Check if user is authenticated and has admin role
+    // Step 1: Connect to database
+    await dbConnect();
+
+    // Step 2: Check if user is authenticated and has admin role
     const authResponse = await checkAdminAuthorization();
     if (authResponse) return authResponse;
-
-    // Step 2: Connect to database
-    await dbConnect();
 
     // Step 3: Validate product ID
     const { productId } = params;
@@ -65,12 +65,12 @@ export async function PUT(
   { params }: { params: { productId: string } }
 ) {
   try {
-    // Step 1: Check if user is authenticated and has admin role
+    // Step 1: Connect to database
+    await dbConnect();
+
+    // Step 2: Check if user is authenticated and has admin role
     const authResponse = await checkAdminAuthorization();
     if (authResponse) return authResponse;
-
-    // Step 2: Connect to database
-    await dbConnect();
 
     // Step 3: Validate product ID
     const { productId } = params;

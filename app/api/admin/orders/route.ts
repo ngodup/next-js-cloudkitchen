@@ -9,10 +9,10 @@ import { createNextResponse } from "@/lib/ApiResponse";
 
 export async function GET(req: NextRequest) {
   try {
+    await dbConnect();
+
     const authResponse = await checkAdminAuthorization();
     if (authResponse) return authResponse;
-
-    await dbConnect();
 
     const { searchParams } = req.nextUrl;
     let page = parseInt(searchParams.get("page") || "1");
