@@ -37,8 +37,9 @@ export const addressService = {
         addressId,
         ...data,
       });
-      if (response.data.success && response.data.addresss) {
-        return response.data.addresss;
+      debugger;
+      if (response.data.success && response.data.address) {
+        return response.data.address;
       }
       throw new Error(response.data.message || "Failed to update address");
     } catch (error) {
