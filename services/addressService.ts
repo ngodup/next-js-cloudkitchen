@@ -37,7 +37,6 @@ export const addressService = {
         addressId,
         ...data,
       });
-      debugger;
       if (response.data.success && response.data.address) {
         return response.data.address;
       }

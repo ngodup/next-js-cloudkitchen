@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { IExtendComment } from "@/types";
-import Rating from "./Rating";
-import { commentService } from "@/services/commentService";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquare, Mail } from "lucide-react";
+import { MessageSquare } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useToastNotification } from "@/hooks/useToastNotification";
+import { IExtendComment } from "@/types";
+import { commentService } from "@/services/commentService";
+import Comment from "./Comment";
+import CommentsSkeleton from "./CommentsSkeleton";
 
 interface CommentsListProps {
   productId: string;
@@ -22,13 +23,15 @@ export default function CommentsList({
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { data: session } = useSession();
+  const { successToast, errorToast } = useToastNotification();
 
   const fetchComments = async (pageNum: number) => {
     setIsLoading(true);
     setError(null);
     try {
       const { comments: newComments, hasMore: moreComments } =
-        await commentService.fetchComments(productId, pageNum, 5);
+        await commentService.fetchProductComments(productId, pageNum, 5);
       setComments((prev) =>
         pageNum === 1 ? newComments : [...prev, ...newComments]
       );
@@ -51,18 +54,34 @@ export default function CommentsList({
     }
   };
 
-  const getInitials = (name: string, email: string) => {
-    if (name && name.trim() !== "") {
-      return name
-        .split(" ")
-        .map((word) => word[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
-    } else if (email) {
-      return email.slice(0, 2).toUpperCase();
+  const handleUpdateComment = async (
+    commentId: string,
+    content: string,
+    rating: number | null
+  ) => {
+    try {
+      await commentService.updateUserComment(commentId, { content, rating });
+      setComments(
+        comments.map((comment) =>
+          comment._id === commentId ? { ...comment, content, rating } : comment
+        )
+      );
+      successToast("Success", "Comment updated successfully");
+    } catch (error) {
+      errorToast("Error", "Failed to update comment");
     }
-    return "??";
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      try {
+        await commentService.deleteUserComment(commentId);
+        setComments(comments.filter((comment) => comment._id !== commentId));
+        successToast("Success", "Comment deleted successfully");
+      } catch (error) {
+        errorToast("Error", "Failed to delete comment");
+      }
+    }
   };
 
   if (error) {
@@ -82,42 +101,13 @@ export default function CommentsList({
       </h2>
 
       {comments.map((comment) => (
-        <Card key={comment._id} className="mb-6 border-primary/10 shadow-sm">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <Avatar className="h-12 w-12">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {getInitials(comment.username, comment.email)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-popover-foreground">
-                    {comment.username}
-                  </p>
-                  <div className="flex items-center">
-                    {comment.rating && (
-                      <Rating value={comment.rating} readOnly />
-                    )}
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {new Date(comment.createdAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </p>
-                <p className="mt-2 text-sm text-popover-foreground">
-                  {comment.content}
-                </p>
-                <p className="text-xs text-muted-foreground mt-2 flex items-center">
-                  <Mail className="mr-1 h-3 w-3" /> {comment.email}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <Comment
+          key={comment._id}
+          comment={comment}
+          isOwnComment={session?.user?.email === comment.email}
+          onEdit={handleUpdateComment}
+          onDelete={handleDeleteComment}
+        />
       ))}
 
       {isLoading && <CommentsSkeleton />}
@@ -145,30 +135,5 @@ export default function CommentsList({
         </Card>
       )}
     </div>
-  );
-}
-
-function CommentsSkeleton() {
-  return (
-    <>
-      {[1, 2, 3].map((n) => (
-        <Card key={n} className="mb-6 shadow-sm">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-4">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between">
-                  <Skeleton className="h-4 w-[100px]" />
-                  <Skeleton className="h-4 w-[100px]" />
-                </div>
-                <Skeleton className="h-3 w-[120px]" />
-                <Skeleton className="h-20 w-full" />
-                <Skeleton className="h-3 w-[160px]" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </>
   );
 }

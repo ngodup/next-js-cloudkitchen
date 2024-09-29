@@ -393,6 +393,12 @@ export const navItems: NavItem[] = [
     label: "acount",
   },
   {
+    title: "Comments",
+    href: "/comments",
+    icon: "comment",
+    label: "Comments",
+  },
+  {
     title: "Settings",
     href: "/settings",
     icon: "settings",

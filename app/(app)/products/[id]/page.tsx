@@ -12,9 +12,9 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import CommentForm from "@/components/products/CommentForm";
 import CommentsList from "@/components/products/CommentsList";
-import Rating from "@/components/products/rating";
 import ProductQuantities from "@/components/products/ProductQuantities";
 import PageContainer from "@/components/layout/page-container";
+import Rating from "@/components/products/Rating";
 
 type Props = {
   params: { id: string };

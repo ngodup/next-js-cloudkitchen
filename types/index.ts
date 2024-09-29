@@ -70,12 +70,19 @@ export interface IComment {
   createdAt: Date;
   productId: string;
   userId: string;
-  rating?: number;
+  rating?: number | null | undefined;
 }
 
 export interface IExtendComment extends IComment {
   username: string;
   email: string;
+}
+
+export interface ICommentWithProduct extends IComment {
+  product: {
+    name: string;
+    imageUrl: string;
+  };
 }
 
 export interface IOrderProduct {
