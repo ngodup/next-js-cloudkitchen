@@ -54,7 +54,7 @@ const EditCommentModal: React.FC<EditCommentModalProps> = ({
     if (data.rating !== undefined) {
       updatedData.rating = data.rating;
     }
-    onEdit(comment._id!, updatedData);
+    onEdit(comment._id, updatedData);
   };
 
   return (

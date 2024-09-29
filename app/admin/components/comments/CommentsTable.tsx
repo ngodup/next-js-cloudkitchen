@@ -9,9 +9,12 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { IComment } from "@/types";
 
-export interface ICommentUser extends IComment {
+export interface ICommentUser {
+  _id: string;
+  content: string;
+  rating?: number;
+  createdAt: Date;
   user: {
     username: string;
     email: string;
@@ -23,8 +26,8 @@ export interface ICommentUser extends IComment {
 
 interface CommentsTableProps {
   comments: ICommentUser[];
-  onEdit: (comment: IComment) => void;
-  onDelete: (comment: IComment) => void;
+  onEdit: (comment: ICommentUser) => void;
+  onDelete: (comment: ICommentUser) => void;
 }
 
 const CommentsTable = ({ comments, onEdit, onDelete }: CommentsTableProps) => {

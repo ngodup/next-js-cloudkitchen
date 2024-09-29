@@ -12,10 +12,9 @@ export const adminCommentService = {
       throw error;
     }
   },
-
   updateComment: async (
     commentId: string,
-    updatedData: { content: string; rating: number }
+    updatedData: Partial<{ content: string; rating: number | undefined }>
   ) => {
     try {
       const response = await axios.patch(

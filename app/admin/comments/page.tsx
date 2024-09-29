@@ -75,7 +75,7 @@ const Comments = () => {
 
   const handleEditComment = async (
     commentId: string,
-    updatedData: { content: string; rating: number }
+    updatedData: Partial<{ content: string; rating: number | undefined }>
   ) => {
     try {
       const data = await adminCommentService.updateComment(
@@ -108,7 +108,7 @@ const Comments = () => {
     if (commentToDelete) {
       try {
         const data = await adminCommentService.deleteComment(
-          commentToDelete._id!
+          commentToDelete._id
         );
         if (data.success) {
           setComments((prevComments) =>
