@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { IFoodItem } from "@/types";
@@ -36,6 +37,7 @@ export default function ProductCard({ food }: MenuItemProps) {
           width={170}
           height={100}
           className="w-full h-auto rounded-xl"
+          priority={true}
         />
       </CardHeader>
       <CardContent className="p-2 mt-2 flex-grow">

@@ -101,6 +101,7 @@ export default function ProductDetail({ params }: Props) {
                   width={540}
                   height={400}
                   className="w-full h-auto rounded-lg shadow-md"
+                  priority={true}
                 />
               </div>
               <div className="w-full md:w-1/2 space-y-6">
