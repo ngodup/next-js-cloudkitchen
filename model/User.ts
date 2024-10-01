@@ -8,6 +8,8 @@ export interface UserAuth extends Document {
   verifyCode: string;
   verifyCodeExpiry: Date;
   isVerified: boolean;
+  resetPasswordToken?: string;
+  resetPasswordExpiry?: Date;
 }
 
 const UserAuthSchema: Schema<UserAuth> = new mongoose.Schema({
@@ -41,6 +43,14 @@ const UserAuthSchema: Schema<UserAuth> = new mongoose.Schema({
   isVerified: {
     type: Boolean,
     default: false,
+  },
+  resetPasswordToken: {
+    type: String,
+    default: null,
+  },
+  resetPasswordExpiry: {
+    type: Date,
+    default: null,
   },
 });
 

@@ -7,16 +7,6 @@ import UserProfileModel from "@/model/UserProfile";
 import { signInSchema } from "@/schemas/signInSchema";
 import dbConnect from "@/lib/dbConnect";
 
-// interface AuthCredentials {
-//   email: string;
-//   password: string;
-// }
-
-// interface AuthResponse {
-//   success: boolean;
-//   message: string;
-//   user?: any; // You can replace 'any' with a more specific type if needed
-// }
 async function authorize(credentials: any): Promise<any> {
   await dbConnect();
 

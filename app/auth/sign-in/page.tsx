@@ -113,6 +113,14 @@ export default function SignInForm() {
                 </FormItem>
               )}
             />
+            <div className="flex justify-end">
+              <Link
+                href="/auth/forgot-password"
+                className="text-sm text-green-500 hover:text-green-700"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <LoadingButton
               pending={form.formState.isSubmitting}
               label="Sign in"
@@ -143,7 +151,7 @@ export default function SignInForm() {
 
         <div className="w-full flex mt-6 justify-between items-center">
           <div className="text-gray-600">
-            Already a member?{" "}
+            Not a member?{" "}
             <Link
               href="/auth/sign-up"
               className="text-green-500 hover:text-green-700 font-semibold pl-1"
