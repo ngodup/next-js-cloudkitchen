@@ -2,37 +2,30 @@
 
 import { useSidebar } from "@/hooks/useSidebar";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const MenuTitle = () => {
   const { isMinimized } = useSidebar();
 
-  // Increase the maximum width for both states
-  const maxWidth = isMinimized ? 80 : 160; // Increased from 60 and 120
-
-  // Assuming the original aspect ratio is 100:40
-  const aspectRatio = 50 / 100;
-
   return (
     <div className="flex items-center gap-2">
       <div
-        style={{
-          width: `${maxWidth}px`,
-          height: `${maxWidth * aspectRatio}px`,
-          position: "relative",
-          left: isMinimized ? "-24px" : "0",
-        }}
+        className={cn(
+          "relative",
+          isMinimized ? "w-20 h-10 -left-6" : "w-40 h-20"
+        )}
       >
         <Image
           src="/assets/images/main-logo.webp"
           alt="Cloud kitchen"
           fill
-          style={{ objectFit: "contain" }}
-          sizes={`${maxWidth}px`}
+          className="object-contain"
+          sizes={isMinimized ? "80px" : "160px"}
           priority
         />
       </div>
       {!isMinimized && (
-        <span className="text-lg text-primary font-semibold">Tamo Kitchen</span>
+        <span className="text-lg font-semibold text-primary">Tamo Kitchen</span>
       )}
     </div>
   );

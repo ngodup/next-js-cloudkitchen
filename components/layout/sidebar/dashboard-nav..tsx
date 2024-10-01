@@ -56,7 +56,7 @@ const DashboardNav = ({
       return true; // Show all items for authenticated users
     } else {
       // Hide Account, Settings, and Orders for non-authenticated users
-      return !["Account", "Settings", "Order"].includes(item.title);
+      return !["Account", "Settings", "Order", "Comments"].includes(item.title);
     }
   });
 

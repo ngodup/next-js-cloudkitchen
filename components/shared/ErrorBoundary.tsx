@@ -32,10 +32,17 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div>
-          <h1>Something went wrong.</h1>
-          <details style={{ whiteSpace: "pre-wrap" }}>
-            {this.state.error && this.state.error.toString()}
+        <div className="p-4 bg-red-50 border border-red-200 rounded-md">
+          <h1 className="text-2xl font-bold text-red-800 mb-2">
+            Something went wrong.
+          </h1>
+          <details className="mt-2 text-sm text-red-700 whitespace-pre-wrap">
+            <summary className="cursor-pointer hover:underline">
+              Error details
+            </summary>
+            <p className="mt-2">
+              {this.state.error && this.state.error.toString()}
+            </p>
           </details>
         </div>
       );
