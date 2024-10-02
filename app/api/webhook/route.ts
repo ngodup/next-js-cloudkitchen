@@ -4,7 +4,8 @@ import { createNextResponse } from "@/lib/ApiResponse";
 import OrderModel from "@/model/Order";
 
 export const dynamic = "force-dynamic";
-export const preferredRegion = "edge";
+export const runtime = "edge";
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
