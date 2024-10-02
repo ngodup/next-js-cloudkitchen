@@ -17,17 +17,31 @@ export const authService = {
     }
   },
 
-  checkUsernameUnique: async (username: string): Promise<string> => {
+  checkUsernameUnique: async (username: string) => {
     try {
-      const response = await axios.get<ApiResponse>(
-        `/api/auth/check-username-unique?username=${username}`
+      const baseUrl =
+        process.env.NEXT_PUBLIC_DOMAIN ||
+        "https://tamo-cloudkitchen.vercel.app";
+      const response = await fetch(
+        `${baseUrl}/api/auth/check-username-unique`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username }),
+        }
       );
-      return response.data.message;
+
+      if (!response.ok) {
+        throw new Error("Failed to check username");
+      }
+
+      const data = await response.json();
+      return data.message; // Return just the message string
     } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-      throw new Error(
-        axiosError.response?.data.message ?? "Error checking username"
-      );
+      console.error("Error checking username:", error);
+      throw new Error("Error checking username");
     }
   },
 

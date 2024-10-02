@@ -7,20 +7,16 @@ import { createNextResponse } from "@/lib/ApiResponse";
 
 export const dynamic = "force-dynamic";
 
-const UsernameQuerySchema = z.object({
+const UsernameSchema = z.object({
   username: usernameValidation,
 });
 
-export async function GET(request: NextRequest) {
+export async function POST(request: NextRequest) {
   await dbConnect();
 
   try {
-    const { searchParams } = new URL(request.url);
-    const queryParam = {
-      username: searchParams.get("username"),
-    };
-
-    const result = UsernameQuerySchema.safeParse(queryParam);
+    const body = await request.json();
+    const result = UsernameSchema.safeParse(body);
 
     if (!result.success) {
       const usernameErrors = result.error.format().username?._errors || [];
@@ -28,7 +24,7 @@ export async function GET(request: NextRequest) {
         false,
         usernameErrors.length > 0
           ? usernameErrors.join(", ")
-          : "Invalid query parameters",
+          : "Invalid username",
         400
       );
     }
@@ -46,7 +42,7 @@ export async function GET(request: NextRequest) {
     if (existingVerifiedUser) {
       return createNextResponse(
         false,
-        "Username is already taken, Please select another username",
+        "Username is already taken. Please select another username",
         409
       );
     }
