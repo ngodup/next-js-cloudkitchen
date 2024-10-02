@@ -1,10 +1,12 @@
 import { headers } from "next/headers";
 import HomePageWrapper from "@/components/HomePageWrapper";
+
+//  Server-Side Rendering (SSR): This page uses SSR to fetch initial data, which is great for performance and SEO.
 async function fetchProducts(page = 1, limit = 12) {
   try {
     const headersList = headers();
     const protocol = headersList.get("x-forwarded-proto") || "http";
-    const host = headersList.get("host") || "localhost:3000";
+    const host = headersList.get("host") || process.env.NEXT_PUBLIC_DOMAIN;
 
     const apiUrl = `${protocol}://${host}/api/products?page=${page}&limit=${limit}`;
 

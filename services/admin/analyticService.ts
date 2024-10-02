@@ -8,7 +8,7 @@ export interface AnalyticsData {
 }
 
 export async function fetchAdminAnalytics(): Promise<AnalyticsData> {
-  const baseUrl = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_DOMAIN;
 
   try {
     const [totalUsersRes, totalProductsRes, dailySalesRes, monthlySalesRes] =

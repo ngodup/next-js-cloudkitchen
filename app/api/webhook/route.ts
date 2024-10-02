@@ -3,6 +3,8 @@ import { constructWebhookEvent } from "@/lib/stripe";
 import { createNextResponse } from "@/lib/ApiResponse";
 import OrderModel from "@/model/Order";
 
+export const dynamic = "force-dynamic";
+export const preferredRegion = "edge";
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature");
@@ -71,9 +73,3 @@ async function handlePaymentIntentFailed(event: any) {
 
   return createNextResponse(true, "Payment failure handled", 200);
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
