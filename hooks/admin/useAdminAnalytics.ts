@@ -13,7 +13,14 @@ export function useAdminAnalytics(initialData: AnalyticsData | null) {
     if (!initialData) {
       fetchAdminAnalytics()
         .then(setData)
-        .catch(setError)
+        .catch((err) => {
+          console.error("Error fetching admin analytics:", err);
+          setError(
+            err instanceof Error
+              ? err
+              : new Error("An error occurred while fetching admin analytics")
+          );
+        })
         .finally(() => setIsLoading(false));
     } else {
       setIsLoading(false);
@@ -26,7 +33,12 @@ export function useAdminAnalytics(initialData: AnalyticsData | null) {
       const newData = await fetchAdminAnalytics();
       setData(newData);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("An error occurred"));
+      console.error("Error refetching admin analytics:", err);
+      setError(
+        err instanceof Error
+          ? err
+          : new Error("An error occurred while refetching admin analytics")
+      );
     } finally {
       setIsLoading(false);
     }

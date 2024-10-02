@@ -8,7 +8,7 @@ export interface AnalyticsData {
 }
 
 export async function fetchAdminAnalytics(): Promise<AnalyticsData> {
-  const baseUrl = process.env.NEXT_PUBLIC_DOMAIN;
+  const baseUrl = process.env.NEXT_PUBLIC_DOMAIN || "http://localhost:3000";
 
   try {
     const [totalUsersRes, totalProductsRes, dailySalesRes, monthlySalesRes] =
@@ -27,6 +27,12 @@ export async function fetchAdminAnalytics(): Promise<AnalyticsData> {
     };
   } catch (error) {
     console.error("Failed to fetch analytics data:", error);
-    throw new Error("Failed to fetch analytics data");
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Failed to fetch analytics data: ${error.message}`);
+    } else {
+      throw new Error(
+        "An unexpected error occurred while fetching analytics data"
+      );
+    }
   }
 }
