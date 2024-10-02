@@ -144,11 +144,22 @@ export const authOptions: NextAuthOptions = {
     maxAge: 60 * 60, // 1 hour
   },
   jwt: {
-    maxAge: 60 * 60, // 1 hour
+    maxAge: 60 * 60,
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/auth/sign-in",
     error: "/auth/error", // Add this line
+  },
+  cookies: {
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+      },
+    },
   },
 };
