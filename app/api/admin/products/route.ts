@@ -6,6 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PipelineStage } from "mongoose";
 import { productItemSchema } from "@/schemas/productItemSchema";
 
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();

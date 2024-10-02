@@ -5,6 +5,8 @@ import { z } from "zod";
 import { usernameValidation } from "@/schemas/signUpSchema";
 import { createNextResponse } from "@/lib/ApiResponse";
 
+export const dynamic = "force-dynamic";
+
 const UsernameQuerySchema = z.object({
   username: usernameValidation,
 });

@@ -5,6 +5,7 @@ import CommentModel from "@/model/Comment";
 import { Types } from "mongoose";
 import { checkUserAuthentication } from "../../userAuthCheck";
 
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();

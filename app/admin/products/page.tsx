@@ -1,10 +1,16 @@
 import { cookies } from "next/headers";
 import ProductsClient from "./ProductsClient";
 
-//  Server-Side Rendering (SSR): This page uses SSR to fetch initial data, which is great for performance and SEO.
+export const dynamic = "force-dynamic";
+
+//Server side rendering
 async function getProducts(page = 1, cuisine = "", search = "") {
+  const baseUrl =
+    process.env.NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_DOMAIN ||
+    "https://tamo-cloudkitchen.vercel.app";
   const res = await fetch(
-    `${process.env.NEXTAUTH_URL}/api/admin/products?page=${page}&cuisine=${cuisine}&search=${search}`,
+    `${baseUrl}/api/admin/products?page=${page}&cuisine=${cuisine}&search=${search}`,
     {
       headers: {
         Cookie: cookies().toString(),
@@ -20,7 +26,11 @@ async function getProducts(page = 1, cuisine = "", search = "") {
 }
 
 export default async function ProductsPage() {
-  const initialData = await getProducts();
-
-  return <ProductsClient initialData={initialData} />;
+  try {
+    const initialData = await getProducts();
+    return <ProductsClient initialData={initialData} />;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return <div>Error loading products. Please try again later.</div>;
+  }
 }

@@ -1,14 +1,16 @@
 import { headers } from "next/headers";
 import HomePageWrapper from "@/components/HomePageWrapper";
 
-//  Server-Side Rendering (SSR): This page uses SSR to fetch initial data, which is great for performance and SEO.
+export const dynamic = "force-dynamic";
+
 async function fetchProducts(page = 1, limit = 12) {
   try {
     const headersList = headers();
     const protocol = headersList.get("x-forwarded-proto") || "http";
-    const host = headersList.get("host") || process.env.NEXT_PUBLIC_DOMAIN;
+    const host = headersList.get("host") || "localhost:3000";
 
-    const apiUrl = `${protocol}://${host}/api/products?page=${page}&limit=${limit}`;
+    const baseUrl = process.env.NEXT_PUBLIC_DOMAIN || `${protocol}://${host}`;
+    const apiUrl = `${baseUrl}/api/products?page=${page}&limit=${limit}`;
 
     const res = await fetch(apiUrl, {
       method: "GET",
@@ -31,6 +33,7 @@ async function fetchProducts(page = 1, limit = 12) {
     };
   }
 }
+
 export default async function HomePage() {
   try {
     const initialData = await fetchProducts();

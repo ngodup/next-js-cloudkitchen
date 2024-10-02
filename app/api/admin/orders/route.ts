@@ -7,6 +7,7 @@ import OrderModel from "@/model/Order";
 
 import { createNextResponse } from "@/lib/ApiResponse";
 
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();

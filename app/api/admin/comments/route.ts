@@ -4,6 +4,8 @@ import dbConnect from "@/lib/dbConnect";
 import { createNextResponse } from "@/lib/ApiResponse";
 import CommentModel from "@/model/Comment";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();

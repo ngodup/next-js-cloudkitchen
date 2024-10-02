@@ -11,6 +11,8 @@ import OrderModel, {
 } from "@/model/Order";
 import mongoose, { Types } from "mongoose";
 import { createPaymentIntent } from "@/lib/stripe";
+
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   try {
     await dbConnect();
