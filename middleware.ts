@@ -11,31 +11,32 @@ export async function middleware(request: NextRequest) {
   // Protect admin routes
   if (url.pathname.startsWith("/admin")) {
     if (!token || token.role !== "admin") {
+      console.log("Middleware - Redirecting to sign-in (admin)");
       return NextResponse.redirect(new URL("/auth/sign-in", request.url));
     }
   }
 
-  // Redirect to home page if the user is already authenticated
-  // and trying to access sign-in or sign-up pages
+  // Redirect authenticated users away from auth pages
   if (
     token &&
     (url.pathname.startsWith("/auth/sign-in") ||
       url.pathname.startsWith("/auth/sign-up") ||
       url.pathname.startsWith("/auth/verify"))
   ) {
+    console.log("Middleware - Redirecting to home (authenticated user)");
     return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // Redirect to sign-in page if the user is not authenticated
-  // and trying to access account, orders, checkout, settings, or admin pages
+  // Redirect unauthenticated users to sign-in
   if (
-    (!token &&
-      (url.pathname.startsWith("/account") ||
-        url.pathname.startsWith("/orders") ||
-        url.pathname.startsWith("/checkout") ||
-        url.pathname.startsWith("/comments"))) ||
-    url.pathname.startsWith("/settings")
+    !token &&
+    (url.pathname.startsWith("/account") ||
+      url.pathname.startsWith("/orders") ||
+      url.pathname.startsWith("/checkout") ||
+      url.pathname.startsWith("/comments") ||
+      url.pathname.startsWith("/settings"))
   ) {
+    console.log("Middleware - Redirecting to sign-in (unauthenticated)");
     return NextResponse.redirect(new URL("/auth/sign-in", request.url));
   }
 
@@ -44,13 +45,12 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/auth/sign-in",
-    "/auth/sign-up",
-    "/auth/verify/:path*",
-    "/account/:path*",
-    "/checkout/:path*",
-    "/settings/:path*",
-    "/orders/:path*",
     "/admin/:path*",
+    "/auth/:path*",
+    "/account/:path*",
+    "/orders/:path*",
+    "/checkout/:path*",
+    "/comments/:path*",
+    "/settings/:path*",
   ],
 };
