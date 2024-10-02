@@ -4,7 +4,7 @@ import { createNextResponse } from "@/lib/ApiResponse";
 import OrderModel from "@/model/Order";
 
 export const dynamic = "force-dynamic";
-export const runtime = "edge";
+export const preferredRegion = "auto";
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
   if (!sig) {
     return createNextResponse(false, "No Stripe signature found", 400);
   }
-
   try {
     const event = constructWebhookEvent(body, sig);
 
