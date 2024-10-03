@@ -103,8 +103,8 @@ const OrdersPage = () => {
         orders.map((order) => (
           <Card key={order._id} className="mb-6">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                Order #{order._id}
+              <CardTitle className="md:text-lg text-sm font-semibold">
+                Order # <span className="font-normal">{order._id}</span>
               </CardTitle>
               <CardDescription>
                 Placed on {new Date(order.createdAt).toLocaleDateString()}

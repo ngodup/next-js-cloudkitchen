@@ -151,7 +151,9 @@ export default function OrderConfirmationPage() {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableCaption>A summary of your order</TableCaption>
+            <TableCaption className="text-sm text-muted-foreground">
+              A summary of your order
+            </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>

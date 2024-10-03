@@ -155,5 +155,3 @@ export async function GET(req: NextRequest) {
     return createNextResponse(false, message, 500);
   }
 }
-
-/******  9f70ed20-8dd9-441a-a7c8-0f85e09cb36c  *******/
