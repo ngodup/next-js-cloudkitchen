@@ -92,7 +92,7 @@ export default function ProductDetail({ params }: Props) {
     <PageContainer scrollable={true}>
       {product ? (
         <Card className="m-2 md:m-10 overflow-hidden">
-          <CardContent className="p-2 md:p-6">
+          <CardContent className="p-1 md:p-6">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="w-full md:w-1/2">
                 <Image
