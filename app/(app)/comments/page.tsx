@@ -135,7 +135,7 @@ const CommentsPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Your Comments</h1>
+      <h1 className="text-lg md:text-2xl font-bold mb-6">Your Comments</h1>
       <CommentsList
         comments={comments}
         onEdit={setEditingComment}

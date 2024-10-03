@@ -23,14 +23,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
           placeholder="Search for order ID, username, or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-96"
+          className="w-79 md:w-96"
         />
         <Button onClick={handleSearch}>
           <Search className="h-4 w-4 mr-2" />
           Search
         </Button>
       </div>
-      <Button variant="outline">
+      <Button variant="outline" className="md:flex hidden">
         <Filter className="h-4 w-4 mr-2" />
         Filters
       </Button>

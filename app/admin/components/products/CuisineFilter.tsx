@@ -21,7 +21,7 @@ const CuisineFilter = ({
   setActiveCuisine,
 }: CuisineFilterProps) => {
   return (
-    <div className="flex space-x-2 mb-6">
+    <div className="flex space-x-2 mb-6 flex-wrap gap-1">
       {cuisines.map((cuisine) => (
         <Button
           key={cuisine}

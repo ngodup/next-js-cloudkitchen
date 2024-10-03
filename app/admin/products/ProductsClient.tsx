@@ -133,21 +133,37 @@ export default function ProductsClient({ initialData }: ProductsClientProps) {
   };
 
   return (
-    <section className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Food Item Management</h1>
+    <section className="container mx-auto p-4 md:p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-lgmd:text-2xl font-bold mb-6">
+          Food Item Management
+        </h1>
+        <Button
+          onClick={() => setIsAddModalOpen(true)}
+          className="md:hidden flex"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Add Product
+        </Button>
+      </div>
+
       <CuisineFilter
         activeCuisine={activeCuisine}
         setActiveCuisine={handleCuisineChange}
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between flex-wrap gap-2 items-center mb-6">
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           handleSearch={handleSearch}
         />
-        <Button onClick={() => setIsAddModalOpen(true)}>
+
+        <Button
+          onClick={() => setIsAddModalOpen(true)}
+          className="md:flex hidden"
+        >
           <Plus className="h-4 w-4 mr-2" />
-          Add Food Item
+          Add Product
         </Button>
       </div>
       <ProductTable

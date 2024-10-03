@@ -55,16 +55,21 @@ const CommentsTable = ({ comments, onEdit, onDelete }: CommentsTableProps) => {
                 {new Date(comment.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell>
-                <Button
-                  variant="outline"
-                  onClick={() => onEdit(comment)}
-                  className="mr-2"
-                >
-                  Edit
-                </Button>
-                <Button variant="destructive" onClick={() => onDelete(comment)}>
-                  Delete
-                </Button>
+                <div className="flex justify-start gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => onEdit(comment)}
+                    className="mr-2"
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => onDelete(comment)}
+                  >
+                    Delete
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

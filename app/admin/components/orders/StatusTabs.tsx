@@ -10,7 +10,7 @@ interface StatusTabsProps {
 
 const StatusTabs = ({ activeTab, setActiveTab }: StatusTabsProps) => {
   return (
-    <div className="flex space-x-2 mb-6">
+    <div className="flex flex-wrap space-x-2 mb-6">
       {tabs.map((tab) => (
         <Button
           key={tab}

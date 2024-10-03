@@ -16,7 +16,7 @@ const MenuCuisineItem = ({ menu, isActive, onClick }: MenuCuisineProps) => {
   return (
     <Card
       className={cn(
-        "w-48 rounded-2xl shadow-md p-2 cursor-pointer transition-colors",
+        "w-30 md:w-48 rounded-2xl shadow-md p-2 cursor-pointer transition-colors",
         isActive ? "bg-primary text-primary-foreground" : "hover:bg-accent"
       )}
       onClick={onClick}
@@ -24,7 +24,7 @@ const MenuCuisineItem = ({ menu, isActive, onClick }: MenuCuisineProps) => {
       <CardContent className="flex gap-2 pl-0 pb-0 justify-start">
         <Icon
           className={cn(
-            "size-8",
+            "size-6 md:size-8",
             isActive ? "text-primary-foreground" : "text-primary"
           )}
         />

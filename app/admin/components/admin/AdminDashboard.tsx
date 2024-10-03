@@ -27,16 +27,18 @@ export default function AdminDashboard({
   }
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+    <div className="p-4 md:p-6 space-y-6">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <h1 className="text-lg md:text-3xl font-bold">Admin Dashboard</h1>
 
-      {/* Refresh button */}
-      <Button onClick={refetchData} className="mb-4">
-        Refresh Data
-      </Button>
+        {/* Refresh button */}
+        <Button onClick={refetchData} className="mb-4">
+          Refresh Data
+        </Button>
+      </div>
 
       {/* Analytics data on cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <InfoCard title="Total Users" content={analyticsData.totalUsers} />
         <InfoCard
           title="Total Products"

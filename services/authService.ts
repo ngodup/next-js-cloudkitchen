@@ -51,7 +51,6 @@ export const authService = {
         `/api/auth/forgot-password`,
         { email }
       );
-      debugger;
       return response.data.message;
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;

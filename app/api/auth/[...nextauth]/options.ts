@@ -151,6 +151,7 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/sign-in",
     error: "/auth/error", // Add this line
   },
+  // Enable this will work on vercel but not in localhost
   cookies: {
     sessionToken: {
       name: `__Secure-next-auth.session-token`,

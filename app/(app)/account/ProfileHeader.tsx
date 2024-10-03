@@ -11,8 +11,8 @@ export function ProfileHeader({ userProfile }: ProfileHeaderProps) {
   const { data: session } = useSession();
 
   return (
-    <div className="flex items-center space-x-4 mb-6">
-      <Avatar className="h-24 w-24">
+    <div className="flex items-center space-x-2 md:space-x-4 mb-6">
+      <Avatar className="h-10 w-1O md:h-24 md:w-24">
         <AvatarImage
           src={userProfile.avatarUrl || ""}
           alt={userProfile.firstName || session?.user.username || "User"}
@@ -26,12 +26,14 @@ export function ProfileHeader({ userProfile }: ProfileHeaderProps) {
         </AvatarFallback>
       </Avatar>
       <div>
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-md md:text-xl font-semibold">
           {userProfile.firstName
             ? `${userProfile.firstName} ${userProfile.lastName || ""}`
             : session?.user.username}
         </h2>
-        <p className="text-gray-500">{session?.user.email}</p>
+        <p className="text-gray-500 text-sm md:text-xl">
+          {session?.user.email}
+        </p>
       </div>
     </div>
   );

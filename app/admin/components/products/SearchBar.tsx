@@ -21,7 +21,7 @@ const SearchBar = ({
         placeholder="Search for food item name..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-96"
+        className="w-79 md:w-96"
       />
       <Button onClick={handleSearch}>
         <Search className="h-4 w-4 mr-2" />

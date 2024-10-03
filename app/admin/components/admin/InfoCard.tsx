@@ -13,7 +13,7 @@ const InfoCard = ({ title, content, isCurrency = false }: InfoCardProps) => {
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
+        <div className="text-lg md:text-2xl font-bold">
           {isCurrency && "€"} {content}
         </div>
       </CardContent>

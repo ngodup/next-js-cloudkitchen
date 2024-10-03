@@ -153,7 +153,9 @@ const Comments = () => {
   return (
     <ErrorBoundary>
       <section className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Comment Management</h1>
+        <h1 className="text-lg md:text-2xl font-bold mb-6">
+          Comment Management
+        </h1>
         <div className="mb-6">
           <SearchBar
             searchTerm={searchTerm}

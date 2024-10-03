@@ -100,30 +100,46 @@ export default function OrderConfirmationPage() {
     <div className="container mx-auto p-4">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Order Confirmation</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            Order Confirmation
+          </CardTitle>
           <CardDescription>Thank you for your order!</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <p className="font-semibold">Order Number:</p>
-              <p>{order._id}</p>
+              <p className="font-semibold">
+                Order Number: <span className="font-normal">{order._id}</span>
+              </p>
             </div>
             <div>
-              <p className="font-semibold">Order Date:</p>
-              <p>{new Date(order.createdAt).toLocaleString()}</p>
+              <p className="font-semibold">
+                Order Date:{" "}
+                <span className="font-normal">
+                  {new Date(order.createdAt).toLocaleString()}
+                </span>
+              </p>
             </div>
             <div>
-              <p className="font-semibold">Order Status:</p>
-              <Badge
-                variant={order.status === "pending" ? "secondary" : "default"}
-              >
-                {order.status}
-              </Badge>
+              <p className="font-semibold">
+                Order Status:{" "}
+                <span className="font-normal">
+                  {" "}
+                  <Badge
+                    variant={
+                      order.status === "pending" ? "secondary" : "default"
+                    }
+                  >
+                    {order.status}
+                  </Badge>
+                </span>
+              </p>
             </div>
             <div>
-              <p className="font-semibold">Total Items:</p>
-              <p>{order.totalItems}</p>
+              <p className="font-semibold">
+                Total Items:{" "}
+                <span className="font-normal"> {order.totalItems}</span>
+              </p>
             </div>
           </div>
         </CardContent>
@@ -131,7 +147,7 @@ export default function OrderConfirmationPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Order Details</CardTitle>
+          <CardTitle className="text-lg font-semibold">Order Details</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>

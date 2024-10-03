@@ -91,8 +91,8 @@ export default function ProductDetail({ params }: Props) {
   return (
     <PageContainer scrollable={true}>
       {product ? (
-        <Card className="m-10 overflow-hidden">
-          <CardContent className="p-6">
+        <Card className="m-2 md:m-10 overflow-hidden">
+          <CardContent className="p-2 md:p-6">
             <div className="flex flex-col md:flex-row gap-8">
               <div className="w-full md:w-1/2">
                 <Image
@@ -105,7 +105,7 @@ export default function ProductDetail({ params }: Props) {
                 />
               </div>
               <div className="w-full md:w-1/2 space-y-6">
-                <h1 className="text-3xl font-bold text-primary">
+                <h1 className="text-2xl md:text-3xl font-bold text-primary">
                   {product.name}
                 </h1>
                 {product.rating && <Rating value={product.rating} readOnly />}
@@ -127,7 +127,7 @@ export default function ProductDetail({ params }: Props) {
                 {product && (
                   <ProductQuantities className="w-1/2" product={product} />
                 )}
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-2 md:gap-4">
                   <Card className="bg-blue-100 text-blue-800 p-2 flex items-center">
                     <Utensils className="mr-2 h-4 w-4" />
                     {product.cuisine}

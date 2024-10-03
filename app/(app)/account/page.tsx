@@ -121,7 +121,7 @@ const Account = () => {
     <div className="container mx-auto p-4 max-w-8xl">
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">User Profile</CardTitle>
+          <CardTitle className="text-lg font-semibold">User Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <ProfileHeader userProfile={userProfile} />

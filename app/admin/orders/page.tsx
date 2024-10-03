@@ -122,7 +122,7 @@ const Orders = () => {
   return (
     <ErrorBoundary>
       <section className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-6">Order Details</h1>
+        <h1 className="text-lg md:text-2xl font-bold mb-6">Order Details</h1>
         <StatusTabs activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="mb-6">
           <SearchBar
